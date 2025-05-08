@@ -8,10 +8,10 @@ import { ThemeProvider } from "./components/ThemeProvider";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Home from "./sections/Home";
-import Features from "./sections/Features";
+import SupportedModels from "./sections/SupportedModels";
 import Resellers from "./sections/Resellers";
 import PaymentMethods from "./sections/PaymentMethods";
-import ServerStatus from "./sections/ServerStatus";
+import Pricing from "./sections/Pricing";
 import Contact from "./sections/Contact";
 
 const queryClient = new QueryClient();
@@ -29,11 +29,11 @@ const App = () => (
               <section id="home">
                 <Home />
               </section>
-              <section id="features">
-                <Features />
+              <section id="supported-models">
+                <SupportedModels />
               </section>
-              <section id="server-status">
-                <ServerStatus />
+              <section id="pricing">
+                <Pricing />
               </section>
               <section id="resellers">
                 <Resellers />

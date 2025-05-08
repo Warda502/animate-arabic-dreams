@@ -2,12 +2,33 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
+import { supabase } from "@/integrations/supabase/client";
 
 const Home = () => {
   const [isVisible, setIsVisible] = useState(false);
+  const [homeImageUrl, setHomeImageUrl] = useState("/lovable-uploads/46319556-27d1-46f3-b365-81927d12674f.png");
 
   useEffect(() => {
     setIsVisible(true);
+    
+    // Fetch home image from Supabase storage
+    const fetchHomeImage = async () => {
+      try {
+        // Get home image from Supabase storage
+        const { data: imageData } = await supabase
+          .storage
+          .from('website')
+          .getPublicUrl('img/home.png');
+
+        if (imageData) {
+          setHomeImageUrl(imageData.publicUrl);
+        }
+      } catch (error) {
+        console.error('Error fetching home image:', error);
+      }
+    };
+
+    fetchHomeImage();
   }, []);
 
   return (
@@ -49,9 +70,9 @@ const Home = () => {
               <div className="relative">
                 <div className="bg-orange-100 dark:bg-orange-900/30 rounded-full h-80 w-80 mx-auto"></div>
                 <img 
-                  src="/lovable-uploads/46319556-27d1-46f3-b365-81927d12674f.png" 
+                  src={homeImageUrl} 
                   alt="Pegasus Tool Interface" 
-                  className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 max-w-full h-auto animate-float"
+                  className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 max-w-[80%] h-auto animate-float"
                 />
               </div>
             </div>
@@ -117,14 +138,14 @@ const Home = () => {
           
           <div className="mt-16 rounded-lg overflow-hidden shadow-xl max-w-4xl mx-auto transform hover:-translate-y-2 transition-transform duration-300">
             <img 
-              src="/lovable-uploads/46319556-27d1-46f3-b365-81927d12674f.png" 
+              src={homeImageUrl} 
               alt="Pegasus Tool Interface" 
               className="w-full h-auto"
             />
           </div>
           
           <div className="flex justify-center mt-12">
-            <div className="flex flex-col md:flex-row items-center p-6 bg-white dark:bg-gray-800 rounded-full shadow-lg">
+            <div className="flex flex-col md:flex-row items-center p-6 bg-white dark:bg-gray-700 rounded-full shadow-lg">
               <div className="flex-shrink-0 mr-4 mb-4 md:mb-0">
                 <div className="h-14 w-14 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-pegasus-orange" fill="none" viewBox="0 0 24 24" stroke="currentColor">

@@ -1,34 +1,37 @@
 
 import React, { useState, useEffect } from 'react';
+import { Link } from "react-router-dom";
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { ThemeToggle } from './ThemeToggle';
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { Menu, X } from "lucide-react";
+
+interface MenuItem {
+  title: string;
+  href: string;
+}
 
 const Navbar = () => {
+  const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState('home');
+  
+  // Menu items
+  const menuItems: MenuItem[] = [
+    { title: "Home", href: "#home" },
+    { title: "Supported Models", href: "#supported-models" },
+    { title: "Pricing", href: "#pricing" },
+    { title: "Resellers", href: "#resellers" },
+    { title: "Contact", href: "#contact" },
+  ];
 
+  // Handle scrolling effect for navbar
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 10) {
+      if (window.scrollY > 0) {
         setIsScrolled(true);
       } else {
         setIsScrolled(false);
       }
-
-      // Update active section based on scroll position
-      const sections = document.querySelectorAll('section');
-      let currentActive = 'home';
-
-      sections.forEach((section) => {
-        const sectionTop = section.offsetTop;
-        const sectionHeight = section.clientHeight;
-        if (window.scrollY >= sectionTop - 200 && window.scrollY < sectionTop + sectionHeight - 200) {
-          currentActive = section.id;
-        }
-      });
-
-      setActiveSection(currentActive);
     };
 
     window.addEventListener('scroll', handleScroll);
@@ -37,124 +40,85 @@ const Navbar = () => {
     };
   }, []);
 
-  const scrollToSection = (sectionId: string) => {
-    const section = document.getElementById(sectionId);
-    if (section) {
-      window.scrollTo({
-        top: section.offsetTop - 80, // Adjust for navbar height
-        behavior: 'smooth'
-      });
-      setIsMobileMenuOpen(false);
-    }
-  };
-
-  const isActive = (sectionId: string) => activeSection === sectionId;
-
-  const navLinks = [
-    { name: "Home", sectionId: "home" },
-    { name: "Features", sectionId: "features" },
-    { name: "Server Status", sectionId: "server-status" },
-    { name: "Resellers", sectionId: "resellers" },
-    { name: "Payment Methods", sectionId: "payment-methods" },
-    { name: "Contact", sectionId: "contact" },
-  ];
-
   return (
-    <nav className={`fixed w-full top-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-white dark:bg-gray-900 shadow-md py-2' : 'bg-white dark:bg-gray-900 py-4'}`}>
-      <div className="container mx-auto px-4 flex justify-between items-center">
-        <div className="flex items-center gap-2">
-          <h1 className="text-2xl font-bold text-pegasus-orange">Pegasus Tool</h1>
-        </div>
-
-        {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center gap-6">
-          {navLinks.map((link) => (
-            <button
-              key={link.sectionId}
-              onClick={() => scrollToSection(link.sectionId)}
-              className={`text-sm font-medium transition-colors hover:text-pegasus-orange relative
-                ${isActive(link.sectionId) ? 'text-pegasus-orange font-semibold' : 'text-gray-600 dark:text-gray-300'}
-                after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 
-                after:bg-pegasus-orange after:origin-bottom-right after:transition-transform after:duration-300 
-                hover:after:scale-x-100 hover:after:origin-bottom-left`}
-            >
-              {link.name}
-            </button>
-          ))}
-        </div>
-
-        <div className="hidden md:flex items-center gap-3">
-          <ThemeToggle />
-          <Button 
-            className="bg-pegasus-orange hover:bg-orange-600 text-white px-6 py-2 rounded-full"
-            onClick={() => scrollToSection('contact')}
-          >
-            Login
-          </Button>
-        </div>
-
-        {/* Mobile Menu Button */}
-        <div className="flex md:hidden items-center gap-2">
-          <ThemeToggle />
-          <button 
-            className="p-2" 
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          >
-            <svg 
-              xmlns="http://www.w3.org/2000/svg" 
-              fill="none" 
-              viewBox="0 0 24 24" 
-              stroke="currentColor" 
-              className="h-6 w-6 dark:text-white"
-            >
-              {isMobileMenuOpen ? (
-                <path 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round" 
-                  strokeWidth={2} 
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              ) : (
-                <path 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round" 
-                  strokeWidth={2} 
-                  d="M4 6h16M4 12h16M4 18h16"
-                />
-              )}
-            </svg>
-          </button>
-        </div>
-      </div>
-
-      {/* Mobile Menu */}
-      {isMobileMenuOpen && (
-        <div className="md:hidden bg-white dark:bg-gray-900 shadow-lg py-4 px-4 absolute w-full animate-fade-in">
-          <div className="flex flex-col gap-4">
-            {navLinks.map((link) => (
-              <button
-                key={link.sectionId}
-                onClick={() => scrollToSection(link.sectionId)}
-                className={`text-sm font-medium p-2 rounded-md
-                  ${isActive(link.sectionId) ? 'bg-orange-100 dark:bg-orange-900/30 text-pegasus-orange font-semibold' : 'text-gray-600 dark:text-gray-300'}`}
+    <header className={cn(
+      "fixed w-full z-50 top-0 transition-all duration-300",
+      isScrolled 
+        ? "bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm shadow-md" 
+        : "bg-transparent"
+    )}>
+      <div className="container mx-auto px-4">
+        <div className="flex items-center justify-between h-20">
+          {/* Logo */}
+          <Link to="/" className="flex items-center">
+            <span className="font-bold text-2xl text-pegasus-orange">Pegasus Tool</span>
+          </Link>
+          
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex space-x-8">
+            {menuItems.map((item) => (
+              <a
+                key={item.title}
+                href={item.href}
+                className={cn(
+                  "font-medium transition-colors hover:text-pegasus-orange",
+                  isScrolled ? "text-gray-800 dark:text-gray-100" : "text-gray-800 dark:text-gray-100"
+                )}
               >
-                {link.name}
-              </button>
+                {item.title}
+              </a>
             ))}
+          </nav>
+          
+          {/* Action Buttons */}
+          <div className="hidden md:flex items-center space-x-4">
+            <ThemeToggle />
+            <Button className="bg-pegasus-orange hover:bg-orange-600 text-white">
+              Download Now
+            </Button>
+          </div>
+          
+          {/* Mobile Menu Button */}
+          <div className="flex items-center md:hidden">
+            <ThemeToggle />
             <Button 
-              className="bg-pegasus-orange hover:bg-orange-600 text-white px-6 py-2 rounded-full mt-2"
-              onClick={() => {
-                scrollToSection('contact');
-                setIsMobileMenuOpen(false);
-              }}
+              variant="ghost" 
+              size="icon"
+              onClick={() => setIsOpen(!isOpen)}
+              className="ml-2"
+              aria-label="Toggle menu"
             >
-              Login
+              {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </Button>
           </div>
         </div>
-      )}
-    </nav>
+      </div>
+      
+      {/* Mobile Menu */}
+      <div className={cn(
+        "md:hidden overflow-hidden transition-all duration-300 bg-white dark:bg-gray-900",
+        isOpen ? "max-h-[500px] border-b border-gray-200 dark:border-gray-700" : "max-h-0"
+      )}>
+        <div className="container mx-auto px-4 py-4 space-y-4">
+          {menuItems.map((item) => (
+            <a
+              key={item.title}
+              href={item.href}
+              className="block py-2 text-gray-800 dark:text-gray-100 hover:text-pegasus-orange"
+              onClick={() => setIsOpen(false)}
+            >
+              {item.title}
+            </a>
+          ))}
+          <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
+            <Button className="w-full bg-pegasus-orange hover:bg-orange-600 text-white">
+              Download Now
+            </Button>
+          </div>
+        </div>
+      </div>
+    </header>
   );
-};
+}
 
 export default Navbar;
