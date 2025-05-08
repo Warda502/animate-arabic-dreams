@@ -1,9 +1,8 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter } from "react-router-dom";
+import { BrowserRouter, Route, Routes, useLocation, Navigate } from "react-router-dom";
 import { ThemeProvider } from "./components/ThemeProvider";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -13,8 +12,36 @@ import Resellers from "./sections/Resellers";
 import PaymentMethods from "./sections/PaymentMethods";
 import Pricing from "./sections/Pricing";
 import Contact from "./sections/Contact";
+import { useEffect } from "react";
 
-const queryClient = new QueryClient();
+const ScrollToTop = () => {
+  const { pathname, hash } = useLocation();
+
+  useEffect(() => {
+    // If there's a hash, scroll to it
+    if (hash) {
+      const element = document.getElementById(hash.substring(1));
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+        return;
+      }
+    }
+    
+    // Otherwise scroll to top
+    window.scrollTo(0, 0);
+  }, [pathname, hash]);
+
+  return null;
+};
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -25,6 +52,7 @@ const App = () => (
           <Sonner />
           <div className="flex flex-col min-h-screen">
             <Navbar />
+            <ScrollToTop />
             <main className="flex-grow">
               <section id="home">
                 <Home />

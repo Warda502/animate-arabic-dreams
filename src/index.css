@@ -116,11 +116,13 @@
   }
   
   .section-title {
-    @apply text-3xl font-bold text-center mb-10;
+    @apply text-3xl font-bold text-center mb-6 opacity-0;
+    animation: fade-in 0.5s ease-out forwards;
   }
   
   .section-subtitle {
-    @apply text-xl text-gray-600 dark:text-gray-300 text-center mb-16;
+    @apply text-xl text-gray-600 dark:text-gray-300 text-center mb-10 opacity-0;
+    animation: fade-in 0.5s ease-out 0.2s forwards;
   }
 
   .btn-primary {
@@ -128,10 +130,41 @@
   }
   
   .reseller-card {
-    @apply bg-white dark:bg-gray-800 rounded-lg p-6 shadow-md;
+    @apply bg-white dark:bg-gray-800 rounded-lg p-6 shadow-md transition-all duration-300 hover:shadow-lg;
   }
   
   .reseller-header {
     @apply bg-pegasus-orange text-white py-2 px-4 rounded-t-lg font-semibold mb-4 -mx-6 -mt-6;
   }
 }
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-in {
+  0% {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.5s ease-out forwards;
+}
+
+.animate-slide-in {
+  animation: slide-in 0.5s ease-out forwards;
+}
+
