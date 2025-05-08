@@ -16,7 +16,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 210 100% 50%;
+    --primary: 24 95% 53%;
     --primary-foreground: 210 40% 98%;
 
     --secondary: 210 40% 96.1%;
@@ -64,7 +64,7 @@
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 210 40% 98%;
+    --primary: 24 95% 53%;
     --primary-foreground: 222.2 47.4% 11.2%;
 
     --secondary: 217.2 32.6% 17.5%;
@@ -99,8 +99,12 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground scroll-smooth;
     font-family: 'Cairo', sans-serif;
+  }
+  
+  html {
+    scroll-behavior: smooth;
   }
 
   .card-hover {
@@ -108,7 +112,7 @@
   }
   
   .feature-icon {
-    @apply text-hw-blue text-4xl mb-4;
+    @apply text-pegasus-orange text-4xl mb-4;
   }
   
   .section-title {
@@ -116,18 +120,18 @@
   }
   
   .section-subtitle {
-    @apply text-xl text-gray-600 text-center mb-16;
+    @apply text-xl text-gray-600 dark:text-gray-300 text-center mb-16;
   }
 
   .btn-primary {
-    @apply bg-hw-blue text-white px-6 py-2 rounded-full hover:bg-blue-600 transition-colors;
+    @apply bg-pegasus-orange text-white px-6 py-2 rounded-full hover:bg-orange-600 transition-colors;
   }
   
   .reseller-card {
-    @apply bg-white rounded-lg p-6 shadow-md;
+    @apply bg-white dark:bg-gray-800 rounded-lg p-6 shadow-md;
   }
   
   .reseller-header {
-    @apply bg-hw-blue text-white py-2 px-4 rounded-t-lg font-semibold mb-4 -mx-6 -mt-6;
+    @apply bg-pegasus-orange text-white py-2 px-4 rounded-t-lg font-semibold mb-4 -mx-6 -mt-6;
   }
 }
