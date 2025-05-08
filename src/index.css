@@ -1,3 +1,6 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -13,7 +16,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 222.2 47.4% 11.2%;
+    --primary: 210 100% 50%;
     --primary-foreground: 210 40% 98%;
 
     --secondary: 210 40% 96.1%;
@@ -97,5 +100,34 @@
 
   body {
     @apply bg-background text-foreground;
+    font-family: 'Cairo', sans-serif;
+  }
+
+  .card-hover {
+    @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
+  }
+  
+  .feature-icon {
+    @apply text-hw-blue text-4xl mb-4;
+  }
+  
+  .section-title {
+    @apply text-3xl font-bold text-center mb-10;
+  }
+  
+  .section-subtitle {
+    @apply text-xl text-gray-600 text-center mb-16;
+  }
+
+  .btn-primary {
+    @apply bg-hw-blue text-white px-6 py-2 rounded-full hover:bg-blue-600 transition-colors;
+  }
+  
+  .reseller-card {
+    @apply bg-white rounded-lg p-6 shadow-md;
+  }
+  
+  .reseller-header {
+    @apply bg-hw-blue text-white py-2 px-4 rounded-t-lg font-semibold mb-4 -mx-6 -mt-6;
   }
 }
