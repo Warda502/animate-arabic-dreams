@@ -142,57 +142,7 @@ const Pricing = () => {
       </section>
 
       {/* FAQ Section */}
-      <section className="py-16 bg-gray-50 dark:bg-gray-800">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12">Frequently Asked Questions</h2>
-          
-          <div className="max-w-3xl mx-auto space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">How long is a license valid?</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-600 dark:text-gray-300">
-                  Our standard licenses are valid for one month from the activation date, while our premium licenses offer extended validity periods. Check the specific plan details for more information.
-                </p>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Can I use the tool on multiple computers?</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-600 dark:text-gray-300">
-                  Each license is typically tied to a single hardware ID. If you need to use the tool on multiple computers, please consider our multi-device plans or contact our support team.
-                </p>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Do you offer refunds?</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-600 dark:text-gray-300">
-                  We offer a satisfaction guarantee. If you encounter any issues with our tool that we can't resolve, please contact our support team within 7 days of purchase to discuss refund options.
-                </p>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">How do I get support?</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-600 dark:text-gray-300">
-                  We provide technical support via email and our dedicated support portal. Premium plans include priority support with faster response times and direct access to our technical team.
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
+      
 
       {/* CTA Section */}
       <section className="py-16 bg-gradient-to-r from-orange-600 to-orange-400 text-white">
