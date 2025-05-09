@@ -30,7 +30,9 @@ const SectionHeader: React.FC<SectionHeaderProps> = ({
         centered ? "mx-auto" : "",
         "text-pegasus-orange dark:text-pegasus-orange",
         titleClassName
-      )}>
+      )}
+      style={{ animationFillMode: 'forwards' }}
+      >
         {title}
       </h2>
       
@@ -39,7 +41,9 @@ const SectionHeader: React.FC<SectionHeaderProps> = ({
           "text-lg text-gray-600 dark:text-gray-300 max-w-3xl opacity-0 animate-fade-in-delay-1",
           centered ? "mx-auto" : "",
           subtitleClassName
-        )}>
+        )}
+        style={{ animationFillMode: 'forwards' }}
+        >
           {subtitle}
         </p>
       )}

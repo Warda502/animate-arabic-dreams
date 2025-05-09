@@ -50,19 +50,19 @@ const Home = () => {
   return (
     <div>
       {/* Hero Section */}
-      <section className="pt-28 pb-20 bg-gradient-to-b from-white via-orange-50/30 to-white dark:from-gray-900 dark:via-gray-800/70 dark:to-gray-900 overflow-hidden relative">
+      <section className="pt-28 pb-20 bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 overflow-hidden relative">
         <div className="absolute inset-0 bg-[url('/patterns/dots.svg')] opacity-5"></div>
         <div className="container mx-auto px-4 relative">
           <div className="flex flex-col md:flex-row items-center">
             <div className="md:w-1/2 mb-10 md:mb-0">
               <h1 
-                className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-gray-900 dark:text-white opacity-0 animate-fade-in-delay-1 font-montserrat tracking-tight leading-tight" 
+                className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-white opacity-0 animate-fade-in-delay-1 font-montserrat tracking-tight leading-tight" 
                 style={{ animationFillMode: 'forwards' }}
               >
-                The Ultimate <span className="text-gradient">Smartphone</span> Flashing Tool
+                The Ultimate <span className="text-pegasus-orange">Smartphone</span> Flashing Tool
               </h1>
               <p 
-                className="text-lg md:text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-lg opacity-0 animate-fade-in-delay-2" 
+                className="text-lg md:text-xl text-gray-300 mb-8 max-w-lg opacity-0 animate-fade-in-delay-2" 
                 style={{ animationFillMode: 'forwards' }}
               >
                 Professional unlocking and flashing tool for smartphones, specializing in 
@@ -80,7 +80,7 @@ const Home = () => {
                 </Button>
                 <Button 
                   variant="outline" 
-                  className="border-2 border-pegasus-orange text-pegasus-orange hover:bg-orange-50 dark:hover:bg-orange-900/20 px-6 py-6 rounded-full text-lg w-full md:w-auto transition-all duration-300 hover:-translate-y-1 flex items-center justify-center"
+                  className="border-2 border-pegasus-orange text-pegasus-orange hover:bg-orange-900/20 dark:hover:bg-orange-900/20 px-6 py-6 rounded-full text-lg w-full md:w-auto transition-all duration-300 hover:-translate-y-1 flex items-center justify-center"
                   onClick={() => scrollToSection('supported-models')}
                 >
                   Learn More <ArrowRight className="ml-2 h-4 w-4" />
@@ -88,23 +88,28 @@ const Home = () => {
               </div>
             </div>
             <div 
-              className="md:w-1/2 opacity-0 animate-fade-in-delay-4" 
+              className="md:w-1/2 opacity-0 animate-fade-in-delay-4 relative z-10" 
               style={{ animationFillMode: 'forwards' }}
             >
-              <div className="relative">
-                <div className="bg-gradient-to-br from-orange-100 to-orange-200 dark:from-orange-800/30 dark:to-orange-900/20 rounded-full h-64 w-64 md:h-80 md:w-80 mx-auto shadow-xl opacity-70 animate-pulse-gentle"></div>
+              <div className="relative flex items-center justify-center">
+                <div className="bg-gradient-to-br from-orange-700/30 to-orange-900/20 rounded-full h-64 w-64 md:h-96 md:w-96 mx-auto absolute"></div>
                 <img 
                   src={homeImageUrl} 
                   alt="Pegasus Tool Interface" 
-                  className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 max-w-[90%] h-auto animate-float-slow hover-glow"
+                  className="relative z-10 max-w-full md:max-w-md mx-auto"
+                  style={{ 
+                    maxHeight: '500px',
+                    objectFit: 'contain',
+                    filter: 'drop-shadow(0 10px 8px rgb(0 0 0 / 0.5))'
+                  }}
                   onError={(e) => {
                     // Fallback to local image if Supabase image fails
                     const target = e.target as HTMLImageElement;
                     target.src = "/lovable-uploads/46319556-27d1-46f3-b365-81927d12674f.png";
                   }}
                 />
-                <div className="absolute -right-10 top-1/4 w-20 h-20 bg-orange-400/10 rounded-full blur-xl animate-pulse-gentle"></div>
-                <div className="absolute -left-5 bottom-1/4 w-32 h-32 bg-orange-300/10 rounded-full blur-xl animate-pulse-gentle" style={{animationDelay: '1s'}}></div>
+                <div className="absolute -right-10 top-1/4 w-20 h-20 bg-orange-400/10 rounded-full blur-xl"></div>
+                <div className="absolute -left-5 bottom-1/4 w-32 h-32 bg-orange-300/10 rounded-full blur-xl"></div>
               </div>
             </div>
           </div>
