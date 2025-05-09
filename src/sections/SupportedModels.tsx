@@ -4,10 +4,12 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Smartphone, Search, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
+import { ChevronLeft, ChevronRight, Loader2, Search } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
+import BrandSelector from '@/components/BrandSelector';
+import SectionHeader from '@/components/SectionHeader';
+import AnimatedCard from '@/components/AnimatedCard';
 
 interface SupportedModel {
   id: string;
@@ -112,76 +114,57 @@ const SupportedModels = () => {
   };
 
   return (
-    <div className="pt-24 pb-16 py-0">
+    <div className="pt-24 pb-16">
       {/* Hero Section */}
-      <section className="bg-gradient-to-b from-white to-orange-50 dark:from-gray-900 dark:to-gray-800 py-16">
-        <div className="container mx-auto px-4">
-          <h1 className="text-4xl md:text-5xl font-bold text-center text-gray-900 dark:text-white mb-6 opacity-0 animate-fade-in-delay-1" style={{
-            animationFillMode: 'forwards'
-          }}>
-            Supported Models
-          </h1>
-          <p className="text-xl text-gray-600 dark:text-gray-300 text-center max-w-3xl mx-auto opacity-0 animate-fade-in-delay-2" style={{
-            animationFillMode: 'forwards'
-          }}>
-            Discover all the smartphone models supported by Pegasus Tool
-          </p>
+      <section className="bg-gradient-to-b from-white to-orange-50 dark:from-gray-900 dark:to-gray-800 py-16 relative overflow-hidden">
+        <div className="absolute inset-0 bg-[url('/patterns/grid.svg')] opacity-5"></div>
+        <div className="container mx-auto px-4 relative">
+          <SectionHeader
+            title="Supported Models"
+            subtitle="Discover all the smartphone models supported by Pegasus Tool"
+          />
         </div>
       </section>
 
       {/* Brands Section with Dropdown */}
-      <section className="py-10">
+      <section className="py-10 bg-white dark:bg-gray-900">
         <div className="container mx-auto px-4">
           <div className="flex flex-col items-center mb-8">
-            <h2 className="text-2xl font-bold mb-4 text-center">Select a Brand</h2>
+            <h2 className="text-2xl font-bold mb-6 text-center text-gray-800 dark:text-white">Select a Brand</h2>
             
-            {isLoading ? (
-              <div className="w-full max-w-md h-10 animate-pulse bg-gray-200 dark:bg-gray-700 rounded-md"></div>
-            ) : brands.length > 0 ? (
-              <Select value={selectedBrand || undefined} onValueChange={handleBrandSelect}>
-                <SelectTrigger className="w-full max-w-md">
-                  <SelectValue placeholder="Select a brand" />
-                </SelectTrigger>
-                <SelectContent>
-                  {brands.map(brand => (
-                    <SelectItem key={brand} value={brand}>
-                      <div className="flex items-center">
-                        <Smartphone className="mr-2 h-4 w-4 text-pegasus-orange" />
-                        {brand}
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            ) : (
-              <div className="text-center py-6">
-                <p className="text-lg text-gray-500 dark:text-gray-400">No brands available</p>
-              </div>
-            )}
+            <BrandSelector 
+              brands={brands} 
+              selectedBrand={selectedBrand} 
+              onBrandSelect={handleBrandSelect} 
+              isLoading={isLoading} 
+              className="opacity-0 animate-fade-in" 
+            />
           </div>
         </div>
       </section>
 
       {/* Models Section */}
       {selectedBrand && (
-        <section className="py-0">
+        <section className="py-8 bg-white dark:bg-gray-900">
           <div className="container mx-auto px-4">
-            <Card className="bg-white dark:bg-gray-800 shadow-lg overflow-hidden">
-              <CardHeader className="flex flex-col md:flex-row justify-between items-center border-b border-gray-200 dark:border-gray-700">
-                <CardTitle className="text-2xl font-bold">{selectedBrand} Models</CardTitle>
-                <div className="relative w-full md:w-64 mt-4 md:mt-0">
+            <AnimatedCard variant="elegant" delay={0.2} className="shadow-lg overflow-hidden border-orange-200 dark:border-orange-900/30">
+              <CardHeader className="flex flex-col md:flex-row justify-between items-center border-b border-gray-200 dark:border-gray-700 p-6">
+                <CardTitle className="text-2xl font-bold text-gray-800 dark:text-white mb-4 md:mb-0">
+                  {selectedBrand} Models
+                </CardTitle>
+                <div className="relative w-full md:w-64">
                   <Search className="h-4 w-4 absolute left-3 top-3 text-gray-400" />
                   <Input 
                     type="text" 
                     placeholder="Search models..." 
-                    className="pl-10" 
+                    className="pl-10 border-orange-200 dark:border-orange-900/30 focus:border-pegasus-orange focus:ring-pegasus-orange" 
                     value={searchQuery} 
                     onChange={e => setSearchQuery(e.target.value)} 
                   />
                 </div>
               </CardHeader>
 
-              <CardContent className="p-4">
+              <CardContent className="p-6">
                 {isLoading ? (
                   <div className="animate-pulse space-y-3">
                     {[...Array(6)].map((_, i) => (
@@ -192,27 +175,35 @@ const SupportedModels = () => {
                   <div className="overflow-x-auto">
                     <Table>
                       <TableHeader>
-                        <TableRow>
-                          <TableHead className="w-[250px]">Model</TableHead>
-                          <TableHead>Security</TableHead>
-                          <TableHead>Carrier</TableHead>
-                          <TableHead>Operation</TableHead>
+                        <TableRow className="border-orange-200 dark:border-orange-900/30">
+                          <TableHead className="w-[250px] text-gray-800 dark:text-gray-200">Model</TableHead>
+                          <TableHead className="text-gray-800 dark:text-gray-200">Security</TableHead>
+                          <TableHead className="text-gray-800 dark:text-gray-200">Carrier</TableHead>
+                          <TableHead className="text-gray-800 dark:text-gray-200">Operation</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {currentModels.map(model => (
-                          <TableRow key={model.id} className="hover:bg-orange-50 dark:hover:bg-orange-900/10 transition-colors">
-                            <TableCell className="font-medium">{model.model}</TableCell>
-                            <TableCell>{model.security || "—"}</TableCell>
-                            <TableCell>{model.carrier || "—"}</TableCell>
-                            <TableCell>{model.operation || "—"}</TableCell>
+                        {currentModels.map((model, index) => (
+                          <TableRow 
+                            key={model.id} 
+                            className="hover:bg-orange-50 dark:hover:bg-orange-900/10 transition-colors border-orange-100 dark:border-orange-900/20"
+                            style={{
+                              opacity: 0,
+                              animation: 'fade-in 0.3s ease-out forwards',
+                              animationDelay: `${index * 0.05 + 0.1}s`
+                            }}
+                          >
+                            <TableCell className="font-medium text-gray-800 dark:text-gray-200">{model.model}</TableCell>
+                            <TableCell className="text-gray-700 dark:text-gray-300">{model.security || "—"}</TableCell>
+                            <TableCell className="text-gray-700 dark:text-gray-300">{model.carrier || "—"}</TableCell>
+                            <TableCell className="text-gray-700 dark:text-gray-300">{model.operation || "—"}</TableCell>
                           </TableRow>
                         ))}
                       </TableBody>
                     </Table>
 
                     {/* Pagination */}
-                    <div className="flex items-center justify-between mt-6">
+                    <div className="flex items-center justify-between mt-8">
                       <div className="text-sm text-gray-500 dark:text-gray-400">
                         Showing {filteredModels.length > 0 ? indexOfFirstModel + 1 : 0}-{Math.min(indexOfLastModel, filteredModels.length)} of {filteredModels.length} models
                       </div>
@@ -222,17 +213,17 @@ const SupportedModels = () => {
                           size="sm" 
                           onClick={() => paginate(currentPage - 1)} 
                           disabled={currentPage === 1}
-                          className="transition-colors"
+                          className="transition-colors border-orange-200 dark:border-orange-900/30 hover:bg-orange-50 dark:hover:bg-orange-900/20 hover:text-pegasus-orange"
                         >
                           <ChevronLeft className="h-4 w-4" />
                         </Button>
-                        <span className="text-sm">{currentPage} / {totalPages || 1}</span>
+                        <span className="text-sm text-gray-700 dark:text-gray-300">{currentPage} / {totalPages || 1}</span>
                         <Button 
                           variant="outline" 
                           size="sm" 
                           onClick={() => paginate(currentPage + 1)} 
                           disabled={currentPage === totalPages || totalPages === 0}
-                          className="transition-colors"
+                          className="transition-colors border-orange-200 dark:border-orange-900/30 hover:bg-orange-50 dark:hover:bg-orange-900/20 hover:text-pegasus-orange"
                         >
                           <ChevronRight className="h-4 w-4" />
                         </Button>
@@ -240,14 +231,17 @@ const SupportedModels = () => {
                     </div>
                   </div>
                 ) : (
-                  <div className="text-center py-10">
-                    <p className="text-gray-500 dark:text-gray-400">
+                  <div className="text-center py-16 opacity-0 animate-fade-in" style={{animationFillMode: 'forwards'}}>
+                    <p className="text-xl text-gray-500 dark:text-gray-400 mb-2">
                       {searchQuery ? "No models found matching your search" : `No models found for ${selectedBrand}`}
+                    </p>
+                    <p className="text-gray-500 dark:text-gray-400">
+                      Try adjusting your search or selecting a different brand
                     </p>
                   </div>
                 )}
               </CardContent>
-            </Card>
+            </AnimatedCard>
           </div>
         </section>
       )}

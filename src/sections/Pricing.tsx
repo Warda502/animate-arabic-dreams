@@ -1,10 +1,13 @@
+
 import React, { useState, useEffect } from 'react';
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from "@/components/ui/button";
-import { Check, Loader2, ExternalLink } from "lucide-react";
+import { Loader2, Download } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { toast } from "sonner";
+import SectionHeader from '@/components/SectionHeader';
+import PricingCard from '@/components/PricingCard';
+
 interface PricingPlan {
   id: string;
   name_plan: string;
@@ -12,12 +15,12 @@ interface PricingPlan {
   features: string;
   perks: string | null;
 }
+
 const Pricing = () => {
-  const {
-    toast
-  } = useToast();
+  const { toast: toastNotify } = useToast();
   const [plans, setPlans] = useState<PricingPlan[]>([]);
   const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     const fetchPricingPlans = async () => {
       try {
@@ -30,7 +33,7 @@ const Pricing = () => {
         setLoading(false);
       } catch (error) {
         console.error("Error fetching pricing plans:", error);
-        toast({
+        toastNotify({
           title: "Error loading pricing plans",
           description: "Please try again later",
           variant: "destructive"
@@ -60,30 +63,21 @@ const Pricing = () => {
     }
   };
 
-  // Function to get a card highlight color based on plan name
-  const getPlanColor = (planName: string): string => {
-    const lowerPlanName = planName.toLowerCase();
-    if (lowerPlanName.includes('premium')) return 'from-purple-500 to-indigo-600';
-    if (lowerPlanName.includes('standard')) return 'from-blue-500 to-cyan-600';
-    if (lowerPlanName.includes('basic')) return 'from-green-500 to-emerald-600';
-    return 'from-orange-500 to-amber-600'; // default
+  const handleChoosePlan = (plan: PricingPlan) => {
+    toast(`You've selected the ${plan.name_plan} plan`, {
+      description: "Contact sales for next steps.",
+      action: {
+        label: "Contact Sales",
+        onClick: () => {
+          const contactSection = document.getElementById('contact');
+          if (contactSection) {
+            contactSection.scrollIntoView({ behavior: 'smooth' });
+          }
+        }
+      }
+    });
   };
 
-  // Function to get a card highlight text color based on plan name
-  const getPlanTextColor = (planName: string): string => {
-    const lowerPlanName = planName.toLowerCase();
-    if (lowerPlanName.includes('premium')) return 'text-purple-600 dark:text-purple-400';
-    if (lowerPlanName.includes('standard')) return 'text-blue-600 dark:text-blue-400';
-    if (lowerPlanName.includes('basic')) return 'text-green-600 dark:text-green-400';
-    return 'text-pegasus-orange'; // default
-  };
-  const handleChoosePlan = (plan: PricingPlan) => {
-    toast({
-      title: "Plan Selected",
-      description: `You've selected the ${plan.name_plan} plan. Contact sales for next steps.`
-    });
-    // In a real app, this could navigate to checkout or contact page
-  };
   const handleViewAllPlans = () => {
     const pricingSection = document.getElementById('pricing');
     if (pricingSection) {
@@ -92,114 +86,127 @@ const Pricing = () => {
       });
     }
   };
-  return <div className="pt-24 pb-16 py-0">
+
+  // Function to determine the plan variant
+  const getPlanVariant = (planName: string): 'primary' | 'secondary' | 'premium' | 'basic' => {
+    const lowerPlanName = planName.toLowerCase();
+    if (lowerPlanName.includes('premium')) return 'premium';
+    if (lowerPlanName.includes('standard')) return 'secondary';
+    if (lowerPlanName.includes('basic')) return 'basic';
+    return 'primary';
+  };
+
+  // Function to determine if plan is recommended
+  const isRecommended = (planName: string): boolean => {
+    const lowerPlanName = planName.toLowerCase();
+    return lowerPlanName.includes('recommended') || lowerPlanName.includes('premium');
+  };
+
+  const getPlanCardWidth = () => {
+    const count = plans.length;
+    if (count === 1) return 'md:max-w-md';
+    if (count === 2) return 'md:max-w-3xl';
+    return 'md:max-w-6xl';
+  };
+
+  return (
+    <div className="pt-24 pb-16">
       {/* Hero Section */}
-      <section className="bg-gradient-to-b from-white to-orange-50 dark:from-gray-900 dark:to-gray-800 py-16 animate-fade-in">
-        <div className="container mx-auto px-4">
-          <h1 className="text-4xl md:text-5xl font-bold text-center text-gray-900 dark:text-white mb-6 opacity-0 animate-fade-in-delay-1" style={{
-          animationFillMode: 'forwards'
-        }}>
-            Pricing Plans
-          </h1>
-          <p className="text-xl text-gray-600 dark:text-gray-300 text-center max-w-3xl mx-auto opacity-0 animate-fade-in-delay-2" style={{
-          animationFillMode: 'forwards'
-        }}>
-            Choose the perfect plan for your smartphone unlocking and flashing needs
-          </p>
+      <section className="bg-gradient-to-b from-white to-orange-50 dark:from-gray-900 dark:to-gray-800 py-16 relative overflow-hidden">
+        <div className="absolute inset-0 bg-[url('/patterns/grid.svg')] opacity-5"></div>
+        <div className="container mx-auto px-4 relative">
+          <SectionHeader
+            title="Pricing Plans"
+            subtitle="Choose the perfect plan for your smartphone unlocking and flashing needs"
+          />
         </div>
       </section>
 
       {/* Pricing Plans */}
-      <section className="py-16">
+      <section className="py-16 bg-white dark:bg-gray-900">
         <div className="container mx-auto px-4">
-          {loading ? <div className="flex flex-col items-center justify-center min-h-[400px]">
+          {loading ? (
+            <div className="flex flex-col items-center justify-center min-h-[400px]">
               <Loader2 className="h-12 w-12 text-pegasus-orange animate-spin mb-4" />
               <p className="text-lg text-gray-500 dark:text-gray-400">Loading pricing plans...</p>
-            </div> : plans.length > 0 ? <div className="flex justify-center">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl">
+            </div>
+          ) : plans.length > 0 ? (
+            <div className={`flex justify-center items-center ${plans.length === 1 ? 'mt-10 mb-10' : ''}`}>
+              <div className={`grid grid-cols-1 md:grid-cols-${Math.min(plans.length, 3)} gap-8 ${getPlanCardWidth()}`}>
                 {plans.map((plan, index) => {
-              const features = parseFeatures(plan.features);
-              const perks = parsePerks(plan.perks);
-              const planColor = getPlanColor(plan.name_plan);
-              const textColor = getPlanTextColor(plan.name_plan);
-              return <Card key={plan.id} className="overflow-hidden transition-all duration-300 hover:shadow-xl relative transform hover:-translate-y-2" style={{
-                animationDelay: `${index * 0.1}s`,
-                opacity: 0,
-                animation: 'fade-in 0.5s ease-out forwards'
-              }}>
-                      <div className={`h-2 w-full bg-gradient-to-r ${planColor}`}></div>
-                      <CardHeader className="pt-6">
-                        <CardTitle className={`text-2xl font-bold ${textColor}`}>
-                          {plan.name_plan}
-                        </CardTitle>
-                        <p className="text-3xl font-bold mt-2">
-                          {plan.price}
-                          <span className="text-sm text-gray-500 dark:text-gray-400 font-normal">/license</span>
-                        </p>
-                      </CardHeader>
-                      <CardContent>
-                        <ul className="space-y-3 mb-6">
-                          {features.map((feature, i) => <li key={i} className="flex items-start">
-                              <Check className="h-5 w-5 text-green-500 mr-2 shrink-0 mt-0.5" />
-                              <span className="text-gray-700 dark:text-gray-300">{feature}</span>
-                            </li>)}
-                        </ul>
-                        
-                        {perks.length > 0 && <div className="mt-6">
-                            <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">Extra Perks:</h4>
-                            <ul className="space-y-2">
-                              {perks.map((perk, i) => <li key={i} className="flex items-start">
-                                  <Check className={`h-4 w-4 ${textColor} mr-2 shrink-0 mt-0.5`} />
-                                  <span className="text-gray-600 dark:text-gray-400 text-sm">{perk}</span>
-                                </li>)}
-                            </ul>
-                          </div>}
-                      </CardContent>
-                      <CardFooter>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button className={`w-full bg-gradient-to-r ${planColor} hover:opacity-90 transition-opacity text-white`}>
-                              Choose Plan
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem onClick={() => handleChoosePlan(plan)}>
-                              Purchase Now
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => window.location.href = '#contact'}>
-                              Contact Sales
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => window.open('https://pegasus-tool.com/faq', '_blank')}>
-                              Read FAQ <ExternalLink className="ml-2 h-4 w-4" />
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </CardFooter>
-                    </Card>;
-            })}
+                  const features = parseFeatures(plan.features);
+                  const perks = parsePerks(plan.perks);
+                  const planVariant = getPlanVariant(plan.name_plan);
+                  const recommended = isRecommended(plan.name_plan);
+
+                  return (
+                    <PricingCard
+                      key={plan.id}
+                      id={plan.id}
+                      name={plan.name_plan}
+                      price={plan.price}
+                      features={features}
+                      perks={perks}
+                      index={index}
+                      recommended={recommended}
+                      variant={planVariant}
+                      onChoosePlan={() => handleChoosePlan(plan)}
+                    />
+                  );
+                })}
               </div>
-            </div> : <div className="text-center py-20">
-              <p className="text-xl text-gray-500 dark:text-gray-400">No pricing plans available at the moment.</p>
-              <p className="text-gray-500 dark:text-gray-400 mt-2">Please check back later or contact us for custom pricing.</p>
-            </div>}
+            </div>
+          ) : (
+            <div className="text-center py-20 px-4 max-w-2xl mx-auto">
+              <h3 className="text-2xl font-bold text-gray-700 dark:text-gray-300 mb-4">No pricing plans available at the moment</h3>
+              <p className="text-gray-500 dark:text-gray-400 mb-6">
+                Please check back later or contact us for custom pricing tailored to your needs.
+              </p>
+              <Button 
+                onClick={() => {
+                  const contactSection = document.getElementById('contact');
+                  if (contactSection) {
+                    contactSection.scrollIntoView({ behavior: 'smooth' });
+                  }
+                }}
+                className="bg-pegasus-orange hover:bg-pegasus-orange-600 text-white"
+              >
+                Contact Us
+              </Button>
+            </div>
+          )}
         </div>
       </section>
-
-      {/* FAQ Section */}
-      
 
       {/* CTA Section */}
-      <section className="py-16 bg-gradient-to-r from-orange-600 to-orange-400 text-white animate-fade-in">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold mb-6">Ready to get started?</h2>
-          <p className="text-xl text-orange-100 max-w-2xl mx-auto mb-8">
+      <section className="py-16 bg-gradient-to-r from-orange-600 to-orange-400 text-white relative overflow-hidden">
+        <div className="absolute inset-0 bg-[url('/patterns/grid.svg')] opacity-10"></div>
+        <div className="container mx-auto px-4 text-center relative">
+          <h2 className="text-3xl font-bold mb-6 text-white opacity-0 animate-fade-in" style={{animationFillMode: 'forwards'}}>
+            Ready to get started?
+          </h2>
+          <p className="text-xl text-orange-100 max-w-2xl mx-auto mb-8 opacity-0 animate-fade-in-delay-1" style={{animationFillMode: 'forwards'}}>
             Choose your plan now and unlock the full potential of your smartphone repair business.
           </p>
-          <Button onClick={handleViewAllPlans} className="bg-white text-orange-600 hover:bg-orange-50 px-8 py-3 rounded-full text-lg shadow-lg transition-all duration-300 hover:-translate-y-1">
-            View All Plans
-          </Button>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 opacity-0 animate-fade-in-delay-2" style={{animationFillMode: 'forwards'}}>
+            <Button 
+              onClick={handleViewAllPlans} 
+              className="bg-white text-orange-600 hover:bg-orange-50 px-8 py-3 rounded-full text-lg shadow-lg transition-all duration-300 hover:-translate-y-1"
+            >
+              View All Plans
+            </Button>
+            <Button 
+              variant="outline"
+              onClick={() => window.open("#download", "_self")}
+              className="border-white text-white hover:bg-white/20 px-8 py-3 rounded-full text-lg shadow-lg transition-all duration-300 hover:-translate-y-1 flex items-center gap-2"
+            >
+              <Download className="h-5 w-5" /> Download Now
+            </Button>
+          </div>
         </div>
       </section>
-    </div>;
+    </div>
+  );
 };
+
 export default Pricing;
