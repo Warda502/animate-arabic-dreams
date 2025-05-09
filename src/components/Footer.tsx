@@ -1,12 +1,8 @@
-
 import React from "react";
 import { Heart } from "lucide-react";
-
 const Footer = () => {
   const currentYear = new Date().getFullYear();
-
-  return (
-    <footer className="bg-gray-900 text-white pt-12 pb-8">
+  return <footer className="bg-gray-900 text-white pt-12 pb-8">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
           {/* About Section */}
@@ -82,7 +78,7 @@ const Footer = () => {
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-3 text-pegasus-orange" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
-                <span className="text-gray-400">support@pegasustool.com</span>
+                <span className="text-gray-400">support@pegasus-tools.com</span>
               </li>
               <li className="flex items-start">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-3 text-pegasus-orange" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -105,8 +101,6 @@ const Footer = () => {
           </p>
         </div>
       </div>
-    </footer>
-  );
-}
-
+    </footer>;
+};
 export default Footer;

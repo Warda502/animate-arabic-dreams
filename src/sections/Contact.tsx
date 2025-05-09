@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -6,15 +5,12 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
-
 const Contact = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     toast.success('Message sent successfully! We\'ll get back to you soon.');
   };
-
-  return (
-    <div className="pt-24 pb-20 bg-white dark:bg-gray-900">
+  return <div className="pt-24 pb-20 bg-white dark:bg-gray-900">
       <div className="container mx-auto px-4">
         <h1 className="text-4xl font-bold text-center mb-4 text-pegasus-orange">Contact Us</h1>
         <p className="text-xl text-center text-gray-600 dark:text-gray-300 mb-12">
@@ -70,9 +66,9 @@ const Contact = () => {
                   <div>
                     <h3 className="text-lg font-semibold mb-1">Email</h3>
                     <p className="text-gray-600 dark:text-gray-300 mb-1">General Inquiries:</p>
-                    <p className="text-pegasus-orange">info@pegasustool.com</p>
+                    <p className="text-pegasus-orange">info@pegasus-tools.com</p>
                     <p className="text-gray-600 dark:text-gray-300 mb-1 mt-2">Technical Support:</p>
-                    <p className="text-pegasus-orange">support@pegasustool.com</p>
+                    <p className="text-pegasus-orange">support@pegasus-tools.com</p>
                   </div>
                 </div>
                 
@@ -112,8 +108,6 @@ const Contact = () => {
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default Contact;

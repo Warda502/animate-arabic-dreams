@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from "@/components/ui/button";
@@ -6,7 +5,6 @@ import { Check, Loader2, ExternalLink } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-
 interface PricingPlan {
   id: string;
   name_plan: string;
@@ -14,12 +12,12 @@ interface PricingPlan {
   features: string;
   perks: string | null;
 }
-
 const Pricing = () => {
-  const { toast } = useToast();
+  const {
+    toast
+  } = useToast();
   const [plans, setPlans] = useState<PricingPlan[]>([]);
   const [loading, setLoading] = useState(true);
-  
   useEffect(() => {
     const fetchPricingPlans = async () => {
       try {
@@ -35,12 +33,11 @@ const Pricing = () => {
         toast({
           title: "Error loading pricing plans",
           description: "Please try again later",
-          variant: "destructive",
+          variant: "destructive"
         });
         setLoading(false);
       }
     };
-    
     fetchPricingPlans();
   }, []);
 
@@ -80,35 +77,33 @@ const Pricing = () => {
     if (lowerPlanName.includes('basic')) return 'text-green-600 dark:text-green-400';
     return 'text-pegasus-orange'; // default
   };
-
   const handleChoosePlan = (plan: PricingPlan) => {
     toast({
       title: "Plan Selected",
-      description: `You've selected the ${plan.name_plan} plan. Contact sales for next steps.`,
+      description: `You've selected the ${plan.name_plan} plan. Contact sales for next steps.`
     });
     // In a real app, this could navigate to checkout or contact page
   };
-
   const handleViewAllPlans = () => {
     const pricingSection = document.getElementById('pricing');
     if (pricingSection) {
-      pricingSection.scrollIntoView({ behavior: 'smooth' });
+      pricingSection.scrollIntoView({
+        behavior: 'smooth'
+      });
     }
   };
-
-  return (
-    <div className="pt-24 pb-16 py-0">
+  return <div className="pt-24 pb-16 py-0">
       {/* Hero Section */}
       <section className="bg-gradient-to-b from-white to-orange-50 dark:from-gray-900 dark:to-gray-800 py-16 animate-fade-in">
         <div className="container mx-auto px-4">
           <h1 className="text-4xl md:text-5xl font-bold text-center text-gray-900 dark:text-white mb-6 opacity-0 animate-fade-in-delay-1" style={{
-            animationFillMode: 'forwards'
-          }}>
+          animationFillMode: 'forwards'
+        }}>
             Pricing Plans
           </h1>
           <p className="text-xl text-gray-600 dark:text-gray-300 text-center max-w-3xl mx-auto opacity-0 animate-fade-in-delay-2" style={{
-            animationFillMode: 'forwards'
-          }}>
+          animationFillMode: 'forwards'
+        }}>
             Choose the perfect plan for your smartphone unlocking and flashing needs
           </p>
         </div>
@@ -117,30 +112,21 @@ const Pricing = () => {
       {/* Pricing Plans */}
       <section className="py-16">
         <div className="container mx-auto px-4">
-          {loading ? (
-            <div className="flex flex-col items-center justify-center min-h-[400px]">
+          {loading ? <div className="flex flex-col items-center justify-center min-h-[400px]">
               <Loader2 className="h-12 w-12 text-pegasus-orange animate-spin mb-4" />
               <p className="text-lg text-gray-500 dark:text-gray-400">Loading pricing plans...</p>
-            </div>
-          ) : plans.length > 0 ? (
-            <div className="flex justify-center">
+            </div> : plans.length > 0 ? <div className="flex justify-center">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl">
                 {plans.map((plan, index) => {
-                  const features = parseFeatures(plan.features);
-                  const perks = parsePerks(plan.perks);
-                  const planColor = getPlanColor(plan.name_plan);
-                  const textColor = getPlanTextColor(plan.name_plan);
-                  
-                  return (
-                    <Card 
-                      key={plan.id} 
-                      className="overflow-hidden transition-all duration-300 hover:shadow-xl relative transform hover:-translate-y-2" 
-                      style={{
-                        animationDelay: `${index * 0.1}s`,
-                        opacity: 0,
-                        animation: 'fade-in 0.5s ease-out forwards'
-                      }}
-                    >
+              const features = parseFeatures(plan.features);
+              const perks = parsePerks(plan.perks);
+              const planColor = getPlanColor(plan.name_plan);
+              const textColor = getPlanTextColor(plan.name_plan);
+              return <Card key={plan.id} className="overflow-hidden transition-all duration-300 hover:shadow-xl relative transform hover:-translate-y-2" style={{
+                animationDelay: `${index * 0.1}s`,
+                opacity: 0,
+                animation: 'fade-in 0.5s ease-out forwards'
+              }}>
                       <div className={`h-2 w-full bg-gradient-to-r ${planColor}`}></div>
                       <CardHeader className="pt-6">
                         <CardTitle className={`text-2xl font-bold ${textColor}`}>
@@ -153,27 +139,21 @@ const Pricing = () => {
                       </CardHeader>
                       <CardContent>
                         <ul className="space-y-3 mb-6">
-                          {features.map((feature, i) => (
-                            <li key={i} className="flex items-start">
+                          {features.map((feature, i) => <li key={i} className="flex items-start">
                               <Check className="h-5 w-5 text-green-500 mr-2 shrink-0 mt-0.5" />
                               <span className="text-gray-700 dark:text-gray-300">{feature}</span>
-                            </li>
-                          ))}
+                            </li>)}
                         </ul>
                         
-                        {perks.length > 0 && (
-                          <div className="mt-6">
+                        {perks.length > 0 && <div className="mt-6">
                             <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">Extra Perks:</h4>
                             <ul className="space-y-2">
-                              {perks.map((perk, i) => (
-                                <li key={i} className="flex items-start">
+                              {perks.map((perk, i) => <li key={i} className="flex items-start">
                                   <Check className={`h-4 w-4 ${textColor} mr-2 shrink-0 mt-0.5`} />
                                   <span className="text-gray-600 dark:text-gray-400 text-sm">{perk}</span>
-                                </li>
-                              ))}
+                                </li>)}
                             </ul>
-                          </div>
-                        )}
+                          </div>}
                       </CardContent>
                       <CardFooter>
                         <DropdownMenu>
@@ -195,17 +175,13 @@ const Pricing = () => {
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </CardFooter>
-                    </Card>
-                  );
-                })}
+                    </Card>;
+            })}
               </div>
-            </div>
-          ) : (
-            <div className="text-center py-20">
+            </div> : <div className="text-center py-20">
               <p className="text-xl text-gray-500 dark:text-gray-400">No pricing plans available at the moment.</p>
               <p className="text-gray-500 dark:text-gray-400 mt-2">Please check back later or contact us for custom pricing.</p>
-            </div>
-          )}
+            </div>}
         </div>
       </section>
 
@@ -219,16 +195,11 @@ const Pricing = () => {
           <p className="text-xl text-orange-100 max-w-2xl mx-auto mb-8">
             Choose your plan now and unlock the full potential of your smartphone repair business.
           </p>
-          <Button 
-            onClick={handleViewAllPlans}
-            className="bg-white text-orange-600 hover:bg-orange-50 px-8 py-3 rounded-full text-lg shadow-lg transition-all duration-300 hover:-translate-y-1"
-          >
+          <Button onClick={handleViewAllPlans} className="bg-white text-orange-600 hover:bg-orange-50 px-8 py-3 rounded-full text-lg shadow-lg transition-all duration-300 hover:-translate-y-1">
             View All Plans
           </Button>
         </div>
       </section>
-    </div>
-  );
+    </div>;
 };
-
 export default Pricing;
