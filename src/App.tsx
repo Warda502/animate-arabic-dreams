@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -13,6 +14,7 @@ import PaymentMethods from "./sections/PaymentMethods";
 import Pricing from "./sections/Pricing";
 import Contact from "./sections/Contact";
 import { useEffect } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 
 const ScrollToTop = () => {
   const { pathname, hash } = useLocation();
@@ -34,6 +36,65 @@ const ScrollToTop = () => {
   return null;
 };
 
+// Page transition variants
+const pageVariants = {
+  initial: {
+    opacity: 0,
+    y: 20
+  },
+  animate: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.5,
+      ease: "easeOut"
+    }
+  },
+  exit: {
+    opacity: 0,
+    y: -20,
+    transition: {
+      duration: 0.3
+    }
+  }
+};
+
+const MainContent = () => {
+  const location = useLocation();
+  
+  return (
+    <AnimatePresence mode="wait">
+      <motion.main 
+        key={location.pathname}
+        className="flex-grow"
+        variants={pageVariants}
+        initial="initial"
+        animate="animate"
+        exit="exit"
+      >
+        <section id="home">
+          <Home />
+        </section>
+        <section id="supported-models">
+          <SupportedModels />
+        </section>
+        <section id="pricing">
+          <Pricing />
+        </section>
+        <section id="resellers">
+          <Resellers />
+        </section>
+        <section id="payment-methods">
+          <PaymentMethods />
+        </section>
+        <section id="contact">
+          <Contact />
+        </section>
+      </motion.main>
+    </AnimatePresence>
+  );
+};
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -53,26 +114,7 @@ const App = () => (
           <div className="flex flex-col min-h-screen">
             <Navbar />
             <ScrollToTop />
-            <main className="flex-grow">
-              <section id="home">
-                <Home />
-              </section>
-              <section id="supported-models">
-                <SupportedModels />
-              </section>
-              <section id="pricing">
-                <Pricing />
-              </section>
-              <section id="resellers">
-                <Resellers />
-              </section>
-              <section id="payment-methods">
-                <PaymentMethods />
-              </section>
-              <section id="contact">
-                <Contact />
-              </section>
-            </main>
+            <MainContent />
             <Footer />
           </div>
         </TooltipProvider>

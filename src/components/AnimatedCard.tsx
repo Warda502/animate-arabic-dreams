@@ -2,13 +2,15 @@
 import React from "react";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
 
 interface AnimatedCardProps {
   children: React.ReactNode;
   className?: string;
   delay?: number;
-  variant?: "default" | "elegant" | "gradient" | "glow";
-  hoverEffect?: "scale" | "lift" | "glow" | "none";
+  variant?: "default" | "elegant" | "gradient" | "glow" | "glass";
+  hoverEffect?: "scale" | "lift" | "glow" | "none" | "rotate" | "bounce";
+  whileInView?: boolean;
 }
 
 const AnimatedCard: React.FC<AnimatedCardProps> = ({
@@ -16,7 +18,8 @@ const AnimatedCard: React.FC<AnimatedCardProps> = ({
   className,
   delay = 0,
   variant = "default",
-  hoverEffect = "lift"
+  hoverEffect = "lift",
+  whileInView = true
 }) => {
   const getVariantClasses = () => {
     switch (variant) {
@@ -26,53 +29,61 @@ const AnimatedCard: React.FC<AnimatedCardProps> = ({
         return "bg-gradient-to-br from-white to-orange-50 dark:from-gray-800 dark:to-gray-900";
       case "glow":
         return "bg-white dark:bg-gray-800 border border-orange-200 dark:border-orange-700/30 shadow-glow";
+      case "glass":
+        return "bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border border-white/20 dark:border-gray-700/30";
       default:
         return "bg-white dark:bg-gray-800";
     }
   };
 
-  const getHoverEffectClasses = () => {
+  const getHoverAnimation = () => {
     switch (hoverEffect) {
       case "scale":
-        return "transition-transform duration-300 hover:scale-105";
+        return { scale: 1.03 };
       case "lift":
-        return "transition-all duration-300 hover:-translate-y-2 hover:shadow-lg";
+        return { y: -10, boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)" };
       case "glow":
-        return "transition-all duration-300 hover:shadow-glow";
+        return { boxShadow: "0 0 15px rgba(249, 115, 22, 0.5)" };
+      case "rotate":
+        return { rotate: 1, scale: 1.02 };
+      case "bounce":
+        return { y: [0, -5, 0] };
       default:
-        return "";
+        return {};
     }
   };
-
-  const getDelayClass = () => {
-    switch (delay) {
-      case 0.1:
-        return "animate-fade-in-delay-1";
-      case 0.2:
-        return "animate-fade-in-delay-2";
-      case 0.3:
-        return "animate-fade-in-delay-3";
-      case 0.4:
-        return "animate-fade-in-delay-4";
-      case 0.5:
-        return "animate-fade-in-delay-5";
-      default:
-        return "animate-fade-in";
-    }
-  };
+  
+  const motionProps = whileInView 
+    ? {
+        initial: { opacity: 0, y: 20 },
+        whileInView: { opacity: 1, y: 0 },
+        viewport: { once: true, margin: "-50px" },
+        transition: { duration: 0.5, delay: delay * 0.2 }
+      }
+    : {
+        initial: { opacity: 0, y: 20 },
+        animate: { opacity: 1, y: 0 },
+        transition: { duration: 0.5, delay: delay * 0.2 }
+      };
 
   return (
-    <Card
-      className={cn(
-        "rounded-lg shadow-md overflow-hidden opacity-0",
-        getVariantClasses(),
-        getHoverEffectClasses(),
-        getDelayClass(),
-        className
-      )}
+    <motion.div 
+      {...motionProps}
+      whileHover={getHoverAnimation()}
+      transition={{
+        duration: 0.3
+      }}
     >
-      {children}
-    </Card>
+      <Card
+        className={cn(
+          "rounded-lg shadow-md overflow-hidden",
+          getVariantClasses(),
+          className
+        )}
+      >
+        {children}
+      </Card>
+    </motion.div>
   );
 };
 

@@ -1,6 +1,7 @@
 
 import React from "react";
 import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
 
 interface SectionHeaderProps {
   title: string;
@@ -9,6 +10,7 @@ interface SectionHeaderProps {
   titleClassName?: string;
   subtitleClassName?: string;
   containerClassName?: string;
+  highlightWord?: string;
 }
 
 const SectionHeader: React.FC<SectionHeaderProps> = ({
@@ -17,35 +19,63 @@ const SectionHeader: React.FC<SectionHeaderProps> = ({
   centered = true,
   titleClassName = "",
   subtitleClassName = "",
-  containerClassName = ""
+  containerClassName = "",
+  highlightWord
 }) => {
+  // Split title to highlight specific word if provided
+  const renderTitle = () => {
+    if (!highlightWord || !title.includes(highlightWord)) {
+      return <span>{title}</span>;
+    }
+    
+    const parts = title.split(highlightWord);
+    return (
+      <>
+        {parts[0]}
+        <span className="text-pegasus-orange relative inline-block">
+          {highlightWord}
+          <span className="absolute bottom-0 left-0 w-full h-1 bg-pegasus-orange/30 rounded-full"></span>
+        </span>
+        {parts[1]}
+      </>
+    );
+  };
+
   return (
     <div className={cn(
       "mb-12",
       centered && "text-center",
       containerClassName
     )}>
-      <h2 className={cn(
-        "text-3xl md:text-4xl font-bold mb-4 opacity-0 animate-fade-in",
-        centered ? "mx-auto" : "",
-        "text-pegasus-orange dark:text-pegasus-orange",
-        titleClassName
-      )}
-      style={{ animationFillMode: 'forwards' }}
+      <motion.h2 
+        className={cn(
+          "text-3xl md:text-4xl font-bold mb-4",
+          centered ? "mx-auto" : "",
+          "text-gray-800 dark:text-gray-100",
+          titleClassName
+        )}
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
       >
-        {title}
-      </h2>
+        {renderTitle()}
+      </motion.h2>
       
       {subtitle && (
-        <p className={cn(
-          "text-lg text-gray-600 dark:text-gray-300 max-w-3xl opacity-0 animate-fade-in-delay-1",
-          centered ? "mx-auto" : "",
-          subtitleClassName
-        )}
-        style={{ animationFillMode: 'forwards' }}
+        <motion.p 
+          className={cn(
+            "text-lg text-gray-600 dark:text-gray-300 max-w-3xl",
+            centered ? "mx-auto" : "",
+            subtitleClassName
+          )}
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
         >
           {subtitle}
-        </p>
+        </motion.p>
       )}
     </div>
   );

@@ -94,6 +94,9 @@ export default {
 				'card': '0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
 				'pricing': '0 20px 25px -5px rgba(249, 115, 22, 0.1), 0 10px 10px -5px rgba(249, 115, 22, 0.04)',
 				'glow': '0 0 15px rgba(249, 115, 22, 0.5)',
+				'3d': '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(0, 0, 0, 0.1)',
+                'neon': '0 0 5px rgba(249, 115, 22, 0.5), 0 0 20px rgba(249, 115, 22, 0.3)',
+                'inner-glow': 'inset 0 0 15px rgba(249, 115, 22, 0.2)'
 			},
 			keyframes: {
 				'accordion-down': {
@@ -126,6 +129,16 @@ export default {
 					'0%': {
 						opacity: '0',
 						transform: 'translateX(20px)'
+					},
+					'100%': {
+						opacity: '1',
+						transform: 'translateX(0)'
+					}
+				},
+				'fade-in-left': {
+					'0%': {
+						opacity: '0',
+						transform: 'translateX(-20px)'
 					},
 					'100%': {
 						opacity: '1',
@@ -185,7 +198,41 @@ export default {
 						opacity: '1',
 						transform: 'translateX(0)'
 					}
-				}
+				},
+				'bounce-gentle': {
+                    '0%, 100%': {
+                        transform: 'translateY(0)'
+                    },
+                    '50%': {
+                        transform: 'translateY(-5px)'
+                    }
+                },
+                'spin-slow': {
+                    '0%': {
+                        transform: 'rotate(0deg)'
+                    },
+                    '100%': {
+                        transform: 'rotate(360deg)'
+                    }
+                },
+                'ripple': {
+                    '0%': {
+                        transform: 'scale(0)',
+                        opacity: '1'
+                    },
+                    '100%': {
+                        transform: 'scale(4)',
+                        opacity: '0'
+                    }
+                },
+                'shimmer': {
+                    '0%': {
+                        backgroundPosition: '-500px 0'
+                    },
+                    '100%': {
+                        backgroundPosition: '500px 0'
+                    }
+                }
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
@@ -197,20 +244,27 @@ export default {
 				'fade-in-delay-4': 'fade-in 0.5s ease-out 0.4s forwards',
 				'fade-in-delay-5': 'fade-in 0.5s ease-out 0.5s forwards',
 				'fade-in-right': 'fade-in-right 0.5s ease-out',
+				'fade-in-left': 'fade-in-left 0.5s ease-out',
 				'float': 'float 6s ease-in-out infinite',
 				'float-slow': 'float-slow 8s ease-in-out infinite',
 				'pulse-light': 'pulse-light 3s infinite',
 				'pulse-gentle': 'pulse-gentle 3s infinite',
 				'scale-in': 'scale-in 0.3s ease-out',
-				'slide-in': 'slide-in 0.5s ease-out'
+				'slide-in': 'slide-in 0.5s ease-out',
+				'bounce-gentle': 'bounce-gentle 2s ease-in-out infinite',
+                'spin-slow': 'spin-slow 12s linear infinite',
+                'ripple': 'ripple 1s ease-out',
+                'shimmer': 'shimmer 1.5s infinite linear'
 			},
 			backgroundImage: {
 				'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
 				'hero-pattern': 'url("/patterns/hero-pattern.svg")',
 				'orange-gradient': 'linear-gradient(135deg, #F97316 0%, #EA580C 100%)',
 				'orange-light-gradient': 'linear-gradient(135deg, #FED7AA 0%, #FB923C 100%)',
+				'shimmer': 'linear-gradient(90deg, transparent, rgba(249, 115, 22, 0.2), transparent)'
 			}
 		}
 	},
 	plugins: [require("tailwindcss-animate")],
 } satisfies Config;
+

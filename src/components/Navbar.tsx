@@ -4,7 +4,8 @@ import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { Menu, X, Download } from "lucide-react";
+import { Menu, X, Download, ChevronDown } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface MenuItem {
   title: string;
@@ -49,28 +50,38 @@ const Navbar = () => {
   };
 
   return (
-    <header className={cn(
-      "fixed w-full z-50 top-0 transition-all duration-500",
-      isScrolled 
-        ? "bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm shadow-md py-3" 
-        : "bg-transparent py-5"
-    )}>
+    <motion.header 
+      className={cn(
+        "fixed w-full z-50 top-0 transition-all duration-500",
+        isScrolled 
+          ? "bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm shadow-md py-3" 
+          : "bg-transparent py-5"
+      )}
+      initial={{ y: -100, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+    >
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <Link to="/" className="flex items-center">
-            <span className={cn(
-              "font-bold text-2xl transition-all duration-300",
-              isScrolled ? "text-pegasus-orange" : "text-pegasus-orange"
-            )}>
+          <Link to="/" className="flex items-center group">
+            <motion.span 
+              className={cn(
+                "font-bold text-2xl transition-all duration-300",
+                isScrolled ? "text-pegasus-orange" : "text-pegasus-orange"
+              )}
+              whileHover={{ scale: 1.05 }}
+              transition={{ type: "spring", stiffness: 400, damping: 10 }}
+            >
               Pegasus Tool
-            </span>
+              <span className="block h-0.5 w-0 group-hover:w-full transition-all duration-300 bg-pegasus-orange"></span>
+            </motion.span>
           </Link>
           
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
             {menuItems.map((item) => (
-              <a
+              <motion.a
                 key={item.title}
                 href={item.href}
                 onClick={(e) => {
@@ -83,21 +94,32 @@ const Navbar = () => {
                   "hover:text-pegasus-orange hover:after:scale-x-100 hover:after:origin-left",
                   isScrolled ? "text-gray-700 dark:text-gray-200" : "text-gray-800 dark:text-gray-100"
                 )}
+                whileHover={{ y: -2 }}
+                whileTap={{ scale: 0.97 }}
               >
                 {item.title}
-              </a>
+              </motion.a>
             ))}
           </nav>
           
           {/* Action Buttons */}
           <div className="hidden md:flex items-center space-x-4">
             <ThemeToggle />
-            <Button 
-              onClick={() => window.open("#download", "_self")}
-              className="bg-pegasus-orange hover:bg-pegasus-orange-600 text-white px-5 py-2 rounded-full shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 flex items-center gap-2"
-            >
-              <Download className="h-4 w-4" /> Download Now
-            </Button>
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Button 
+                onClick={() => window.open("#download", "_self")}
+                className="bg-pegasus-orange hover:bg-pegasus-orange-600 text-white px-5 py-2 rounded-full shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 flex items-center gap-2 overflow-hidden group relative"
+              >
+                <motion.div 
+                  className="absolute inset-0 bg-white/20 z-0" 
+                  initial={{ x: -100, opacity: 0 }}
+                  whileHover={{ x: 300, opacity: 0.5 }}
+                  transition={{ duration: 0.7 }}
+                />
+                <Download className="h-4 w-4 relative z-10" /> 
+                <span className="relative z-10">Download Now</span>
+              </Button>
+            </motion.div>
           </div>
           
           {/* Mobile Menu Button */}
@@ -113,53 +135,86 @@ const Navbar = () => {
               )}
               aria-label="Toggle menu"
             >
-              {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              <AnimatePresence mode="wait">
+                {isOpen ? (
+                  <motion.div
+                    key="close"
+                    initial={{ rotate: -90, opacity: 0 }}
+                    animate={{ rotate: 0, opacity: 1 }}
+                    exit={{ rotate: 90, opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <X className="h-6 w-6" />
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="menu"
+                    initial={{ rotate: 90, opacity: 0 }}
+                    animate={{ rotate: 0, opacity: 1 }}
+                    exit={{ rotate: -90, opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <Menu className="h-6 w-6" />
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </Button>
           </div>
         </div>
       </div>
       
       {/* Mobile Menu */}
-      <div 
-        className={cn(
-          "md:hidden overflow-hidden transition-all duration-500 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700",
-          isOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div 
+            className="md:hidden overflow-hidden bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700"
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+          >
+            <div className="container mx-auto px-4 py-4 space-y-4">
+              {menuItems.map((item, index) => (
+                <motion.a
+                  key={item.title}
+                  href={item.href}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    scrollToSection(item.href);
+                  }}
+                  className={cn(
+                    "block py-3 text-gray-700 dark:text-gray-200 hover:text-pegasus-orange font-medium transition-all duration-200 border-b border-gray-100 dark:border-gray-800",
+                    { 'border-b-0': index === menuItems.length - 1 }
+                  )}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.05 + 0.1 }}
+                  whileTap={{ scale: 0.97 }}
+                >
+                  {item.title}
+                </motion.a>
+              ))}
+              <motion.div 
+                className="pt-4"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+              >
+                <Button 
+                  onClick={() => {
+                    window.open("#download", "_self");
+                    setIsOpen(false);
+                  }}
+                  className="w-full bg-pegasus-orange hover:bg-pegasus-orange-600 text-white py-3 rounded-full shadow-md hover:shadow-lg transition-all duration-300 flex items-center justify-center gap-2"
+                >
+                  <Download className="h-5 w-5" /> Download Now
+                </Button>
+              </motion.div>
+            </div>
+          </motion.div>
         )}
-      >
-        <div className="container mx-auto px-4 py-4 space-y-4">
-          {menuItems.map((item, index) => (
-            <a
-              key={item.title}
-              href={item.href}
-              onClick={(e) => {
-                e.preventDefault();
-                scrollToSection(item.href);
-              }}
-              className={cn(
-                "block py-3 text-gray-700 dark:text-gray-200 hover:text-pegasus-orange font-medium transition-all duration-200 border-b border-gray-100 dark:border-gray-800",
-                "animate-fade-in",
-                { 'border-b-0': index === menuItems.length - 1 }
-              )}
-              style={{ animationDelay: `${index * 0.05 + 0.1}s` }}
-            >
-              {item.title}
-            </a>
-          ))}
-          <div className="pt-4">
-            <Button 
-              onClick={() => {
-                window.open("#download", "_self");
-                setIsOpen(false);
-              }}
-              className="w-full bg-pegasus-orange hover:bg-pegasus-orange-600 text-white py-3 rounded-full shadow-md hover:shadow-lg transition-all duration-300 flex items-center justify-center gap-2 animate-fade-in"
-              style={{ animationDelay: '0.3s' }}
-            >
-              <Download className="h-5 w-5" /> Download Now
-            </Button>
-          </div>
-        </div>
-      </div>
-    </header>
+      </AnimatePresence>
+    </motion.header>
   );
 }
 
