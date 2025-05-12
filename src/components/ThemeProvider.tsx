@@ -1,6 +1,5 @@
 
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { toast } from "./ui/use-toast";
 
 type Theme = "dark" | "light" | "system";
 
@@ -49,23 +48,10 @@ export function ThemeProvider({
         : "light";
 
       root.classList.add(systemTheme);
-      
-      // Add data-theme attribute for more specific CSS targeting
-      root.setAttribute('data-theme', systemTheme);
       return;
     }
 
     root.classList.add(theme);
-    
-    // Add data-theme attribute for more specific CSS targeting
-    root.setAttribute('data-theme', theme);
-    
-    // Show toast notification when theme changes
-    toast({
-      title: `Theme Changed`,
-      description: `Switched to ${theme} mode.`,
-      variant: "default",
-    });
   }, [theme]);
 
   const value = {

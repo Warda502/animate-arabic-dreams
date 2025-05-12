@@ -7,9 +7,6 @@ import { useToast } from "@/components/ui/use-toast";
 import { ArrowRight, Smartphone, ShieldCheck, Download, Zap, BarChart3, CheckCircle2, ChevronRight } from "lucide-react";
 import SectionHeader from '@/components/SectionHeader';
 import AnimatedCard from '@/components/AnimatedCard';
-import AnimatedBackground from '@/components/AnimatedBackground';
-import AnimatedWaves from '@/components/AnimatedWaves';
-import { useTheme } from '@/components/ThemeProvider';
 
 const container = {
   hidden: { opacity: 0 },
@@ -29,7 +26,6 @@ const item = {
 
 const Home = () => {
   const { toast } = useToast();
-  const { theme } = useTheme();
   const [isVisible, setIsVisible] = useState(false);
   const [homeImageUrl, setHomeImageUrl] = useState("/lovable-uploads/46319556-27d1-46f3-b365-81927d12674f.png");
   
@@ -67,16 +63,37 @@ const Home = () => {
     }
   };
 
-  const isDarkMode = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
-
   return (
     <div>
       {/* Hero Section */}
-      <AnimatedBackground 
-        particleCount={20} 
-        patternType="dots" 
-        className="pt-28 pb-20 light-theme-hero overflow-hidden relative"
-      >
+      <section className="pt-28 pb-20 bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 overflow-hidden relative">
+        <div className="absolute inset-0 bg-[url('/patterns/dots.svg')] opacity-5"></div>
+        {/* Animated background elements */}
+        <motion.div 
+          className="absolute top-20 right-20 w-64 h-64 bg-pegasus-orange/5 rounded-full blur-3xl"
+          animate={{
+            scale: [1, 1.2, 1],
+            opacity: [0.3, 0.2, 0.3]
+          }}
+          transition={{
+            duration: 8,
+            repeat: Infinity,
+            repeatType: "reverse"
+          }}
+        ></motion.div>
+        <motion.div 
+          className="absolute bottom-10 left-10 w-40 h-40 bg-pegasus-orange/10 rounded-full blur-3xl"
+          animate={{
+            scale: [1, 1.5, 1],
+            opacity: [0.2, 0.3, 0.2]
+          }}
+          transition={{
+            duration: 10,
+            repeat: Infinity,
+            repeatType: "reverse"
+          }}
+        ></motion.div>
+
         <div className="container mx-auto px-4 relative">
           <div className="flex flex-col md:flex-row items-center">
             <motion.div 
@@ -85,11 +102,11 @@ const Home = () => {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.7, ease: "easeOut" }}
             >
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-gray-900 dark:text-white font-montserrat tracking-tight leading-tight">
-                The Ultimate <span className="text-gradient">Smartphone</span> Flashing Tool
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-white font-montserrat tracking-tight leading-tight">
+                The Ultimate <span className="text-pegasus-orange bg-gradient-to-r from-pegasus-orange to-pegasus-orange-400 bg-clip-text text-transparent">Smartphone</span> Flashing Tool
               </h1>
               <motion.p 
-                className="text-lg md:text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-lg"
+                className="text-lg md:text-xl text-gray-300 mb-8 max-w-lg"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.3, duration: 0.7 }}
@@ -131,11 +148,7 @@ const Home = () => {
             >
               <div className="relative flex items-center justify-center">
                 <motion.div 
-                  className={`rounded-full h-64 w-64 md:h-96 md:w-96 mx-auto absolute ${
-                    isDarkMode 
-                      ? 'bg-gradient-to-br from-orange-700/30 to-orange-900/20' 
-                      : 'bg-gradient-to-br from-pegasus-orange-100/50 to-pegasus-orange-300/30'
-                  }`}
+                  className="bg-gradient-to-br from-orange-700/30 to-orange-900/20 rounded-full h-64 w-64 md:h-96 md:w-96 mx-auto absolute"
                   animate={{ 
                     scale: [1, 1.05, 1],
                     opacity: [0.7, 0.9, 0.7]
@@ -161,9 +174,7 @@ const Home = () => {
                   style={{ 
                     maxHeight: '500px',
                     objectFit: 'contain',
-                    filter: isDarkMode 
-                      ? 'drop-shadow(0 10px 15px rgb(0 0 0 / 0.5))' 
-                      : 'drop-shadow(0 10px 20px rgb(249 115 22 / 0.15))'
+                    filter: 'drop-shadow(0 10px 15px rgb(0 0 0 / 0.5))'
                   }}
                   onError={(e) => {
                     // Fallback to local image if Supabase image fails
@@ -171,25 +182,8 @@ const Home = () => {
                     target.src = "/lovable-uploads/46319556-27d1-46f3-b365-81927d12674f.png";
                   }}
                 />
-                
-                {/* Light reflection effect */}
                 <motion.div 
-                  className="absolute top-1/4 left-1/4 w-1/2 h-1/2 rounded-full bg-white/10"
-                  style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 100%)' }}
-                  animate={{
-                    opacity: [0.1, 0.3, 0.1]
-                  }}
-                  transition={{
-                    duration: 8,
-                    repeat: Infinity,
-                    repeatType: "reverse"
-                  }}
-                />
-
-                <motion.div 
-                  className={`absolute -right-10 top-1/4 w-20 h-20 rounded-full blur-xl ${
-                    isDarkMode ? 'bg-orange-400/10' : 'bg-pegasus-orange-300/30'
-                  }`}
+                  className="absolute -right-10 top-1/4 w-20 h-20 bg-orange-400/10 rounded-full blur-xl"
                   animate={{
                     scale: [1, 1.3, 1],
                     opacity: [0.3, 0.5, 0.3]
@@ -201,9 +195,7 @@ const Home = () => {
                   }}
                 ></motion.div>
                 <motion.div 
-                  className={`absolute -left-5 bottom-1/4 w-32 h-32 rounded-full blur-xl ${
-                    isDarkMode ? 'bg-orange-300/10' : 'bg-pegasus-orange-200/30'
-                  }`}
+                  className="absolute -left-5 bottom-1/4 w-32 h-32 bg-orange-300/10 rounded-full blur-xl"
                   animate={{
                     scale: [1, 1.5, 1],
                     opacity: [0.3, 0.6, 0.3]
@@ -218,13 +210,10 @@ const Home = () => {
             </motion.div>
           </div>
         </div>
-      </AnimatedBackground>
+      </section>
 
       {/* Features Preview */}
-      <section className="py-20 bg-white dark:bg-gray-900 overflow-hidden light-theme-section relative">
-        {/* Add animated waves at the top */}
-        <AnimatedWaves position="top" height="15vh" />
-        
+      <section className="py-20 bg-white dark:bg-gray-900 overflow-hidden">
         <div className="container mx-auto px-4">
           <SectionHeader 
             title="Our Key Features" 
@@ -240,7 +229,7 @@ const Home = () => {
             viewport={{ once: true, margin: "-100px" }}
           >
             <motion.div variants={item}>
-              <AnimatedCard variant="elegant" hoverEffect="lift" delay={0.1} className="p-8 border-t-4 border-pegasus-orange light-theme-card">
+              <AnimatedCard variant="elegant" hoverEffect="lift" delay={0.1} className="p-8 border-t-4 border-pegasus-orange">
                 <div className="flex flex-col items-center text-center">
                   <div className="w-16 h-16 flex items-center justify-center bg-gradient-to-br from-orange-100 to-orange-200 dark:from-orange-900/30 dark:to-orange-800/20 rounded-full mb-6 shadow-md">
                     <Smartphone className="h-8 w-8 text-pegasus-orange" />
@@ -252,7 +241,7 @@ const Home = () => {
             </motion.div>
             
             <motion.div variants={item}>
-              <AnimatedCard variant="elegant" hoverEffect="lift" delay={0.2} className="p-8 border-t-4 border-pegasus-orange light-theme-card">
+              <AnimatedCard variant="elegant" hoverEffect="lift" delay={0.2} className="p-8 border-t-4 border-pegasus-orange">
                 <div className="flex flex-col items-center text-center">
                   <div className="w-16 h-16 flex items-center justify-center bg-gradient-to-br from-orange-100 to-orange-200 dark:from-orange-900/30 dark:to-orange-800/20 rounded-full mb-6 shadow-md">
                     <ShieldCheck className="h-8 w-8 text-pegasus-orange" />
@@ -264,7 +253,7 @@ const Home = () => {
             </motion.div>
             
             <motion.div variants={item}>
-              <AnimatedCard variant="elegant" hoverEffect="lift" delay={0.3} className="p-8 border-t-4 border-pegasus-orange light-theme-card">
+              <AnimatedCard variant="elegant" hoverEffect="lift" delay={0.3} className="p-8 border-t-4 border-pegasus-orange">
                 <div className="flex flex-col items-center text-center">
                   <div className="w-16 h-16 flex items-center justify-center bg-gradient-to-br from-orange-100 to-orange-200 dark:from-orange-900/30 dark:to-orange-800/20 rounded-full mb-6 shadow-md">
                     <Zap className="h-8 w-8 text-pegasus-orange" />
@@ -292,23 +281,26 @@ const Home = () => {
             </Button>
           </motion.div>
         </div>
-        
-        {/* Add animated waves at the bottom */}
-        <AnimatedWaves position="bottom" height="15vh" />
       </section>
 
       {/* Why Choose Us */}
-      <section className="py-20 overflow-hidden relative light-theme-section">
-        <AnimatedBackground
-          particleCount={15}
-          patternType="circles"
-          className={`absolute inset-0 ${isDarkMode ? 'bg-gray-900' : 'bg-gradient-to-r from-orange-50 to-orange-100/50'}`}
-        >
-          <div className="relative w-full h-full">
-            {/* This empty div serves as the child for AnimatedBackground */}
-          </div>
-        </AnimatedBackground>
+      <section className="py-20 bg-gradient-to-r from-orange-50 to-orange-100/50 dark:from-gray-800 dark:to-gray-900 overflow-hidden relative">
+        <div className="absolute inset-0 bg-[url('/patterns/circles.svg')] opacity-5"></div>
         
+        {/* Animated background elements */}
+        <motion.div 
+          className="absolute top-20 left-40 w-72 h-72 bg-pegasus-orange/5 rounded-full blur-3xl"
+          animate={{
+            scale: [1, 1.2, 1],
+            opacity: [0.2, 0.3, 0.2]
+          }}
+          transition={{
+            duration: 8,
+            repeat: Infinity,
+            repeatType: "reverse"
+          }}
+        ></motion.div>
+
         <div className="container mx-auto px-4 relative">
           <SectionHeader 
             title="Why Choose Pegasus Tool" 
@@ -324,7 +316,7 @@ const Home = () => {
             viewport={{ once: true, margin: "-100px" }}
           >
             <motion.div variants={item}>
-              <AnimatedCard variant="gradient" hoverEffect="scale" className="p-6 border border-orange-200/30 dark:border-orange-700/10 light-theme-card">
+              <AnimatedCard variant="gradient" hoverEffect="scale" className="p-6 border border-orange-200/30 dark:border-orange-700/10">
                 <div className="flex items-start space-x-4">
                   <div className="w-12 h-12 flex-shrink-0 rounded-full bg-gradient-to-br from-orange-200 to-orange-300 dark:from-orange-700/30 dark:to-orange-600/20 flex items-center justify-center shadow-md">
                     <CheckCircle2 className="h-6 w-6 text-pegasus-orange" />
@@ -338,7 +330,7 @@ const Home = () => {
             </motion.div>
 
             <motion.div variants={item}>
-              <AnimatedCard variant="gradient" hoverEffect="scale" className="p-6 border border-orange-200/30 dark:border-orange-700/10 light-theme-card">
+              <AnimatedCard variant="gradient" hoverEffect="scale" className="p-6 border border-orange-200/30 dark:border-orange-700/10">
                 <div className="flex items-start space-x-4">
                   <div className="w-12 h-12 flex-shrink-0 rounded-full bg-gradient-to-br from-orange-200 to-orange-300 dark:from-orange-700/30 dark:to-orange-600/20 flex items-center justify-center shadow-md">
                     <CheckCircle2 className="h-6 w-6 text-pegasus-orange" />
@@ -352,7 +344,7 @@ const Home = () => {
             </motion.div>
 
             <motion.div variants={item}>
-              <AnimatedCard variant="gradient" hoverEffect="scale" className="p-6 border border-orange-200/30 dark:border-orange-700/10 light-theme-card">
+              <AnimatedCard variant="gradient" hoverEffect="scale" className="p-6 border border-orange-200/30 dark:border-orange-700/10">
                 <div className="flex items-start space-x-4">
                   <div className="w-12 h-12 flex-shrink-0 rounded-full bg-gradient-to-br from-orange-200 to-orange-300 dark:from-orange-700/30 dark:to-orange-600/20 flex items-center justify-center shadow-md">
                     <CheckCircle2 className="h-6 w-6 text-pegasus-orange" />
@@ -366,7 +358,7 @@ const Home = () => {
             </motion.div>
 
             <motion.div variants={item}>
-              <AnimatedCard variant="gradient" hoverEffect="scale" className="p-6 border border-orange-200/30 dark:border-orange-700/10 light-theme-card">
+              <AnimatedCard variant="gradient" hoverEffect="scale" className="p-6 border border-orange-200/30 dark:border-orange-700/10">
                 <div className="flex items-start space-x-4">
                   <div className="w-12 h-12 flex-shrink-0 rounded-full bg-gradient-to-br from-orange-200 to-orange-300 dark:from-orange-700/30 dark:to-orange-600/20 flex items-center justify-center shadow-md">
                     <CheckCircle2 className="h-6 w-6 text-pegasus-orange" />
@@ -382,42 +374,33 @@ const Home = () => {
         </div>
       </section>
 
-      {/* CTA Section - with enhanced animations */}
-      <section className="py-20 overflow-hidden relative">
-        <AnimatedBackground
-          particleCount={20}
-          patternType="grid"
-          className={isDarkMode 
-            ? "bg-gradient-to-r from-orange-700 to-orange-500"
-            : "bg-gradient-to-r from-pegasus-orange-300 to-pegasus-orange-400"}
-        >
-          {/* Added div to serve as child for AnimatedBackground */}
-          <div className="relative w-full h-full">
-            {/* Enhanced animated particles */}
-            {[...Array(10)].map((_, i) => (
-              <motion.div
-                key={i}
-                className="absolute rounded-full bg-white/10"
-                style={{
-                  width: Math.random() * 50 + 20,
-                  height: Math.random() * 50 + 20,
-                  top: `${Math.random() * 100}%`,
-                  left: `${Math.random() * 100}%`,
-                }}
-                animate={{
-                  y: [0, -100, 0],
-                  x: [0, Math.random() * 50 - 25, 0],
-                  opacity: [0, 0.5, 0],
-                }}
-                transition={{
-                  duration: Math.random() * 10 + 10,
-                  repeat: Infinity,
-                  delay: Math.random() * 5,
-                }}
-              />
-            ))}
-          </div>
-        </AnimatedBackground>
+      {/* CTA Section */}
+      <section className="py-20 bg-gradient-to-r from-orange-600 to-orange-400 text-white relative overflow-hidden">
+        <div className="absolute inset-0 bg-[url('/patterns/grid.svg')] opacity-10"></div>
+        
+        {/* Animated particles */}
+        {[...Array(6)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute rounded-full bg-white/10"
+            style={{
+              width: Math.random() * 50 + 20,
+              height: Math.random() * 50 + 20,
+              top: `${Math.random() * 100}%`,
+              left: `${Math.random() * 100}%`,
+            }}
+            animate={{
+              y: [0, -100, 0],
+              x: [0, Math.random() * 50 - 25, 0],
+              opacity: [0, 0.5, 0],
+            }}
+            transition={{
+              duration: Math.random() * 10 + 10,
+              repeat: Infinity,
+              delay: Math.random() * 5,
+            }}
+          />
+        ))}
         
         <div className="container mx-auto px-4 relative">
           <div className="flex flex-col md:flex-row items-center justify-between">
@@ -439,22 +422,12 @@ const Home = () => {
               viewport={{ once: true }}
               transition={{ duration: 0.7, delay: 0.2 }}
               whileHover={{ scale: 1.05 }}
-              className="group"
             >
               <Button 
-                className="bg-white text-orange-600 hover:bg-orange-50 px-8 py-4 rounded-full text-lg shadow-lg transition-all duration-300 hover:-translate-y-1 flex items-center group relative overflow-hidden"
+                className="bg-white text-orange-600 hover:bg-orange-50 px-8 py-4 rounded-full text-lg shadow-lg transition-all duration-300 hover:-translate-y-1 flex items-center group"
                 onClick={() => window.open("#download", "_self")}
               >
-                {/* Ripple effect on click */}
-                <span className="absolute inset-0 w-full h-full">
-                  <span className="absolute inset-0 bg-white opacity-30 rounded-full animate-ripple"></span>
-                </span>
-                
-                <Download className="mr-2 h-5 w-5 group-hover:scale-110 transition-transform" /> 
-                <span>Download Pegasus Tool v1.1.7</span>
-                
-                {/* Subtle shine effect */}
-                <span className="absolute inset-0 w-full h-full animate-shimmer pointer-events-none"></span>
+                <Download className="mr-2 h-5 w-5 group-hover:scale-110 transition-transform" /> Download Pegasus Tool v1.1.7
               </Button>
             </motion.div>
           </div>
