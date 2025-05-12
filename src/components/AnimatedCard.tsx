@@ -24,11 +24,11 @@ const AnimatedCard: React.FC<AnimatedCardProps> = ({
   const getVariantClasses = () => {
     switch (variant) {
       case "elegant":
-        return "bg-white dark:bg-gray-800 border border-orange-100 dark:border-orange-900/30";
+        return "bg-white dark:bg-gray-800 border border-pegasus-orange/20 dark:border-pegasus-orange/10";
       case "gradient":
-        return "bg-gradient-to-br from-white to-orange-50 dark:from-gray-800 dark:to-gray-900";
+        return "bg-gradient-to-br from-white to-pegasus-orange-50 dark:from-gray-800 dark:to-gray-900";
       case "glow":
-        return "bg-white dark:bg-gray-800 border border-orange-200 dark:border-orange-700/30 shadow-glow";
+        return "bg-white dark:bg-gray-800 border border-pegasus-orange/20 dark:border-pegasus-orange/10 shadow-glow";
       case "glass":
         return "bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border border-white/20 dark:border-gray-700/30";
       default:

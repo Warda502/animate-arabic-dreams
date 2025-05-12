@@ -43,15 +43,15 @@ const AnimatedButton: React.FC<AnimatedButtonProps> = ({
   rounded = "md",
   ...props
 }) => {
-  // Base style configs
+  // Base style configs - تحديث الألوان لتكون متناسقة
   const variantStyles = {
     default: "bg-pegasus-orange hover:bg-pegasus-orange-600 text-white",
     primary: "bg-pegasus-orange hover:bg-pegasus-orange-600 text-white",
     secondary: "bg-gray-800 hover:bg-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600 text-white",
-    outline: "border-2 border-pegasus-orange text-pegasus-orange hover:bg-orange-900/10",
-    ghost: "text-pegasus-orange hover:bg-orange-50 dark:hover:bg-orange-900/20",
+    outline: "border-2 border-pegasus-orange text-pegasus-orange hover:bg-pegasus-orange/10",
+    ghost: "text-pegasus-orange hover:bg-pegasus-orange-50 dark:hover:bg-pegasus-orange/10",
     link: "text-pegasus-orange underline hover:text-pegasus-orange-600",
-    gradient: "bg-gradient-to-r from-pegasus-orange to-pegasus-orange-600 hover:from-pegasus-orange-600 hover:to-pegasus-orange text-white",
+    gradient: "bg-orange-gradient hover:opacity-90 text-white",
     glowing: "bg-pegasus-orange text-white shadow-lg hover:shadow-neon"
   };
 
