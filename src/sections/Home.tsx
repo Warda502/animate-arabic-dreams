@@ -303,7 +303,11 @@ const Home = () => {
           particleCount={15}
           patternType="circles"
           className={`absolute inset-0 ${isDarkMode ? 'bg-gray-900' : 'bg-gradient-to-r from-orange-50 to-orange-100/50'}`}
-        />
+        >
+          <div className="relative w-full h-full">
+            {/* This empty div serves as the child for AnimatedBackground */}
+          </div>
+        </AnimatedBackground>
         
         <div className="container mx-auto px-4 relative">
           <SectionHeader 
@@ -386,31 +390,34 @@ const Home = () => {
           className={isDarkMode 
             ? "bg-gradient-to-r from-orange-700 to-orange-500"
             : "bg-gradient-to-r from-pegasus-orange-300 to-pegasus-orange-400"}
-        />
-        
-        {/* Enhanced animated particles */}
-        {[...Array(10)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute rounded-full bg-white/10"
-            style={{
-              width: Math.random() * 50 + 20,
-              height: Math.random() * 50 + 20,
-              top: `${Math.random() * 100}%`,
-              left: `${Math.random() * 100}%`,
-            }}
-            animate={{
-              y: [0, -100, 0],
-              x: [0, Math.random() * 50 - 25, 0],
-              opacity: [0, 0.5, 0],
-            }}
-            transition={{
-              duration: Math.random() * 10 + 10,
-              repeat: Infinity,
-              delay: Math.random() * 5,
-            }}
-          />
-        ))}
+        >
+          {/* Added div to serve as child for AnimatedBackground */}
+          <div className="relative w-full h-full">
+            {/* Enhanced animated particles */}
+            {[...Array(10)].map((_, i) => (
+              <motion.div
+                key={i}
+                className="absolute rounded-full bg-white/10"
+                style={{
+                  width: Math.random() * 50 + 20,
+                  height: Math.random() * 50 + 20,
+                  top: `${Math.random() * 100}%`,
+                  left: `${Math.random() * 100}%`,
+                }}
+                animate={{
+                  y: [0, -100, 0],
+                  x: [0, Math.random() * 50 - 25, 0],
+                  opacity: [0, 0.5, 0],
+                }}
+                transition={{
+                  duration: Math.random() * 10 + 10,
+                  repeat: Infinity,
+                  delay: Math.random() * 5,
+                }}
+              />
+            ))}
+          </div>
+        </AnimatedBackground>
         
         <div className="container mx-auto px-4 relative">
           <div className="flex flex-col md:flex-row items-center justify-between">
