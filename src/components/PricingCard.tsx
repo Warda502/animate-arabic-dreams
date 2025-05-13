@@ -87,8 +87,9 @@ const PricingCard: React.FC<PricingPlanProps> = ({
       {name}
     </CardTitle>
     <div className="mt-4">
-      <span className="text-3xl font-bold text-gray-900 dark:text-gray-100">{price}</span>
-      <span className="text-sm text-gray-500 dark:text-gray-400 font-normal ml-1">/license</span>
+      <span className="text-3xl font-bold text-gray-900 dark:text-gray-100">${price}</span>
+      <span className="text-sm text-gray-500 dark:text-gray-400 font-normal ml-1">PER
+MONTH</span>
     </div>
   </CardHeader>
   <CardContent className="px-6 pb-6">
