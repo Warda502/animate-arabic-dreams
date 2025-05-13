@@ -1,10 +1,9 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
-import { ArrowRight, Smartphone, ShieldCheck, Download, Zap, BarChart3, CheckCircle2, ChevronRight } from "lucide-react";
+import { Download, Zap, ShieldCheck, Smartphone, ChevronRight, BarChart3 } from "lucide-react";
 import SectionHeader from '@/components/SectionHeader';
 import AnimatedCard from '@/components/AnimatedCard';
 
@@ -28,6 +27,10 @@ const Home = () => {
   const { toast } = useToast();
   const [isVisible, setIsVisible] = useState(false);
   const [homeImageUrl, setHomeImageUrl] = useState("/lovable-uploads/46319556-27d1-46f3-b365-81927d12674f.png");
+  const [latestVersion, setLatestVersion] = useState<string>("");
+  const [totalModels, setTotalModels] = useState<number>(0);
+  const [downloadCount, setDownloadCount] = useState<number>(0);
+  const [distributorsCount, setDistributorsCount] = useState<number>(0);
   
   useEffect(() => {
     setIsVisible(true);
@@ -36,9 +39,7 @@ const Home = () => {
     const fetchHomeImage = async () => {
       try {
         // Get home image from Supabase storage
-        const {
-          data: imageData
-        } = await supabase.storage.from('website').getPublicUrl('img/home.png');
+        const { data: imageData } = await supabase.storage.from('website').getPublicUrl('img/home.png');
         
         if (imageData) {
           setHomeImageUrl(imageData.publicUrl);
@@ -53,21 +54,62 @@ const Home = () => {
       }
     };
     
+    // Fetch latest version info from update table
+    const fetchUpdateInfo = async () => {
+      try {
+        const { data: updateData, error: updateError } = await supabase
+          .from('update')
+          .select('varizon, download_count')
+          .order('release_at', { ascending: false })
+          .limit(1);
+          
+        if (updateError) throw updateError;
+        if (updateData && updateData.length > 0) {
+          setLatestVersion(updateData[0].varizon);
+          setDownloadCount(updateData[0].download_count || 0);
+        }
+      } catch (error) {
+        console.error('Error fetching update info:', error);
+      }
+    };
+    
+    // Fetch stats from settings table
+    const fetchStats = async () => {
+      try {
+        const { data: statsData, error: statsError } = await supabase
+          .from('settings')
+          .select('key, numeric_value')
+          .in('key', ['total_models', 'distributors_count']);
+          
+        if (statsError) throw statsError;
+        if (statsData && statsData.length > 0) {
+          statsData.forEach(item => {
+            if (item.key === 'total_models') {
+              setTotalModels(item.numeric_value || 0);
+            } else if (item.key === 'distributors_count') {
+              setDistributorsCount(item.numeric_value || 0);
+            }
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching stats:', error);
+      }
+    };
+    
     fetchHomeImage();
+    fetchUpdateInfo();
+    fetchStats();
   }, []);
 
-  const scrollToSection = (sectionId: string) => {
-    const section = document.getElementById(sectionId);
-    if (section) {
-      section.scrollIntoView({ behavior: 'smooth' });
-    }
+  const downloadLatestVersion = () => {
+    // Open new page or download file
+    window.open("/whats-new", "_blank");
   };
 
   return (
     <div>
       {/* Hero Section */}
       <section className="pt-28 pb-20 bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 overflow-hidden relative">
-        <div className="absolute inset-0 bg-[url('/patterns/dots.svg')] opacity-5"></div>
         {/* Animated background elements */}
         <motion.div 
           className="absolute top-20 right-20 w-64 h-64 bg-pegasus-orange/5 rounded-full blur-3xl"
@@ -122,21 +164,26 @@ const Home = () => {
               >
                 <Button 
                   className="bg-pegasus-orange hover:bg-pegasus-orange-600 text-white px-6 py-6 rounded-full text-lg w-full md:w-auto transition-all duration-300 hover:-translate-y-1 shadow-lg hover:shadow-xl flex items-center justify-center group"
-                  onClick={() => window.open("#download", "_self")}
+                  onClick={downloadLatestVersion}
                 >
                   <Download className="mr-2 h-5 w-5 group-hover:scale-110 transition-transform" /> 
                   <span className="relative">
-                    Download Now
+                    Download Now {latestVersion && `- v${latestVersion}`}
                     <span className="absolute bottom-0 left-0 w-full h-0.5 bg-white/30 scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></span>
                   </span>
                 </Button>
                 <Button 
                   variant="outline" 
                   className="border-2 border-pegasus-orange text-pegasus-orange hover:bg-orange-900/20 dark:hover:bg-orange-900/20 px-6 py-6 rounded-full text-lg w-full md:w-auto transition-all duration-300 hover:-translate-y-1 hover:border-pegasus-orange-400 group flex items-center justify-center"
-                  onClick={() => scrollToSection('supported-models')}
+                  onClick={() => {
+                    const supportedModelsSection = document.getElementById('supported-models');
+                    if (supportedModelsSection) {
+                      supportedModelsSection.scrollIntoView({ behavior: 'smooth' });
+                    }
+                  }}
                 >
                   <span>Learn More</span> 
-                  <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                  <ChevronRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </motion.div>
             </motion.div>
@@ -212,17 +259,17 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Features Preview */}
+      {/* Our Numbers Are Talking (Previously Features Preview) */}
       <section className="py-20 bg-white dark:bg-gray-900 overflow-hidden">
         <div className="container mx-auto px-4">
           <SectionHeader 
-            title="Our Key Features" 
-            subtitle="Everything you need for smartphone flashing and unlocking"
-            highlightWord="Key"
+            title="Our Numbers Are Talking" 
+            subtitle="Key statistics that demonstrate our tool's impact"
+            highlightWord="Numbers"
           />
           
           <motion.div 
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 mt-16"
+            className="grid grid-cols-1 md:grid-cols-3 gap-10 mt-16"
             variants={container}
             initial="hidden"
             whileInView="show"
@@ -234,8 +281,9 @@ const Home = () => {
                   <div className="w-16 h-16 flex items-center justify-center bg-gradient-to-br from-orange-100 to-orange-200 dark:from-orange-900/30 dark:to-orange-800/20 rounded-full mb-6 shadow-md">
                     <Smartphone className="h-8 w-8 text-pegasus-orange" />
                   </div>
-                  <h3 className="text-xl font-semibold mb-3 text-gray-800 dark:text-white">Qualcomm & MediaTek Support</h3>
-                  <p className="text-gray-600 dark:text-gray-300">Comprehensive support for the most common mobile chipsets, ensuring broad compatibility with today's smartphone market.</p>
+                  <h3 className="text-xl font-semibold mb-3 text-gray-800 dark:text-white">Total Models Supported</h3>
+                  <p className="text-4xl font-bold text-pegasus-orange mb-2">{totalModels.toLocaleString()}</p>
+                  <p className="text-gray-600 dark:text-gray-300">Compatible with devices from all major manufacturers</p>
                 </div>
               </AnimatedCard>
             </motion.div>
@@ -244,10 +292,11 @@ const Home = () => {
               <AnimatedCard variant="elegant" hoverEffect="lift" delay={0.2} className="p-8 border-t-4 border-pegasus-orange">
                 <div className="flex flex-col items-center text-center">
                   <div className="w-16 h-16 flex items-center justify-center bg-gradient-to-br from-orange-100 to-orange-200 dark:from-orange-900/30 dark:to-orange-800/20 rounded-full mb-6 shadow-md">
-                    <ShieldCheck className="h-8 w-8 text-pegasus-orange" />
+                    <Download className="h-8 w-8 text-pegasus-orange" />
                   </div>
-                  <h3 className="text-xl font-semibold mb-3 text-gray-800 dark:text-white">Multi-Brand Compatibility</h3>
-                  <p className="text-gray-600 dark:text-gray-300">Service devices from numerous manufacturers including Xiaomi, Vivo, Oppo, Realme and more with our versatile tool.</p>
+                  <h3 className="text-xl font-semibold mb-3 text-gray-800 dark:text-white">Total Downloads</h3>
+                  <p className="text-4xl font-bold text-pegasus-orange mb-2">{downloadCount.toLocaleString()}</p>
+                  <p className="text-gray-600 dark:text-gray-300">Trusted by technicians worldwide</p>
                 </div>
               </AnimatedCard>
             </motion.div>
@@ -256,29 +305,14 @@ const Home = () => {
               <AnimatedCard variant="elegant" hoverEffect="lift" delay={0.3} className="p-8 border-t-4 border-pegasus-orange">
                 <div className="flex flex-col items-center text-center">
                   <div className="w-16 h-16 flex items-center justify-center bg-gradient-to-br from-orange-100 to-orange-200 dark:from-orange-900/30 dark:to-orange-800/20 rounded-full mb-6 shadow-md">
-                    <Zap className="h-8 w-8 text-pegasus-orange" />
+                    <ShieldCheck className="h-8 w-8 text-pegasus-orange" />
                   </div>
-                  <h3 className="text-xl font-semibold mb-3 text-gray-800 dark:text-white">Instant Flashing</h3>
-                  <p className="text-gray-600 dark:text-gray-300">Quickly install or update device firmware to fix software issues or resolve boot loop problems with our optimized flashing technology.</p>
+                  <h3 className="text-xl font-semibold mb-3 text-gray-800 dark:text-white">Official Distributors</h3>
+                  <p className="text-4xl font-bold text-pegasus-orange mb-2">{distributorsCount}</p>
+                  <p className="text-gray-600 dark:text-gray-300">Authorized partners across the globe</p>
                 </div>
               </AnimatedCard>
             </motion.div>
-          </motion.div>
-          
-          <motion.div 
-            className="mt-16 text-center"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.5 }}
-          >
-            <Button 
-              onClick={() => scrollToSection('supported-models')}
-              className="bg-pegasus-orange hover:bg-pegasus-orange-600 text-white px-8 py-3 rounded-full text-lg transition-all duration-300 hover:-translate-y-1 shadow-md hover:shadow-xl flex items-center mx-auto group"
-            >
-              <span>Discover All Features</span> 
-              <ChevronRight className="ml-1 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-            </Button>
           </motion.div>
         </div>
       </section>
@@ -413,7 +447,7 @@ const Home = () => {
             >
               <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">Ready to get started?</h2>
               <p className="text-lg text-orange-100 max-w-xl">
-                Download Pegasus Tool now and unlock the full potential of your smartphone flashing and unlocking service.
+                Download HW-Key Tool now and unlock the full potential of your smartphone flashing and unlocking service.
               </p>
             </motion.div>
             <motion.div
@@ -425,9 +459,10 @@ const Home = () => {
             >
               <Button 
                 className="bg-white text-orange-600 hover:bg-orange-50 px-8 py-4 rounded-full text-lg shadow-lg transition-all duration-300 hover:-translate-y-1 flex items-center group"
-                onClick={() => window.open("#download", "_self")}
+                onClick={downloadLatestVersion}
               >
-                <Download className="mr-2 h-5 w-5 group-hover:scale-110 transition-transform" /> Download Pegasus Tool v1.1.7
+                <Download className="mr-2 h-5 w-5 group-hover:scale-110 transition-transform" />
+                Download HW-Key Tool {latestVersion ? `v${latestVersion}` : ''}
               </Button>
             </motion.div>
           </div>
