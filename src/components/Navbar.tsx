@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -20,6 +19,7 @@ interface LatestUpdate {
 }
 
 const Navbar = () => {
+  const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [latestUpdate, setLatestUpdate] = useState<LatestUpdate | null>(null);
@@ -30,7 +30,7 @@ const Navbar = () => {
     { title: "Supported Models", href: "#supported-models" },
     { title: "Pricing", href: "#pricing" },
     { title: "Resellers", href: "#resellers" },
-    { title: "What's New", href: "/whats-new" }, // Added What's New to the main menu
+    { title: "What's New", href: "/whats-new" },
     { title: "Contact", href: "#contact" },
   ];
 
@@ -89,24 +89,14 @@ const Navbar = () => {
     try {
       if (latestUpdate?.link) {
         // Increment download count before redirecting
-        const { data: updateData, error: fetchError } = await supabase
+        const { error } = await supabase
           .from('update')
-          .select('download_count')
-          .eq('varizon', latestUpdate.varizon)
-          .single();
-        
-        if (fetchError) throw fetchError;
-        
-        const currentCount = updateData?.download_count || 0;
-        const newCount = currentCount + 1;
-        
-        // Update the download count
-        const { error: updateError } = await supabase
-          .from('update')
-          .update({ download_count: newCount })
+          .update({ download_count: supabase.rpc('increment_counter') })
           .eq('varizon', latestUpdate.varizon);
         
-        if (updateError) throw updateError;
+        if (error) {
+          console.error('Error updating download count:', error);
+        }
         
         // Open the download link
         window.location.href = latestUpdate.link;
@@ -114,7 +104,7 @@ const Navbar = () => {
         toast.info("Download link is not available at the moment. Please try again later.");
       }
     } catch (error) {
-      console.error('Error updating download count:', error);
+      console.error('Error during download:', error);
       // Still provide download link even if counting fails
       if (latestUpdate?.link) {
         window.location.href = latestUpdate.link;

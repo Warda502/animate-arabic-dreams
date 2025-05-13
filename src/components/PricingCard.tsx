@@ -1,11 +1,12 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Check, ChevronRight } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 
 interface PricingPlanProps {
   id: string;
@@ -19,6 +20,12 @@ interface PricingPlanProps {
   variant?: 'primary' | 'secondary' | 'premium' | 'basic';
 }
 
+interface Offer {
+  id: string;
+  percentage: string | null;
+  status: string | null;
+}
+
 const PricingCard: React.FC<PricingPlanProps> = ({
   id,
   name,
@@ -30,6 +37,43 @@ const PricingCard: React.FC<PricingPlanProps> = ({
   onChoosePlan,
   variant = 'primary'
 }) => {
+  const [activeOffer, setActiveOffer] = useState<Offer | null>(null);
+  const [discountedPrice, setDiscountedPrice] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchActiveOffers = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('offers')
+          .select('*')
+          .eq('status', 'valid')
+          .order('created_at', { ascending: false })
+          .limit(1);
+        
+        if (error) throw error;
+        
+        if (data && data.length > 0) {
+          setActiveOffer(data[0]);
+          
+          // Calculate discounted price if percentage is available
+          if (data[0].percentage) {
+            const originalPrice = parseFloat(price);
+            const discountPercentage = parseFloat(data[0].percentage);
+            if (!isNaN(originalPrice) && !isNaN(discountPercentage)) {
+              const discount = originalPrice * (discountPercentage / 100);
+              const newPrice = originalPrice - discount;
+              setDiscountedPrice(newPrice.toFixed(2));
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching active offers:', error);
+      }
+    };
+    
+    fetchActiveOffers();
+  }, [price]);
+
   const getGradientClass = () => {
     switch (variant) {
       case 'premium':
@@ -65,96 +109,102 @@ const PricingCard: React.FC<PricingPlanProps> = ({
   };
 
   return (
-<Card 
-  className={cn(
-    "overflow-hidden transition-all duration-500 relative transform hover:-translate-y-2 hover:shadow-pricing",
-    recommended ? "shadow-xl border-pegasus-orange scale-105" : "shadow-md border-gray-200 dark:border-gray-700",
-    "opacity-0"
-  )}
-  style={{
-    animationDelay: `${index * 0.1}s`,
-    animation: 'fade-in 0.5s ease-out forwards'
-  }}
->
-  {recommended && (
-    <div className="absolute -right-12 top-7 bg-pegasus-orange text-white py-1 px-10 transform rotate-45 shadow-md text-sm font-semibold">
-      Recommended
-    </div>
-  )}
-  <div className={cn(`h-2 w-full bg-gradient-to-r ${getGradientClass()}`)}></div>
-  <CardHeader className="pt-6">
-    <CardTitle className={cn("text-2xl font-bold", getTextColorClass())}>
-      {name}
-    </CardTitle>
-    <div className="mt-4">
-      <span className="text-3xl font-bold text-gray-900 dark:text-gray-100">${price}</span>
-      <span className="text-sm text-gray-500 dark:text-gray-400 font-normal ml-1">PER
-MONTH</span>
-    </div>
-  </CardHeader>
-  <CardContent className="px-6 pb-6">
-    <ul className="space-y-3 mb-6">
-      {features.map((feature, i) => (
-        <li key={i} className="flex items-start">
-          <div className="h-5 w-5 text-green-500 mr-2 shrink-0 mt-0.5 flex items-center justify-center">
-            <Check className="h-4 w-4" strokeWidth={3} />
-          </div>
-          <span className="text-gray-700 dark:text-gray-300">{feature}</span>
-        </li>
-      ))}
-    </ul>
-    
-    {perks.length > 0 && (
-      <div className="mt-6 pt-4 border-t border-gray-100 dark:border-gray-800">
-        <h4 className={cn("font-semibold mb-3", getTextColorClass())}>Extra Perks:</h4>
-        <ul className="space-y-2">
-          {perks.map((perk, i) => (
+    <Card 
+      className={cn(
+        "overflow-hidden transition-all duration-500 relative transform hover:-translate-y-2 hover:shadow-pricing",
+        recommended ? "shadow-xl border-pegasus-orange scale-105" : "shadow-md border-gray-200 dark:border-gray-700",
+        "opacity-0"
+      )}
+      style={{
+        animationDelay: `${index * 0.1}s`,
+        animation: 'fade-in 0.5s ease-out forwards'
+      }}
+    >
+      {recommended && (
+        <div className="absolute -right-12 top-7 bg-pegasus-orange text-white py-1 px-10 transform rotate-45 shadow-md text-sm font-semibold">
+          Recommended
+        </div>
+      )}
+      <div className={cn(`h-2 w-full bg-gradient-to-r ${getGradientClass()}`)}></div>
+      <CardHeader className="pt-6">
+        <CardTitle className={cn("text-2xl font-bold", getTextColorClass())}>
+          {name}
+        </CardTitle>
+        <div className="mt-4">
+          {activeOffer && discountedPrice ? (
+            <>
+              <span className="text-gray-500 dark:text-gray-400 text-lg line-through mr-2">${price}</span>
+              <span className="text-3xl font-bold text-gray-900 dark:text-gray-100">${discountedPrice}</span>
+            </>
+          ) : (
+            <span className="text-3xl font-bold text-gray-900 dark:text-gray-100">${price}</span>
+          )}
+          <span className="text-sm text-gray-500 dark:text-gray-400 font-normal ml-1">PER MONTH</span>
+        </div>
+      </CardHeader>
+      <CardContent className="px-6 pb-6">
+        <ul className="space-y-3 mb-6">
+          {features.map((feature, i) => (
             <li key={i} className="flex items-start">
-              <div className="h-4 w-4 mr-2 shrink-0 mt-0.5 text-amber-500 flex items-center justify-center">
-                <Check className="h-3 w-3" strokeWidth={3} />
+              <div className="h-5 w-5 text-green-500 mr-2 shrink-0 mt-0.5 flex items-center justify-center">
+                <Check className="h-4 w-4" strokeWidth={3} />
               </div>
-              <span className="text-gray-600 dark:text-gray-400 text-sm">{perk}</span>
+              <span className="text-gray-700 dark:text-gray-300">{feature}</span>
             </li>
           ))}
         </ul>
-      </div>
-    )}
-  </CardContent>
-  <CardFooter className="bg-gray-50 dark:bg-gray-800/50 px-6 py-4 border-t border-gray-100 dark:border-gray-800">
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button 
-          className={cn(
-            "w-full bg-gradient-to-r hover:opacity-90 transition-all duration-300 text-white shadow-md",
-            getGradientClass()
-          )}
-        >
-          Choose Plan <ChevronRight className="ml-1 h-4 w-4" />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-48">
-        <DropdownMenuItem 
-          onClick={onChoosePlan}
-          className="cursor-pointer"
-        >
-          Purchase Now
-        </DropdownMenuItem>
-        <DropdownMenuItem 
-          onClick={handleContactSales}
-          className="cursor-pointer"
-        >
-          Contact Sales
-        </DropdownMenuItem>
-        <DropdownMenuItem 
-          onClick={() => window.location.href = '/faq'}
-          className="cursor-pointer"
-        >
-          Read FAQ
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  </CardFooter>
-</Card>
+        
+        {perks.length > 0 && (
+          <div className="mt-6 pt-4 border-t border-gray-100 dark:border-gray-800">
+            <h4 className={cn("font-semibold mb-3", getTextColorClass())}>Extra Perks:</h4>
+            <ul className="space-y-2">
+              {perks.map((perk, i) => (
+                <li key={i} className="flex items-start">
+                  <div className="h-4 w-4 mr-2 shrink-0 mt-0.5 text-amber-500 flex items-center justify-center">
+                    <Check className="h-3 w-3" strokeWidth={3} />
+                  </div>
+                  <span className="text-gray-600 dark:text-gray-400 text-sm">{perk}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </CardContent>
+      <CardFooter className="bg-gray-50 dark:bg-gray-800/50 px-6 py-4 border-t border-gray-100 dark:border-gray-800">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button 
+              className={cn(
+                "w-full bg-gradient-to-r hover:opacity-90 transition-all duration-300 text-white shadow-md",
+                getGradientClass()
+              )}
+            >
+              Choose Plan <ChevronRight className="ml-1 h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-48">
+            <DropdownMenuItem 
+              onClick={onChoosePlan}
+              className="cursor-pointer"
+            >
+              Purchase Now
+            </DropdownMenuItem>
+            <DropdownMenuItem 
+              onClick={handleContactSales}
+              className="cursor-pointer"
+            >
+              Contact Sales
+            </DropdownMenuItem>
+            <DropdownMenuItem 
+              onClick={() => window.location.href = '/faq'}
+              className="cursor-pointer"
+            >
+              Read FAQ
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </CardFooter>
+    </Card>
   );
 };
 

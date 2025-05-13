@@ -49,9 +49,34 @@ const WhatsNew = () => {
     }).format(date);
   };
 
-  const handleDownload = (link: string | null) => {
+  const handleDownload = async (link: string | null, version: string) => {
     if (link) {
-      window.open(link, '_blank');
+      try {
+        // First, update the download count for this version
+        const { error } = await supabase
+          .from('update')
+          .update({ download_count: (updates[0]?.download_count || 0) + 1 })
+          .eq('varizon', version);
+        
+        if (error) {
+          console.error('Error updating download count:', error);
+        } else {
+          // Update local state
+          setUpdates(prev => 
+            prev.map(update => 
+              update.varizon === version 
+                ? { ...update, download_count: (update.download_count || 0) + 1 } 
+                : update
+            )
+          );
+        }
+        
+        // Open the download link
+        window.location.href = link;
+      } catch (error) {
+        console.error('Error during download process:', error);
+        toast.error('Failed to process download');
+      }
     } else {
       toast.error('Download link not available');
     }
@@ -107,17 +132,11 @@ const WhatsNew = () => {
                         </div>
                       </div>
                       
-                      <div className="flex justify-between items-center mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-                        <div className="text-sm text-gray-500 dark:text-gray-400">
-                          {update.download_count !== null ? (
-                            <span>{update.download_count.toLocaleString()} downloads</span>
-                          ) : (
-                            <span>Download count not available</span>
-                          )}
-                        </div>
-                        {update.link && (
+                      <div className="flex justify-end items-center mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                        {/* Only show download button for the latest update (index === 0) */}
+                        {index === 0 && update.link && (
                           <Button 
-                            onClick={() => handleDownload(update.link)}
+                            onClick={() => handleDownload(update.link, update.varizon)}
                             size="sm"
                             className="bg-pegasus-orange hover:bg-pegasus-orange-600 text-white flex items-center gap-1"
                           >
