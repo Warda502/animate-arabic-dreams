@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { ArrowRight, Download, ShieldCheck, Smartphone, BarChart3, Users, CheckCircle2, ChevronRight } from "lucide-react";
 import SectionHeader from '@/components/SectionHeader';
 import AnimatedCard from '@/components/AnimatedCard';
+import AnimatedCounter from '@/components/AnimatedCounter';
 
 const container = {
   hidden: { opacity: 0 },
@@ -314,7 +315,7 @@ const Home = () => {
                   </div>
                   <h3 className="text-xl font-semibold mb-3 text-gray-800 dark:text-white">Supported Models</h3>
                   <p className="text-4xl font-bold text-pegasus-orange mt-2 mb-4">
-                    {stats.totalModels.toLocaleString()}
+                    <AnimatedCounter value={stats.totalModels} />
                   </p>
                   <p className="text-gray-600 dark:text-gray-300">Compatible smartphone models with our flashing tool</p>
                 </div>
@@ -329,7 +330,7 @@ const Home = () => {
                   </div>
                   <h3 className="text-xl font-semibold mb-3 text-gray-800 dark:text-white">Total Downloads</h3>
                   <p className="text-4xl font-bold text-pegasus-orange mt-2 mb-4">
-                    {stats.downloadCount.toLocaleString()}
+                    <AnimatedCounter value={stats.downloadCount} />
                   </p>
                   <p className="text-gray-600 dark:text-gray-300">Professionals using our software worldwide</p>
                 </div>
@@ -344,7 +345,7 @@ const Home = () => {
                   </div>
                   <h3 className="text-xl font-semibold mb-3 text-gray-800 dark:text-white">Official Distributors</h3>
                   <p className="text-4xl font-bold text-pegasus-orange mt-2 mb-4">
-                    {stats.distributorsCount.toLocaleString()}
+                    <AnimatedCounter value={stats.distributorsCount} />
                   </p>
                   <p className="text-gray-600 dark:text-gray-300">Authorized distributors in countries worldwide</p>
                 </div>

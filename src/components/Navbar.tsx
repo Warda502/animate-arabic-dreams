@@ -30,6 +30,7 @@ const Navbar = () => {
     { title: "Supported Models", href: "#supported-models" },
     { title: "Pricing", href: "#pricing" },
     { title: "Resellers", href: "#resellers" },
+    { title: "What's New", href: "/whats-new" }, // Added What's New to the main menu
     { title: "Contact", href: "#contact" },
   ];
 
@@ -71,19 +72,53 @@ const Navbar = () => {
     fetchLatestUpdate();
   }, []);
 
+  // Modified to handle both scroll sections and regular page links
   const scrollToSection = (href: string) => {
     setIsOpen(false);
-    const element = document.querySelector(href);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+    
+    if (href.startsWith('#')) {
+      const element = document.querySelector(href);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
     }
+    // Regular links will be handled by React Router
   };
 
-  const handleDownload = () => {
-    if (latestUpdate?.link) {
-      window.open(latestUpdate.link, '_blank');
-    } else {
-      toast.info("Download link is not available at the moment. Please try again later.");
+  const handleDownload = async () => {
+    try {
+      if (latestUpdate?.link) {
+        // Increment download count before redirecting
+        const { data: updateData, error: fetchError } = await supabase
+          .from('update')
+          .select('download_count')
+          .eq('varizon', latestUpdate.varizon)
+          .single();
+        
+        if (fetchError) throw fetchError;
+        
+        const currentCount = updateData?.download_count || 0;
+        const newCount = currentCount + 1;
+        
+        // Update the download count
+        const { error: updateError } = await supabase
+          .from('update')
+          .update({ download_count: newCount })
+          .eq('varizon', latestUpdate.varizon);
+        
+        if (updateError) throw updateError;
+        
+        // Open the download link
+        window.location.href = latestUpdate.link;
+      } else {
+        toast.info("Download link is not available at the moment. Please try again later.");
+      }
+    } catch (error) {
+      console.error('Error updating download count:', error);
+      // Still provide download link even if counting fails
+      if (latestUpdate?.link) {
+        window.location.href = latestUpdate.link;
+      }
     }
   };
 
@@ -125,6 +160,10 @@ const Navbar = () => {
                 onClick={(e) => {
                   e.preventDefault();
                   scrollToSection(item.href);
+                  if (!item.href.startsWith('#')) {
+                    // Use regular navigation for non-hash links
+                    window.location.href = item.href;
+                  }
                 }}
                 className={cn(
                   "font-medium transition-all duration-200 relative py-2 px-1",
@@ -221,6 +260,10 @@ const Navbar = () => {
                   onClick={(e) => {
                     e.preventDefault();
                     scrollToSection(item.href);
+                    if (!item.href.startsWith('#')) {
+                      // Use regular navigation for non-hash links
+                      window.location.href = item.href;
+                    }
                   }}
                   className={cn(
                     "block py-3 text-gray-700 dark:text-gray-200 hover:text-pegasus-orange font-medium transition-all duration-200 border-b border-gray-100 dark:border-gray-800",

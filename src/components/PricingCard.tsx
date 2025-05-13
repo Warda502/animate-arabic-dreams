@@ -109,7 +109,7 @@ const PricingCard: React.FC<PricingPlanProps> = ({
             <ul className="space-y-2">
               {perks.map((perk, i) => (
                 <li key={i} className="flex items-start">
-                  <div className={cn(`h-4 w-4 mr-2 shrink-0 mt-0.5 text-amber-500 flex items-center justify-center`)}>
+                  <div className="h-4 w-4 mr-2 shrink-0 mt-0.5 text-amber-500 flex items-center justify-center">
                     <Check className="h-3 w-3" strokeWidth={3} />
                   </div>
                   <span className="text-gray-600 dark:text-gray-400 text-sm">{perk}</span>
@@ -145,7 +145,7 @@ const PricingCard: React.FC<PricingPlanProps> = ({
               Contact Sales
             </DropdownMenuItem>
             <DropdownMenuItem 
-              onClick={() => window.open('/faq', '_blank')}
+              onClick={() => window.location.href = '/faq'}
               className="cursor-pointer"
             >
               Read FAQ
