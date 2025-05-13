@@ -49,7 +49,7 @@ const Home = () => {
         // Get home image from Supabase storage
         const {
           data: imageData
-        } = await supabase.storage.from('website').getPublicUrl('img/home.png');
+        } = await supabase.storage.from('website').getPublicUrl('Images/Home/home.png');
         
         if (imageData) {
           setHomeImageUrl(imageData.publicUrl);
