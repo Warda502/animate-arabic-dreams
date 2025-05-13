@@ -47,7 +47,7 @@ const Pricing = () => {
   // Function to parse features string into an array
   const parseFeatures = (featuresStr: string): string[] => {
     try {
-      return featuresStr.split(',').map(feature => feature.trim());
+      return featuresStr.split('\n').map(feature => feature.trim());
     } catch (e) {
       return [];
     }
