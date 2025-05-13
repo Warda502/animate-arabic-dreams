@@ -89,14 +89,7 @@ const Navbar = () => {
     try {
       if (latestUpdate?.link) {
         // Increment download count before redirecting
-        const { error } = await supabase
-          .from('update')
-          .update({ download_count: supabase.rpc('increment_counter') })
-          .eq('varizon', latestUpdate.varizon);
-        
-        if (error) {
-          console.error('Error updating download count:', error);
-        }
+        await supabase.rpc('increment_counter');
         
         // Open the download link
         window.location.href = latestUpdate.link;

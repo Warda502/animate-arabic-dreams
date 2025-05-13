@@ -1,10 +1,79 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, ChevronDown } from 'lucide-react';
-import { AnimatedCounter } from '@/components/AnimatedCounter';
+import { ArrowRight, ChevronDown, CheckCircle2, Download } from 'lucide-react';
+import AnimatedCounter from '@/components/AnimatedCounter';
 import { motion } from 'framer-motion';
 import { supabase } from '@/integrations/supabase/client';
+import { Card } from '@/components/ui/card';
+import { cn } from '@/lib/utils';
+
+const AnimatedCard = ({ children, className, delay = 0, variant = "default", hoverEffect = "lift", whileInView = true }) => {
+  const getVariantClasses = () => {
+    switch (variant) {
+      case "elegant":
+        return "bg-white dark:bg-gray-800 border border-pegasus-orange/20 dark:border-pegasus-orange/10";
+      case "gradient":
+        return "bg-gradient-to-br from-white to-pegasus-orange-50 dark:from-gray-800 dark:to-gray-900";
+      case "glow":
+        return "bg-white dark:bg-gray-800 border border-pegasus-orange/20 dark:border-pegasus-orange/10 shadow-glow";
+      case "glass":
+        return "bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border border-white/20 dark:border-gray-700/30";
+      default:
+        return "bg-white dark:bg-gray-800";
+    }
+  };
+
+  const getHoverAnimation = () => {
+    switch (hoverEffect) {
+      case "scale":
+        return { scale: 1.03 };
+      case "lift":
+        return { y: -10, boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)" };
+      case "glow":
+        return { boxShadow: "0 0 15px rgba(249, 115, 22, 0.5)" };
+      case "rotate":
+        return { rotate: 1, scale: 1.02 };
+      case "bounce":
+        return { y: [0, -5, 0] };
+      default:
+        return {};
+    }
+  };
+  
+  const motionProps = whileInView 
+    ? {
+        initial: { opacity: 0, y: 20 },
+        whileInView: { opacity: 1, y: 0 },
+        viewport: { once: true, margin: "-50px" },
+        transition: { duration: 0.5, delay: delay * 0.2 }
+      }
+    : {
+        initial: { opacity: 0, y: 20 },
+        animate: { opacity: 1, y: 0 },
+        transition: { duration: 0.5, delay: delay * 0.2 }
+      };
+
+  return (
+    <motion.div 
+      {...motionProps}
+      whileHover={getHoverAnimation()}
+      transition={{
+        duration: 0.3
+      }}
+    >
+      <Card
+        className={cn(
+          "rounded-lg shadow-md overflow-hidden",
+          getVariantClasses(),
+          className
+        )}
+      >
+        {children}
+      </Card>
+    </motion.div>
+  );
+};
 
 const Home = () => {
   const [countDataLoaded, setCountDataLoaded] = useState(false);
@@ -230,7 +299,7 @@ const Home = () => {
             <div className="bg-orange-50 dark:bg-gray-800 rounded-lg p-8 shadow-lg text-center transform transition-all duration-300 hover:-translate-y-2 hover:shadow-xl">
               <div className="bg-pegasus-orange/20 dark:bg-pegasus-orange/30 rounded-full w-20 h-20 mx-auto mb-6 flex items-center justify-center">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-pegasus-orange" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20h2v-2a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                 </svg>
               </div>
               <h3 className="text-2xl font-bold mb-4 text-gray-800 dark:text-white">Official Distributors</h3>
