@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
-import { Download, Zap, ShieldCheck, Smartphone, ChevronRight, BarChart3 } from "lucide-react";
+import { Download, Zap, ShieldCheck, Smartphone, ChevronRight, BarChart3, ArrowRight, CheckCircle2 } from "lucide-react";
 import SectionHeader from '@/components/SectionHeader';
 import AnimatedCard from '@/components/AnimatedCard';
 
