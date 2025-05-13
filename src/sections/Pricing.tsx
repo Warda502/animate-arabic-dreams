@@ -16,58 +16,32 @@ interface PricingPlan {
   perks: string | null;
 }
 
-interface Offer {
-  id: string;
-  percentage: string | null;
-  status: string | null;
-  expiry_at: string | null;
-}
-
 const Pricing = () => {
   const { toast: toastNotify } = useToast();
   const [plans, setPlans] = useState<PricingPlan[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeOffer, setActiveOffer] = useState<Offer | null>(null);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchPricingPlans = async () => {
       try {
-        // Fetch pricing plans
-        const { data: planData, error: planError } = await supabase
-          .from('pricing')
-          .select('*')
-          .order('price');
-        
-        if (planError) throw planError;
-        
-        // Fetch active offers
-        const { data: offerData, error: offerError } = await supabase
-          .from('offers')
-          .select('*')
-          .eq('status', 'valid')
-          .order('created_at', { ascending: false })
-          .limit(1);
-        
-        if (offerError) throw offerError;
-        
-        if (offerData && offerData.length > 0) {
-          setActiveOffer(offerData[0]);
-        }
-        
-        setPlans(planData || []);
+        const {
+          data,
+          error
+        } = await supabase.from('pricing').select('*').order('price');
+        if (error) throw error;
+        setPlans(data);
         setLoading(false);
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error("Error fetching pricing plans:", error);
         toastNotify({
-          title: "Error loading pricing information",
+          title: "Error loading pricing plans",
           description: "Please try again later",
           variant: "destructive"
         });
         setLoading(false);
       }
     };
-    
-    fetchData();
+    fetchPricingPlans();
   }, []);
 
   // Function to parse features string into an array

@@ -212,30 +212,6 @@ export type Database = {
         }
         Relationships: []
       }
-      offers: {
-        Row: {
-          created_at: string
-          expiry_at: string | null
-          id: string
-          percentage: string | null
-          status: string | null
-        }
-        Insert: {
-          created_at?: string
-          expiry_at?: string | null
-          id?: string
-          percentage?: string | null
-          status?: string | null
-        }
-        Update: {
-          created_at?: string
-          expiry_at?: string | null
-          id?: string
-          percentage?: string | null
-          status?: string | null
-        }
-        Relationships: []
-      }
       operations: {
         Row: {
           android: string | null
@@ -290,27 +266,6 @@ export type Database = {
           time?: string | null
           uid?: string | null
           username?: string | null
-        }
-        Relationships: []
-      }
-      payment_methods: {
-        Row: {
-          description: string | null
-          id: string
-          image_url: string | null
-          method: string
-        }
-        Insert: {
-          description?: string | null
-          id?: string
-          image_url?: string | null
-          method: string
-        }
-        Update: {
-          description?: string | null
-          id?: string
-          image_url?: string | null
-          method?: string
         }
         Relationships: []
       }
