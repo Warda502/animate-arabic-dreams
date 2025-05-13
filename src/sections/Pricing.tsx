@@ -57,7 +57,7 @@ const Pricing = () => {
   const parsePerks = (perksStr: string | null): string[] => {
     if (!perksStr) return [];
     try {
-      return perksStr.split(',').map(perk => perk.trim());
+      return perksStr.split('\n').map(perk => perk.trim());
     } catch (e) {
       return [];
     }
