@@ -5,17 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Globe, Mail, Phone } from 'lucide-react';
 
-interface Reseller {
-  name: string;
-  type: string;
-  website: string;
-  contact: string;
-  phone: string;
-  rating: number;
-}
-
 const Resellers = () => {
-  const worldwideResellers: Reseller[] = [
+  const worldwideResellers = [
     {
       name: "Halabtech",
       type: "Distributor",
@@ -42,7 +33,7 @@ const Resellers = () => {
     }
   ];
 
-  const europeanResellers: Reseller[] = [
+  const europeanResellers = [
     {
       name: "EuroUnlock",
       type: "Reseller",
@@ -61,7 +52,7 @@ const Resellers = () => {
     }
   ];
 
-  const asianResellers: Reseller[] = [
+  const asianResellers = [
     {
       name: "AsiaGSM",
       type: "Reseller",
@@ -98,22 +89,7 @@ const Resellers = () => {
     );
   };
   
-  const formatWebsiteUrl = (website: string) => {
-    if (website.startsWith('http')) {
-      return website;
-    }
-    return `https://${website}`;
-  };
-  
-  const formatEmailUrl = (email: string) => {
-    return `mailto:${email}`;
-  };
-  
-  const formatPhoneUrl = (phone: string) => {
-    return `tel:${phone.replace(/[^\d+]/g, '')}`;
-  };
-  
-  const renderResellerCard = (reseller: Reseller) => (
+  const renderResellerCard = (reseller: any) => (
     <Card key={reseller.name} className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
       <div className="bg-pegasus-orange text-white py-3 px-4 font-semibold">
         {reseller.type === "Distributor" ? "WorldWide Distributor" : "Official Reseller"}
@@ -129,35 +105,24 @@ const Resellers = () => {
             </span>
             {reseller.name} ({reseller.type})
           </p>
-          <a 
-            href={formatWebsiteUrl(reseller.website)} 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="flex items-center text-gray-600 dark:text-gray-300 hover:text-pegasus-orange dark:hover:text-pegasus-orange transition-colors"
-          >
+          <p className="flex items-center text-gray-600 dark:text-gray-300">
             <span className="w-6 h-6 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center mr-2">
               <Globe className="h-4 w-4 text-gray-500 dark:text-gray-400" />
             </span>
             {reseller.website}
-          </a>
-          <a 
-            href={formatEmailUrl(reseller.contact)}
-            className="flex items-center text-gray-600 dark:text-gray-300 hover:text-pegasus-orange dark:hover:text-pegasus-orange transition-colors"
-          >
+          </p>
+          <p className="flex items-center text-gray-600 dark:text-gray-300">
             <span className="w-6 h-6 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center mr-2">
               <Mail className="h-4 w-4 text-gray-500 dark:text-gray-400" />
             </span>
             {reseller.contact}
-          </a>
-          <a 
-            href={formatPhoneUrl(reseller.phone)}
-            className="flex items-center text-gray-600 dark:text-gray-300 hover:text-pegasus-orange dark:hover:text-pegasus-orange transition-colors"
-          >
+          </p>
+          <p className="flex items-center text-gray-600 dark:text-gray-300">
             <span className="w-6 h-6 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center mr-2">
               <Phone className="h-4 w-4 text-gray-500 dark:text-gray-400" />
             </span>
             {reseller.phone}
-          </a>
+          </p>
           <div className="flex items-center text-gray-600">
             {renderStars(reseller.rating)}
           </div>
@@ -201,6 +166,20 @@ const Resellers = () => {
             </div>
           </TabsContent>
         </Tabs>
+
+        <div className="mt-16 max-w-2xl mx-auto bg-gray-50 dark:bg-gray-800 p-8 rounded-xl border border-orange-200 dark:border-orange-900/30">
+          <h2 className="text-2xl font-bold text-center mb-6">Become a Reseller</h2>
+          <p className="text-center text-gray-600 dark:text-gray-300 mb-6">
+            Interested in becoming an authorized reseller of Pegasus Tool? Contact us for details about our reseller program and requirements.
+          </p>
+          <div className="flex justify-center">
+            <a href="#contact">
+              <Button className="bg-pegasus-orange hover:bg-orange-600 text-white px-6 py-2 rounded-full">
+                Contact for Reseller Info
+              </Button>
+            </a>
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -177,21 +177,18 @@ export type Database = {
       settings: {
         Row: {
           key: string
-          numeric_value: number | null
           object_name: string
           title: string | null
           value: boolean | null
         }
         Insert: {
           key: string
-          numeric_value?: number | null
           object_name: string
           title?: string | null
           value?: boolean | null
         }
         Update: {
           key?: string
-          numeric_value?: number | null
           object_name?: string
           title?: string | null
           value?: boolean | null
@@ -253,7 +250,6 @@ export type Database = {
         Row: {
           changelog: string | null
           direct_download: boolean | null
-          download_count: number | null
           link: string | null
           name: string | null
           release_at: string | null
@@ -262,7 +258,6 @@ export type Database = {
         Insert: {
           changelog?: string | null
           direct_download?: boolean | null
-          download_count?: number | null
           link?: string | null
           name?: string | null
           release_at?: string | null
@@ -271,7 +266,6 @@ export type Database = {
         Update: {
           changelog?: string | null
           direct_download?: boolean | null
-          download_count?: number | null
           link?: string | null
           name?: string | null
           release_at?: string | null
