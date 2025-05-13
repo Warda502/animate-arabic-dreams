@@ -7,13 +7,19 @@ import { BrowserRouter, Route, Routes, useLocation, Navigate } from "react-route
 import { ThemeProvider } from "./components/ThemeProvider";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import { ScrollTop } from "./components/scroll-top";
 import Home from "./sections/Home";
 import SupportedModels from "./sections/SupportedModels";
 import Resellers from "./sections/Resellers";
 import PaymentMethods from "./sections/PaymentMethods";
 import Pricing from "./sections/Pricing";
 import Contact from "./sections/Contact";
-import { useEffect } from "react";
+import WhatsNew from "./pages/WhatsNew";
+import KnowledgeBase from "./pages/KnowledgeBase";
+import HelpCenter from "./pages/HelpCenter";
+import FAQ from "./pages/FAQ";
+import TermsOfService from "./pages/TermsOfService";
+import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
 const ScrollToTop = () => {
@@ -104,23 +110,41 @@ const queryClient = new QueryClient({
   },
 });
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <BrowserRouter>
-      <ThemeProvider defaultTheme="system">
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <div className="flex flex-col min-h-screen">
-            <Navbar />
-            <ScrollToTop />
-            <MainContent />
-            <Footer />
-          </div>
-        </TooltipProvider>
-      </ThemeProvider>
-    </BrowserRouter>
-  </QueryClientProvider>
-);
+const App = () => {
+  const [showScrollTop, setShowScrollTop] = useState(true);
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <BrowserRouter>
+        <ThemeProvider defaultTheme="system">
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <div className="flex flex-col min-h-screen">
+              <Navbar />
+              <ScrollToTop />
+              <Routes>
+                {/* Main page with all sections */}
+                <Route path="/" element={<MainContent />} />
+                
+                {/* Individual pages */}
+                <Route path="/whats-new" element={<WhatsNew />} />
+                <Route path="/knowledge-base" element={<KnowledgeBase />} />
+                <Route path="/help-center" element={<HelpCenter />} />
+                <Route path="/faq" element={<FAQ />} />
+                <Route path="/terms-of-service" element={<TermsOfService />} />
+                
+                {/* Page not found */}
+                <Route path="*" element={<Navigate to="/" />} />
+              </Routes>
+              <Footer />
+              <ScrollTop />
+            </div>
+          </TooltipProvider>
+        </ThemeProvider>
+      </BrowserRouter>
+    </QueryClientProvider>
+  );
+};
 
 export default App;

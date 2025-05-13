@@ -2,6 +2,7 @@
 import React from "react";
 import { Heart, Mail, Phone, MapPin, Clock, ExternalLink } from "lucide-react";
 import { Button } from "./ui/button";
+import { Link } from "react-router-dom";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -120,6 +121,16 @@ const Footer = () => {
                   Contact Us
                 </a>
               </li>
+              <li>
+                <Link 
+                  to="/whats-new" 
+                  target="_blank"
+                  className="text-gray-400 hover:text-white transition-colors duration-200 flex items-center group"
+                >
+                  <span className="w-2 h-2 bg-pegasus-orange rounded-full mr-2 transform scale-0 group-hover:scale-100 transition-transform duration-300"></span>
+                  What's New
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -128,22 +139,22 @@ const Footer = () => {
             <h3 className="text-xl font-bold mb-5 text-pegasus-orange font-montserrat border-b border-gray-800 pb-2">Support</h3>
             <ul className="space-y-3">
               <li>
-                <a href="#" className="text-gray-400 hover:text-white transition-colors duration-200 flex items-center gap-2 group">
+                <Link to="/knowledge-base" target="_blank" className="text-gray-400 hover:text-white transition-colors duration-200 flex items-center gap-2 group">
                   <ExternalLink className="h-4 w-4 text-pegasus-orange-400 group-hover:text-pegasus-orange transition-colors duration-200" />
                   Knowledge Base
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-gray-400 hover:text-white transition-colors duration-200 flex items-center gap-2 group">
+                <Link to="/help-center" target="_blank" className="text-gray-400 hover:text-white transition-colors duration-200 flex items-center gap-2 group">
                   <ExternalLink className="h-4 w-4 text-pegasus-orange-400 group-hover:text-pegasus-orange transition-colors duration-200" />
                   Help Center
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-gray-400 hover:text-white transition-colors duration-200 flex items-center gap-2 group">
+                <Link to="/faq" target="_blank" className="text-gray-400 hover:text-white transition-colors duration-200 flex items-center gap-2 group">
                   <ExternalLink className="h-4 w-4 text-pegasus-orange-400 group-hover:text-pegasus-orange transition-colors duration-200" />
                   FAQ
-                </a>
+                </Link>
               </li>
               <li>
                 <a href="#" className="text-gray-400 hover:text-white transition-colors duration-200 flex items-center gap-2 group">
@@ -152,10 +163,10 @@ const Footer = () => {
                 </a>
               </li>
               <li>
-                <a href="#" className="text-gray-400 hover:text-white transition-colors duration-200 flex items-center gap-2 group">
+                <Link to="/terms-of-service" target="_blank" className="text-gray-400 hover:text-white transition-colors duration-200 flex items-center gap-2 group">
                   <ExternalLink className="h-4 w-4 text-pegasus-orange-400 group-hover:text-pegasus-orange transition-colors duration-200" />
                   Terms of Service
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -206,17 +217,6 @@ const Footer = () => {
           <p className="text-gray-500 flex items-center mt-4 md:mt-0">
             Made with <Heart className="h-4 w-4 mx-1 text-red-500 animate-pulse-gentle" /> by Pegasus Team
           </p>
-        </div>
-
-        <div className="mt-8 text-center">
-          <Button 
-            variant="outline" 
-            size="sm" 
-            className="text-gray-400 hover:text-white border-gray-700 hover:border-pegasus-orange transition-colors duration-300"
-            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          >
-            Back to top
-          </Button>
         </div>
       </div>
     </footer>

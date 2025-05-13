@@ -95,7 +95,9 @@ const PricingCard: React.FC<PricingPlanProps> = ({
         <ul className="space-y-3 mb-6">
           {features.map((feature, i) => (
             <li key={i} className="flex items-start">
-              <Check className="h-5 w-5 text-green-500 mr-2 shrink-0 mt-0.5" />
+              <div className="h-5 w-5 text-green-500 mr-2 shrink-0 mt-0.5 flex items-center justify-center">
+                <Check className="h-4 w-4" strokeWidth={3} />
+              </div>
               <span className="text-gray-700 dark:text-gray-300">{feature}</span>
             </li>
           ))}
@@ -107,7 +109,9 @@ const PricingCard: React.FC<PricingPlanProps> = ({
             <ul className="space-y-2">
               {perks.map((perk, i) => (
                 <li key={i} className="flex items-start">
-                  <Check className={cn(`h-4 w-4 mr-2 shrink-0 mt-0.5`, getTextColorClass())} />
+                  <div className={cn(`h-4 w-4 mr-2 shrink-0 mt-0.5 text-amber-500 flex items-center justify-center`)}>
+                    <Check className="h-3 w-3" strokeWidth={3} />
+                  </div>
                   <span className="text-gray-600 dark:text-gray-400 text-sm">{perk}</span>
                 </li>
               ))}
@@ -141,7 +145,7 @@ const PricingCard: React.FC<PricingPlanProps> = ({
               Contact Sales
             </DropdownMenuItem>
             <DropdownMenuItem 
-              onClick={() => window.open('https://pegasus-tool.com/faq', '_blank')}
+              onClick={() => window.open('/faq', '_blank')}
               className="cursor-pointer"
             >
               Read FAQ

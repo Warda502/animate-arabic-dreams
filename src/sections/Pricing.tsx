@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
-import { Loader2, Download } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 import { toast } from "sonner";
@@ -76,15 +76,6 @@ const Pricing = () => {
         }
       }
     });
-  };
-
-  const handleViewAllPlans = () => {
-    const pricingSection = document.getElementById('pricing');
-    if (pricingSection) {
-      pricingSection.scrollIntoView({
-        behavior: 'smooth'
-      });
-    }
   };
 
   // Function to determine the plan variant
@@ -175,34 +166,6 @@ const Pricing = () => {
               </Button>
             </div>
           )}
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-16 bg-gradient-to-r from-orange-600 to-orange-400 text-white relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('/patterns/grid.svg')] opacity-10"></div>
-        <div className="container mx-auto px-4 text-center relative">
-          <h2 className="text-3xl font-bold mb-6 text-white opacity-0 animate-fade-in" style={{animationFillMode: 'forwards'}}>
-            Ready to get started?
-          </h2>
-          <p className="text-xl text-orange-100 max-w-2xl mx-auto mb-8 opacity-0 animate-fade-in-delay-1" style={{animationFillMode: 'forwards'}}>
-            Choose your plan now and unlock the full potential of your smartphone repair business.
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 opacity-0 animate-fade-in-delay-2" style={{animationFillMode: 'forwards'}}>
-            <Button 
-              onClick={handleViewAllPlans} 
-              className="bg-white text-orange-600 hover:bg-orange-50 px-8 py-3 rounded-full text-lg shadow-lg transition-all duration-300 hover:-translate-y-1"
-            >
-              View All Plans
-            </Button>
-            <Button 
-              variant="outline"
-              onClick={() => window.open("#download", "_self")}
-              className="border-white text-white hover:bg-white/20 px-8 py-3 rounded-full text-lg shadow-lg transition-all duration-300 hover:-translate-y-1 flex items-center gap-2"
-            >
-              <Download className="h-5 w-5" /> Download Now
-            </Button>
-          </div>
         </div>
       </section>
     </div>

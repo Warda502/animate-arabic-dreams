@@ -6,15 +6,23 @@ import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Menu, X, Download, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 interface MenuItem {
   title: string;
   href: string;
 }
 
+interface LatestUpdate {
+  varizon: string;
+  link: string | null;
+}
+
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [latestUpdate, setLatestUpdate] = useState<LatestUpdate | null>(null);
   
   // Menu items
   const menuItems: MenuItem[] = [
@@ -41,11 +49,41 @@ const Navbar = () => {
     };
   }, []);
 
+  // Fetch latest version
+  useEffect(() => {
+    const fetchLatestUpdate = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('update')
+          .select('varizon, link')
+          .order('release_at', { ascending: false })
+          .limit(1);
+        
+        if (error) throw error;
+        if (data && data.length > 0) {
+          setLatestUpdate(data[0]);
+        }
+      } catch (error) {
+        console.error('Error fetching latest update:', error);
+      }
+    };
+
+    fetchLatestUpdate();
+  }, []);
+
   const scrollToSection = (href: string) => {
     setIsOpen(false);
     const element = document.querySelector(href);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const handleDownload = () => {
+    if (latestUpdate?.link) {
+      window.open(latestUpdate.link, '_blank');
+    } else {
+      toast.info("Download link is not available at the moment. Please try again later.");
     }
   };
 
@@ -107,7 +145,7 @@ const Navbar = () => {
             <ThemeToggle />
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Button 
-                onClick={() => window.open("#download", "_self")}
+                onClick={handleDownload}
                 className="bg-pegasus-orange hover:bg-pegasus-orange-600 text-white px-5 py-2 rounded-full shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 flex items-center gap-2 overflow-hidden group relative"
               >
                 <motion.div 
@@ -117,7 +155,9 @@ const Navbar = () => {
                   transition={{ duration: 0.7 }}
                 />
                 <Download className="h-4 w-4 relative z-10" /> 
-                <span className="relative z-10">Download Now</span>
+                <span className="relative z-10">
+                  Download Now {latestUpdate && `- ${latestUpdate.varizon}`}
+                </span>
               </Button>
             </motion.div>
           </div>
@@ -202,12 +242,12 @@ const Navbar = () => {
               >
                 <Button 
                   onClick={() => {
-                    window.open("#download", "_self");
+                    handleDownload();
                     setIsOpen(false);
                   }}
                   className="w-full bg-pegasus-orange hover:bg-pegasus-orange-600 text-white py-3 rounded-full shadow-md hover:shadow-lg transition-all duration-300 flex items-center justify-center gap-2"
                 >
-                  <Download className="h-5 w-5" /> Download Now
+                  <Download className="h-5 w-5" /> Download Now {latestUpdate && `- ${latestUpdate.varizon}`}
                 </Button>
               </motion.div>
             </div>

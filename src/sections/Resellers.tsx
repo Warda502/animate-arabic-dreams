@@ -1,9 +1,8 @@
 
 import React from 'react';
 import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Globe, Mail, Phone } from 'lucide-react';
+import { Globe, Mail, Phone, ExternalLink } from 'lucide-react';
 
 const Resellers = () => {
   const worldwideResellers = [
@@ -11,6 +10,7 @@ const Resellers = () => {
       name: "Halabtech",
       type: "Distributor",
       website: "server.halabtech.com",
+      websiteUrl: "https://server.halabtech.com",
       contact: "support@halabtech.com",
       phone: "+1 (555) 123-4567",
       rating: 5
@@ -19,6 +19,7 @@ const Resellers = () => {
       name: "Leope-GSM",
       type: "Reseller",
       website: "leope-gsm.com",
+      websiteUrl: "https://leope-gsm.com",
       contact: "info@leope-gsm.com",
       phone: "+44 20 1234 5678",
       rating: 5
@@ -27,6 +28,7 @@ const Resellers = () => {
       name: "Martlobs GSM",
       type: "Reseller",
       website: "martlobsgsm.com",
+      websiteUrl: "https://martlobsgsm.com",
       contact: "contact@martlobsgsm.com",
       phone: "+971 50 123 4567",
       rating: 5
@@ -38,6 +40,7 @@ const Resellers = () => {
       name: "EuroUnlock",
       type: "Reseller",
       website: "eurounlock.com",
+      websiteUrl: "https://eurounlock.com",
       contact: "sales@eurounlock.com",
       phone: "+33 1 23 45 67 89",
       rating: 5
@@ -46,6 +49,7 @@ const Resellers = () => {
       name: "GSM-Solutions",
       type: "Reseller",
       website: "gsm-solutions.eu",
+      websiteUrl: "https://gsm-solutions.eu",
       contact: "info@gsm-solutions.eu",
       phone: "+49 30 123456",
       rating: 4
@@ -57,6 +61,7 @@ const Resellers = () => {
       name: "AsiaGSM",
       type: "Reseller",
       website: "asiagsmunlock.com",
+      websiteUrl: "https://asiagsmunlock.com",
       contact: "support@asiagsmunlock.com",
       phone: "+91 98765 43210",
       rating: 5
@@ -65,6 +70,7 @@ const Resellers = () => {
       name: "MobileTechAsia",
       type: "Reseller",
       website: "mobiletechasia.com",
+      websiteUrl: "https://mobiletechasia.com",
       contact: "contact@mobiletechasia.com",
       phone: "+65 9876 5432",
       rating: 4
@@ -90,7 +96,7 @@ const Resellers = () => {
   };
   
   const renderResellerCard = (reseller: any) => (
-    <Card key={reseller.name} className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
+    <Card key={reseller.name} className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 transform hover:-translate-y-1 transition-transform duration-300">
       <div className="bg-pegasus-orange text-white py-3 px-4 font-semibold">
         {reseller.type === "Distributor" ? "WorldWide Distributor" : "Official Reseller"}
       </div>
@@ -105,23 +111,41 @@ const Resellers = () => {
             </span>
             {reseller.name} ({reseller.type})
           </p>
-          <p className="flex items-center text-gray-600 dark:text-gray-300">
+          <p className="flex items-center text-gray-600 dark:text-gray-300 group">
             <span className="w-6 h-6 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center mr-2">
               <Globe className="h-4 w-4 text-gray-500 dark:text-gray-400" />
             </span>
-            {reseller.website}
+            <a 
+              href={reseller.websiteUrl} 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="hover:text-pegasus-orange transition-colors duration-200 flex items-center"
+            >
+              {reseller.website}
+              <ExternalLink className="h-3 w-3 ml-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+            </a>
           </p>
-          <p className="flex items-center text-gray-600 dark:text-gray-300">
+          <p className="flex items-center text-gray-600 dark:text-gray-300 group">
             <span className="w-6 h-6 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center mr-2">
               <Mail className="h-4 w-4 text-gray-500 dark:text-gray-400" />
             </span>
-            {reseller.contact}
+            <a 
+              href={`mailto:${reseller.contact}`} 
+              className="hover:text-pegasus-orange transition-colors duration-200"
+            >
+              {reseller.contact}
+            </a>
           </p>
-          <p className="flex items-center text-gray-600 dark:text-gray-300">
+          <p className="flex items-center text-gray-600 dark:text-gray-300 group">
             <span className="w-6 h-6 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center mr-2">
               <Phone className="h-4 w-4 text-gray-500 dark:text-gray-400" />
             </span>
-            {reseller.phone}
+            <a 
+              href={`tel:${reseller.phone.replace(/\s+/g, '')}`} 
+              className="hover:text-pegasus-orange transition-colors duration-200"
+            >
+              {reseller.phone}
+            </a>
           </p>
           <div className="flex items-center text-gray-600">
             {renderStars(reseller.rating)}
@@ -166,20 +190,6 @@ const Resellers = () => {
             </div>
           </TabsContent>
         </Tabs>
-
-        <div className="mt-16 max-w-2xl mx-auto bg-gray-50 dark:bg-gray-800 p-8 rounded-xl border border-orange-200 dark:border-orange-900/30">
-          <h2 className="text-2xl font-bold text-center mb-6">Become a Reseller</h2>
-          <p className="text-center text-gray-600 dark:text-gray-300 mb-6">
-            Interested in becoming an authorized reseller of Pegasus Tool? Contact us for details about our reseller program and requirements.
-          </p>
-          <div className="flex justify-center">
-            <a href="#contact">
-              <Button className="bg-pegasus-orange hover:bg-orange-600 text-white px-6 py-2 rounded-full">
-                Contact for Reseller Info
-              </Button>
-            </a>
-          </div>
-        </div>
       </div>
     </div>
   );
