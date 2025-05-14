@@ -136,7 +136,7 @@ const Home = () => {
 
   const handleDownload = () => {
     if (latestUpdate?.link) {
-      const { data, error } = await supabase.rpc('increment_counter');
+     window.open(latestUpdate.link, '_blank');
     } else {
       toast.info("Download link is not available at the moment. Please try again later.");
     }
