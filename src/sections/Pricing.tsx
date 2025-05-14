@@ -32,24 +32,43 @@ const Pricing = () => {
       try {
         // Fetch pricing plans
         const { data: plansData, error: plansError } = await supabase
-          .from('pricing_plans')
+          .from('pricing')
           .select('*')
           .order('id');
         
         if (plansError) throw plansError;
+
+        // Transform the data to match PricingPlan interface
+        const formattedPlans: PricingPlan[] = plansData ? plansData.map((plan: any) => ({
+          id: Number(plan.id) || 0,
+          name: plan.name_plan,
+          description: plan.name_plan,
+          price: parseFloat(plan.price || '0'),
+          features: plan.features ? plan.features.split(',').map((feature: string) => feature.trim()) : [],
+          recommended: plan.name_plan.toLowerCase().includes('recommended')
+        })) : [];
         
         // Fetch active offers
         const { data: offersData, error: offersError } = await supabase
           .from('offers')
           .select('*')
-          .eq('valid', true)
+          .eq('status', 'active')
           .order('created_at', { ascending: false })
           .limit(1);
         
         if (offersError) throw offersError;
         
-        setPricingPlans(plansData || []);
-        setOffer(offersData && offersData.length > 0 ? offersData[0] : null);
+        // Transform to match Offer interface
+        const activeOffer = offersData && offersData.length > 0 ? {
+          id: Number(offersData[0].id) || 0,
+          discount_percentage: parseFloat(offersData[0].percentage || '0'),
+          is_active: offersData[0].status === 'active',
+          expiry_date: offersData[0].expiry_at,
+          valid: true
+        } : null;
+        
+        setPricingPlans(formattedPlans);
+        setOffer(activeOffer);
       } catch (error) {
         console.error('Error fetching data:', error);
         toast({

@@ -6,10 +6,10 @@ import { Loader2 } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
 
 interface PaymentMethod {
-  id: number;
-  name: string;
-  icon_svg: string;
-  description: string;
+  id: string;
+  method: string;
+  description: string | null;
+  image_url: string | null;
 }
 
 const PaymentMethods = () => {
@@ -72,8 +72,16 @@ const PaymentMethods = () => {
                     key={method.id} 
                     className="flex flex-col items-center justify-center p-4 rounded-lg hover:bg-gray-50 transition-colors text-center"
                   >
-                    <div className="mb-4 text-gray-700" dangerouslySetInnerHTML={{ __html: method.icon_svg }} />
-                    <h3 className="text-lg font-semibold mb-2">{method.name}</h3>
+                    <div className="mb-4 text-gray-700">
+                      {method.image_url ? (
+                        <img src={method.image_url} alt={method.method} className="h-12 w-auto" />
+                      ) : (
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-pegasus-orange" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                        </svg>
+                      )}
+                    </div>
+                    <h3 className="text-lg font-semibold mb-2">{method.method}</h3>
                     <p className="text-sm text-gray-600">{method.description}</p>
                   </div>
                 ))}
