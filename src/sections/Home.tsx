@@ -134,11 +134,31 @@ const Home = () => {
     }
   };
 
-  const handleDownload = () => {
-    if (latestUpdate?.link) {
-     window.open(latestUpdate.link, '_blank');
-    } else {
-      toast.info("Download link is not available at the moment. Please try again later.");
+  const handleDownload = async () => {
+    try {
+      if (latestUpdate?.link) {
+        // Call the increment_counter function
+        const { data, error: counterError } = await supabase.rpc('increment_counter');
+        
+        if (counterError) {
+          console.error('Error incrementing download counter:', counterError);
+          toast.error('Failed to process download request');
+        } else {
+          console.log('Download count increased to:', data);
+          
+          // Open the download link
+          window.location.href = latestUpdate.link;
+          toast.success('Download started!');
+        }
+      } else {
+        toast.info("Download link is not available at the moment. Please try again later.");
+      }
+    } catch (error) {
+      console.error('Error during download:', error);
+      // Still provide download link even if counting fails
+      if (latestUpdate?.link) {
+        window.location.href = latestUpdate.link;
+      }
     }
   };
 
