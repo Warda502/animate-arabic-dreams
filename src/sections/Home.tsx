@@ -136,6 +136,7 @@ const Home = () => {
 
   const handleDownload = () => {
     if (latestUpdate?.link) {
+      const { data, error } = await supabase.rpc('increment_counter');
       window.open(latestUpdate.link, '_blank');
     } else {
       toast.info("Download link is not available at the moment. Please try again later.");
@@ -497,9 +498,10 @@ const Home = () => {
             >
               <Button 
                 className="bg-white text-orange-600 hover:bg-orange-50 px-8 py-4 rounded-full text-lg shadow-lg transition-all duration-300 hover:-translate-y-1 flex items-center group"
-                onClick={() => window.open("#download", "_self")}
+                onClick={handleDownload}
               >
-                <Download className="mr-2 h-5 w-5 group-hover:scale-110 transition-transform" /> Download Pegasus Tool v1.1.7
+                <Download className="mr-2 h-5 w-5 group-hover:scale-110 transition-transform" /> 
+                  Download Now {latestUpdate && `- ${latestUpdate.varizon}`}
               </Button>
             </motion.div>
           </div>
