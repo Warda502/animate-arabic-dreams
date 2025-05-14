@@ -2,20 +2,21 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2 } from "lucide-react";
-import { toast } from "@/components/ui/use-toast";
-import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+import PricingCard from "@/components/PricingCard";
 
 interface PricingPlan {
-  id: number;
+  id: string;
   name: string;
   description: string;
-  price: number;
+  price: string;
   features: string[];
+  perks?: string[];
   recommended?: boolean;
 }
 
 interface Offer {
-  id: number;
+  id: string;
   discount_percentage: number;
   is_active: boolean;
   expiry_date: string | null;
@@ -40,11 +41,12 @@ const Pricing = () => {
 
         // Transform the data to match PricingPlan interface
         const formattedPlans: PricingPlan[] = plansData ? plansData.map((plan: any) => ({
-          id: Number(plan.id) || 0,
-          name: plan.name_plan,
-          description: plan.name_plan,
-          price: parseFloat(plan.price || '0'),
+          id: plan.id || '',
+          name: plan.name_plan || '',
+          description: plan.name_plan || '',
+          price: plan.price || '0',
           features: plan.features ? plan.features.split(',').map((feature: string) => feature.trim()) : [],
+          perks: plan.perks ? plan.perks.split(',').map((perk: string) => perk.trim()) : [],
           recommended: plan.name_plan.toLowerCase().includes('recommended')
         })) : [];
         
@@ -60,7 +62,7 @@ const Pricing = () => {
         
         // Transform to match Offer interface
         const activeOffer = offersData && offersData.length > 0 ? {
-          id: Number(offersData[0].id) || 0,
+          id: offersData[0].id || '',
           discount_percentage: parseFloat(offersData[0].percentage || '0'),
           is_active: offersData[0].status === 'active',
           expiry_date: offersData[0].expiry_at,
@@ -84,12 +86,8 @@ const Pricing = () => {
     fetchData();
   }, []);
 
-  // Calculate discounted price
-  const calculateDiscountedPrice = (originalPrice: number) => {
-    if (!offer) return originalPrice;
-    
-    const discountAmount = (originalPrice * offer.discount_percentage) / 100;
-    return originalPrice - discountAmount;
+  const handleChoosePlan = () => {
+    toast.info("You need to contact sales to purchase this plan.");
   };
 
   return (
@@ -102,6 +100,14 @@ const Pricing = () => {
           <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
             Choose the plan that works best for your needs. All plans include access to our core features.
           </p>
+          
+          {offer && (
+            <div className="mt-6">
+              <span className="inline-block bg-gradient-to-r from-green-500 to-green-600 text-white px-4 py-2 rounded-full text-sm font-semibold">
+                Special Offer: {offer.discount_percentage}% OFF on all plans
+              </span>
+            </div>
+          )}
         </div>
 
         {loading ? (
@@ -110,63 +116,21 @@ const Pricing = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            {pricingPlans.map((plan) => {
-              const originalPrice = plan.price;
-              const discountedPrice = calculateDiscountedPrice(originalPrice);
-              const hasDiscount = offer && discountedPrice < originalPrice;
-              
-              return (
-                <div 
-                  key={plan.id} 
-                  className={`rounded-lg overflow-hidden shadow-lg transition-all duration-300 hover:shadow-xl transform hover:-translate-y-1 bg-white dark:bg-gray-800 ${
-                    plan.recommended ? 'ring-2 ring-blue-500 scale-105 z-10' : ''
-                  }`}
-                >
-                  {plan.recommended && (
-                    <div className="bg-blue-500 text-white text-center py-2 font-semibold">
-                      Recommended
-                    </div>
-                  )}
-                  
-                  <div className="p-8">
-                    <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">{plan.name}</h3>
-                    <p className="text-gray-600 dark:text-gray-300 mb-6">{plan.description}</p>
-                    
-                    <div className="mb-6">
-                      {hasDiscount ? (
-                        <div className="flex items-end">
-                          <span className="text-3xl font-bold text-gray-900 dark:text-white">${discountedPrice.toFixed(2)}</span>
-                          <span className="text-lg text-gray-500 line-through ml-2">${originalPrice.toFixed(2)}</span>
-                        </div>
-                      ) : (
-                        <span className="text-3xl font-bold text-gray-900 dark:text-white">${originalPrice.toFixed(2)}</span>
-                      )}
-                    </div>
-                    
-                    <ul className="space-y-4 mb-8">
-                      {plan.features.map((feature, idx) => (
-                        <li key={idx} className="flex items-start">
-                          <svg className="h-5 w-5 text-green-500 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                          </svg>
-                          <span className="text-gray-600 dark:text-gray-300">{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
-                    
-                    <Button 
-                      className={`w-full py-4 rounded-md ${
-                        plan.recommended 
-                          ? 'bg-blue-600 hover:bg-blue-700 text-white' 
-                          : 'bg-gray-200 hover:bg-gray-300 text-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white'
-                      }`}
-                    >
-                      Get Started
-                    </Button>
-                  </div>
-                </div>
-              );
-            })}
+            {pricingPlans.map((plan, index) => (
+              <PricingCard
+                key={plan.id}
+                id={plan.id}
+                name={plan.name}
+                price={plan.price}
+                features={plan.features}
+                perks={plan.perks}
+                index={index}
+                recommended={plan.recommended}
+                onChoosePlan={handleChoosePlan}
+                variant={index === 0 ? 'basic' : index === 1 ? 'secondary' : 'premium'}
+                discountPercentage={offer ? offer.discount_percentage : undefined}
+              />
+            ))}
           </div>
         )}
       </div>
