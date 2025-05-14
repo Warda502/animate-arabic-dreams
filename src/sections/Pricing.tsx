@@ -45,7 +45,7 @@ const Pricing = () => {
         const { data: offersData, error: offersError } = await supabase
           .from('offers')
           .select('*')
-          .eq('status', 'active')
+          .eq('status', 'valid')
           .gt('expiry_at', now)
           .order('created_at', { ascending: false })
           .limit(1);
