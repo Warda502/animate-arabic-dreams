@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -30,7 +29,7 @@ const Navbar = () => {
     { title: "Supported Models", href: "#supported-models" },
     { title: "Pricing", href: "#pricing" },
     { title: "Resellers", href: "#resellers" },
-    { title: "What's New", href: "/whats-new" }, // Added What's New to the main menu
+    { title: "What's New", href: "/whats-new" },
     { title: "Contact", href: "#contact" },
   ];
 
@@ -88,33 +87,24 @@ const Navbar = () => {
   const handleDownload = async () => {
     try {
       if (latestUpdate?.link) {
-        // Increment download count before redirecting
-        const { data: updateData, error: fetchError } = await supabase
-          .from('update')
-          .select('download_count')
-          .eq('varizon', latestUpdate.varizon)
-          .single();
+        // Call the increment_counter function
+        const { data, error: counterError } = await supabase.rpc('increment_counter');
         
-        if (fetchError) throw fetchError;
-        
-        const currentCount = updateData?.download_count || 0;
-        const newCount = currentCount + 1;
-        
-        // Update the download count
-        const { error: updateError } = await supabase
-          .from('update')
-          .update({ download_count: newCount })
-          .eq('varizon', latestUpdate.varizon);
-        
-        if (updateError) throw updateError;
-        
-        // Open the download link
-        window.location.href = latestUpdate.link;
+        if (counterError) {
+          console.error('Error incrementing download counter:', counterError);
+          toast.error('Failed to process download request');
+        } else {
+          console.log('Download count increased to:', data);
+          
+          // Open the download link
+          window.location.href = latestUpdate.link;
+          toast.success('Download started!');
+        }
       } else {
         toast.info("Download link is not available at the moment. Please try again later.");
       }
     } catch (error) {
-      console.error('Error updating download count:', error);
+      console.error('Error during download:', error);
       // Still provide download link even if counting fails
       if (latestUpdate?.link) {
         window.location.href = latestUpdate.link;

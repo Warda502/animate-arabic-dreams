@@ -61,7 +61,8 @@ const Pricing = () => {
       } catch (error) {
         console.error("Error fetching pricing data:", error);
         toastNotify({
-          description: "Please try again later",
+          title: "Error",
+          description: "Failed to fetch pricing information. Please try again later.",
           variant: "destructive"
         });
       } finally {
@@ -70,12 +71,12 @@ const Pricing = () => {
     };
     
     fetchPricingPlans();
-  }, []);
+  }, [toastNotify]);
 
   // Function to parse features string into an array
   const parseFeatures = (featuresStr: string): string[] => {
     try {
-      return featuresStr.split('\n').map(feature => feature.trim());
+      return featuresStr.split('\n').map(feature => feature.trim()).filter(Boolean);
     } catch (e) {
       return [];
     }
@@ -85,29 +86,31 @@ const Pricing = () => {
   const parsePerks = (perksStr: string | null): string[] => {
     if (!perksStr) return [];
     try {
-      return perksStr.split('\n').map(perk => perk.trim());
+      return perksStr.split('\n').map(perk => perk.trim()).filter(Boolean);
     } catch (e) {
       return [];
     }
   };
 
   // Function to calculate discounted price
-  const calculateDiscountedPrice = (originalPrice: string): { original: number, discounted: number | null } => {
+  const calculateDiscountedPrice = (originalPrice: string): { original: string; discounted: string | null } => {
     if (!activeOffer || !activeOffer.percentage) {
-      return { original: parseFloat(originalPrice), discounted: null };
+      return { original: originalPrice, discounted: null };
     }
     
     const price = parseFloat(originalPrice);
     const discountPercentage = parseFloat(activeOffer.percentage);
     
     if (isNaN(price) || isNaN(discountPercentage)) {
-      return { original: parseFloat(originalPrice), discounted: null };
+      return { original: originalPrice, discounted: null };
     }
     
     const discountAmount = price * (discountPercentage / 100);
+    const discountedPrice = price - discountAmount;
+    
     return {
-      original: price,
-      discounted: Math.round((price - discountAmount) * 100) / 100
+      original: originalPrice,
+      discounted: discountedPrice.toFixed(2)
     };
   };
 
@@ -177,6 +180,8 @@ const Pricing = () => {
                   const perks = parsePerks(plan.perks);
                   const planVariant = getPlanVariant(plan.name_plan);
                   const recommended = isRecommended(plan.name_plan);
+                  
+                  // Apply discount if offer is active
                   const { original, discounted } = calculateDiscountedPrice(plan.price);
 
                   return (
@@ -184,8 +189,8 @@ const Pricing = () => {
                       key={plan.id}
                       id={plan.id}
                       name={plan.name_plan}
-                      price={discounted ? discounted.toString() : plan.price}
-                      originalPrice={discounted ? original.toString() : undefined}
+                      price={discounted || original}
+                      originalPrice={discounted ? original : undefined}
                       features={features}
                       perks={perks}
                       index={index}

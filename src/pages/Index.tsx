@@ -1,9 +1,9 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const Index = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -19,27 +19,31 @@ const Index = () => {
       
       if (error) {
         console.error('Error incrementing download counter:', error);
+        toast.error('Failed to process download request');
       } else {
         console.log('Download count increased to:', data);
-      }
-      
-      // Fetch the latest version download link
-      const { data: updateData, error: updateError } = await supabase
-        .from('update')
-        .select('link')
-        .order('release_at', { ascending: false })
-        .limit(1);
-      
-      if (updateError) throw updateError;
-      
-      if (updateData && updateData.length > 0 && updateData[0].link) {
-        // Open the download link in a new tab
-        window.open(updateData[0].link, '_blank');
-      } else {
-        console.error('No download link available');
+        
+        // Fetch the latest version download link
+        const { data: updateData, error: updateError } = await supabase
+          .from('update')
+          .select('link')
+          .order('release_at', { ascending: false })
+          .limit(1);
+        
+        if (updateError) throw updateError;
+        
+        if (updateData && updateData.length > 0 && updateData[0].link) {
+          // Open the download link in a new tab
+          window.open(updateData[0].link, '_blank');
+          toast.success('Download started');
+        } else {
+          toast.error('Download link not available');
+          console.error('No download link available');
+        }
       }
     } catch (error) {
       console.error('Error during download:', error);
+      toast.error('Failed to process download request');
     }
   };
 

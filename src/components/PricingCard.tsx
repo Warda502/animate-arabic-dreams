@@ -88,7 +88,7 @@ const PricingCard: React.FC<PricingPlanProps> = ({
         <CardTitle className={cn("text-2xl font-bold", getTextColorClass())}>
           {name}
         </CardTitle>
-        <div className="mt-4">
+        <div className="mt-4 flex items-center">
           {originalPrice && (
             <span className="text-lg text-gray-400 dark:text-gray-500 font-normal line-through mr-2">${originalPrice}</span>
           )}

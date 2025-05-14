@@ -11,7 +11,6 @@ interface UpdateItem {
   changelog: string | null;
   release_at: string | null;
   link: string | null;
-  download_count: number | null;
 }
 
 const WhatsNew = () => {
@@ -24,7 +23,7 @@ const WhatsNew = () => {
       try {
         const { data, error } = await supabase
           .from('update')
-          .select('*')
+          .select('varizon, name, changelog, release_at, link')
           .order('release_at', { ascending: false });
         
         if (error) throw error;
@@ -67,12 +66,14 @@ const WhatsNew = () => {
       
       if (error) {
         console.error('Error incrementing download counter:', error);
+        toast.error('Failed to process download');
       } else {
         console.log('Download count increased to:', data);
+        
+        // Open the download link in a new tab
+        window.open(link, '_blank');
+        toast.success('Download started');
       }
-      
-      // Open the download link in a new tab
-      window.open(link, '_blank');
     } catch (error) {
       console.error('Error during download:', error);
       toast.error('Failed to process download');
