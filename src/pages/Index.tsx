@@ -11,6 +11,15 @@ const Index = () => {
     setIsVisible(true);
   }, []);
 
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({
+        behavior: 'smooth'
+      });
+    }
+  };
+
   return (
     <div>
       {/* Hero Section */}
@@ -38,7 +47,11 @@ const Index = () => {
                 <Button className="bg-hw-blue hover:bg-blue-600 text-white px-8 py-6 rounded-full text-lg">
                   Download Now
                 </Button>
-                <Button variant="outline" className="border-hw-blue text-hw-blue hover:bg-blue-50 px-8 py-6 rounded-full text-lg">
+                <Button 
+                  variant="outline" 
+                  className="border-hw-blue text-hw-blue hover:bg-blue-50 dark:hover:bg-blue-900 dark:text-blue-400 dark:border-blue-400 dark:hover:text-blue-300 px-8 py-6 rounded-full text-lg transition-colors"
+                  onClick={() => scrollToSection('why-choose-pegasus')}
+                >
                   Learn More
                 </Button>
               </div>
@@ -56,6 +69,60 @@ const Index = () => {
                 />
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Why Choose Pegasus Tool */}
+      <section id="why-choose-pegasus" className="py-20 bg-white">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-center text-gray-900 mb-12">Why Choose Pegasus Tool</h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+            <div className="bg-gray-50 rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow">
+              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4 mx-auto">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-semibold text-center mb-3">Fast & Efficient</h3>
+              <p className="text-gray-600 text-center">
+                Our tool is designed for speed and efficiency, letting you complete operations in minutes that would take hours with other solutions.
+              </p>
+            </div>
+            
+            <div className="bg-gray-50 rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow">
+              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4 mx-auto">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-semibold text-center mb-3">Secure & Reliable</h3>
+              <p className="text-gray-600 text-center">
+                Security is our priority. We ensure your devices are handled safely with reliable processes that protect device integrity.
+              </p>
+            </div>
+            
+            <div className="bg-gray-50 rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow">
+              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4 mx-auto">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-semibold text-center mb-3">Multi-Brand Support</h3>
+              <p className="text-gray-600 text-center">
+                One tool for many devices. We support a wide range of manufacturers, making us your one-stop solution for all mobile servicing needs.
+              </p>
+            </div>
+          </div>
+          
+          <div className="mt-16 max-w-4xl mx-auto text-center">
+            <p className="text-gray-600 mb-8">
+              Pegasus Tool has been developed by experienced professionals in the mobile repair industry, focusing on the real needs of service centers and phone repair shops.
+            </p>
+            <Button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg text-lg">
+              Explore Features
+            </Button>
           </div>
         </div>
       </section>
