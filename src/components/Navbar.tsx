@@ -84,34 +84,6 @@ const Navbar = () => {
     // Regular links will be handled by React Router
   };
 
-  const handleDownload = async () => {
-    try {
-      if (latestUpdate?.link) {
-        // Call the increment_counter function
-        const { data, error: counterError } = await supabase.rpc('increment_counter');
-        
-        if (counterError) {
-          console.error('Error incrementing download counter:', counterError);
-          toast.error('Failed to process download request');
-        } else {
-          console.log('Download count increased to:', data);
-          
-          // Open the download link
-          window.location.href = latestUpdate.link;
-          toast.success('Download started!');
-        }
-      } else {
-        toast.info("Download link is not available at the moment. Please try again later.");
-      }
-    } catch (error) {
-      console.error('Error during download:', error);
-      // Still provide download link even if counting fails
-      if (latestUpdate?.link) {
-        window.location.href = latestUpdate.link;
-      }
-    }
-  };
-
   return (
     <motion.header 
       className={cn(
@@ -168,28 +140,6 @@ const Navbar = () => {
               </motion.a>
             ))}
           </nav>
-          
-          {/* Action Buttons */}
-          <div className="hidden md:flex items-center space-x-4">
-            <ThemeToggle />
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Button 
-                onClick={handleDownload}
-                className="bg-pegasus-orange hover:bg-pegasus-orange-600 text-white px-5 py-2 rounded-full shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 flex items-center gap-2 overflow-hidden group relative"
-              >
-                <motion.div 
-                  className="absolute inset-0 bg-white/20 z-0" 
-                  initial={{ x: -100, opacity: 0 }}
-                  whileHover={{ x: 300, opacity: 0.5 }}
-                  transition={{ duration: 0.7 }}
-                />
-                <Download className="h-4 w-4 relative z-10" /> 
-                <span className="relative z-10">
-                  Download Now {latestUpdate && `- ${latestUpdate.varizon}`}
-                </span>
-              </Button>
-            </motion.div>
-          </div>
           
           {/* Mobile Menu Button */}
           <div className="flex items-center md:hidden">
@@ -273,15 +223,6 @@ const Navbar = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
               >
-                <Button 
-                  onClick={() => {
-                    handleDownload();
-                    setIsOpen(false);
-                  }}
-                  className="w-full bg-pegasus-orange hover:bg-pegasus-orange-600 text-white py-3 rounded-full shadow-md hover:shadow-lg transition-all duration-300 flex items-center justify-center gap-2"
-                >
-                  <Download className="h-5 w-5" /> Download Now {latestUpdate && `- ${latestUpdate.varizon}`}
-                </Button>
               </motion.div>
             </div>
           </motion.div>
