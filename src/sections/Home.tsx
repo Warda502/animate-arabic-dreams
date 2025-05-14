@@ -136,24 +136,7 @@ const Home = () => {
 
   const handleDownload = () => {
     if (latestUpdate?.link) {
-    try {
-      // Call the increment_counter function
       const { data, error } = await supabase.rpc('increment_counter');
-      
-      if (error) {
-        console.error('Error incrementing download counter:', error);
-        toast.error('Failed to process download');
-      } else {
-        console.log('Download count increased to:', data);
-        
-        // Open the download link in a new tab
-        window.open(link, '_blank');
-        toast.success('Download started');
-      }
-    } catch (error) {
-      console.error('Error during download:', error);
-      toast.error('Failed to process download');
-    }
     } else {
       toast.info("Download link is not available at the moment. Please try again later.");
     }
