@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
+import { supabase } from "@/integrations/supabase/client";
 
 const Index = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -10,6 +11,45 @@ const Index = () => {
   useEffect(() => {
     setIsVisible(true);
   }, []);
+
+  const handleDownloadClick = async () => {
+    try {
+      // Call the increment_counter function
+      const { data, error } = await supabase.rpc('increment_counter');
+      
+      if (error) {
+        console.error('Error incrementing download counter:', error);
+      } else {
+        console.log('Download count increased to:', data);
+      }
+      
+      // Fetch the latest version download link
+      const { data: updateData, error: updateError } = await supabase
+        .from('update')
+        .select('link')
+        .order('release_at', { ascending: false })
+        .limit(1);
+      
+      if (updateError) throw updateError;
+      
+      if (updateData && updateData.length > 0 && updateData[0].link) {
+        // Open the download link in a new tab
+        window.open(updateData[0].link, '_blank');
+      } else {
+        console.error('No download link available');
+      }
+    } catch (error) {
+      console.error('Error during download:', error);
+    }
+  };
+
+  const handleLearnMoreClick = () => {
+    // Scroll to the "Why Choose Pegasus Tool" section
+    const section = document.getElementById('why-choose-pegasus');
+    if (section) {
+      section.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
   return (
     <div>
@@ -35,10 +75,17 @@ const Index = () => {
                 className="space-x-4 opacity-0 animate-fade-in-delay-3"
                 style={{ animationFillMode: 'forwards' }}
               >
-                <Button className="bg-hw-blue hover:bg-blue-600 text-white px-8 py-6 rounded-full text-lg">
+                <Button 
+                  className="bg-hw-blue hover:bg-blue-600 text-white px-8 py-6 rounded-full text-lg"
+                  onClick={handleDownloadClick}
+                >
                   Download Now
                 </Button>
-                <Button variant="outline" className="border-hw-blue text-hw-blue hover:bg-blue-50 px-8 py-6 rounded-full text-lg">
+                <Button 
+                  variant="outline" 
+                  className="border-hw-blue text-hw-blue hover:bg-blue-50 dark:hover:bg-blue-900 dark:hover:text-blue-300 dark:text-blue-400 dark:border-blue-700 px-8 py-6 rounded-full text-lg transition-colors"
+                  onClick={handleLearnMoreClick}
+                >
                   Learn More
                 </Button>
               </div>
@@ -61,9 +108,9 @@ const Index = () => {
       </section>
 
       {/* Features Preview */}
-      <section className="py-20 bg-white">
+      <section className="py-20 bg-white" id="why-choose-pegasus">
         <div className="container mx-auto px-4">
-          <h2 className="section-title text-hw-blue">Our Key Features</h2>
+          <h2 className="section-title text-hw-blue">Why Choose Pegasus Tool</h2>
           <p className="section-subtitle">Everything you need for smartphone flashing and unlocking</p>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 mt-16">
@@ -140,6 +187,7 @@ const Index = () => {
               </div>
               <Button 
                 className="ml-8 bg-hw-blue hover:bg-blue-600 text-white px-6 py-2 rounded-full"
+                onClick={handleDownloadClick}
               >
                 Download Now
               </Button>
@@ -290,6 +338,7 @@ const Index = () => {
             <div>
               <Button 
                 className="bg-white text-blue-600 hover:bg-blue-50 px-8 py-4 rounded-full text-lg shadow-lg"
+                onClick={handleDownloadClick}
               >
                 Download HW-Key Tool v1.1.7
               </Button>

@@ -16,31 +16,59 @@ interface PricingPlan {
   perks: string | null;
 }
 
+interface Offer {
+  id: string;
+  percentage: string | null;
+  expiry_at: string | null;
+  status: string | null;
+}
+
 const Pricing = () => {
   const { toast: toastNotify } = useToast();
   const [plans, setPlans] = useState<PricingPlan[]>([]);
+  const [activeOffer, setActiveOffer] = useState<Offer | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchPricingPlans = async () => {
       try {
-        const {
-          data,
-          error
-        } = await supabase.from('pricing').select('*').order('price');
-        if (error) throw error;
-        setPlans(data);
-        setLoading(false);
+        // Fetch pricing plans
+        const { data: plansData, error: plansError } = await supabase
+          .from('pricing')
+          .select('*')
+          .order('price');
+        
+        if (plansError) throw plansError;
+        
+        // Fetch active offers
+        const now = new Date().toISOString();
+        const { data: offersData, error: offersError } = await supabase
+          .from('offers')
+          .select('*')
+          .eq('status', 'active')
+          .gt('expiry_at', now)
+          .order('created_at', { ascending: false })
+          .limit(1);
+        
+        if (offersError) throw offersError;
+        
+        // Set the active offer if available
+        if (offersData && offersData.length > 0) {
+          setActiveOffer(offersData[0]);
+        }
+        
+        setPlans(plansData || []);
       } catch (error) {
-        console.error("Error fetching pricing plans:", error);
+        console.error("Error fetching pricing data:", error);
         toastNotify({
-          title: "Error loading pricing plans",
           description: "Please try again later",
           variant: "destructive"
         });
+      } finally {
         setLoading(false);
       }
     };
+    
     fetchPricingPlans();
   }, []);
 
@@ -61,6 +89,26 @@ const Pricing = () => {
     } catch (e) {
       return [];
     }
+  };
+
+  // Function to calculate discounted price
+  const calculateDiscountedPrice = (originalPrice: string): { original: number, discounted: number | null } => {
+    if (!activeOffer || !activeOffer.percentage) {
+      return { original: parseFloat(originalPrice), discounted: null };
+    }
+    
+    const price = parseFloat(originalPrice);
+    const discountPercentage = parseFloat(activeOffer.percentage);
+    
+    if (isNaN(price) || isNaN(discountPercentage)) {
+      return { original: parseFloat(originalPrice), discounted: null };
+    }
+    
+    const discountAmount = price * (discountPercentage / 100);
+    return {
+      original: price,
+      discounted: Math.round((price - discountAmount) * 100) / 100
+    };
   };
 
   const handleChoosePlan = (plan: PricingPlan) => {
@@ -129,13 +177,15 @@ const Pricing = () => {
                   const perks = parsePerks(plan.perks);
                   const planVariant = getPlanVariant(plan.name_plan);
                   const recommended = isRecommended(plan.name_plan);
+                  const { original, discounted } = calculateDiscountedPrice(plan.price);
 
                   return (
                     <PricingCard
                       key={plan.id}
                       id={plan.id}
                       name={plan.name_plan}
-                      price={plan.price}
+                      price={discounted ? discounted.toString() : plan.price}
+                      originalPrice={discounted ? original.toString() : undefined}
                       features={features}
                       perks={perks}
                       index={index}

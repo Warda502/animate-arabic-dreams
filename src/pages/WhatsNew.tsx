@@ -17,6 +17,7 @@ interface UpdateItem {
 const WhatsNew = () => {
   const [updates, setUpdates] = useState<UpdateItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [latestVersion, setLatestVersion] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchUpdates = async () => {
@@ -28,6 +29,11 @@ const WhatsNew = () => {
         
         if (error) throw error;
         setUpdates(data || []);
+        
+        // Set the latest version for comparison
+        if (data && data.length > 0) {
+          setLatestVersion(data[0].varizon);
+        }
       } catch (error) {
         console.error('Error fetching updates:', error);
         toast.error('Failed to load update history');
@@ -49,11 +55,27 @@ const WhatsNew = () => {
     }).format(date);
   };
 
-  const handleDownload = (link: string | null) => {
-    if (link) {
-      window.open(link, '_blank');
-    } else {
+  const handleDownload = async (link: string | null, version: string | null) => {
+    if (!link) {
       toast.error('Download link not available');
+      return;
+    }
+
+    try {
+      // Call the increment_counter function
+      const { data, error } = await supabase.rpc('increment_counter');
+      
+      if (error) {
+        console.error('Error incrementing download counter:', error);
+      } else {
+        console.log('Download count increased to:', data);
+      }
+      
+      // Open the download link in a new tab
+      window.open(link, '_blank');
+    } catch (error) {
+      console.error('Error during download:', error);
+      toast.error('Failed to process download');
     }
   };
 
@@ -107,17 +129,10 @@ const WhatsNew = () => {
                         </div>
                       </div>
                       
-                      <div className="flex justify-between items-center mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-                        <div className="text-sm text-gray-500 dark:text-gray-400">
-                          {update.download_count !== null ? (
-                            <span>{update.download_count.toLocaleString()} downloads</span>
-                          ) : (
-                            <span>Download count not available</span>
-                          )}
-                        </div>
-                        {update.link && (
+                      <div className="flex justify-end items-center mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                        {update.link && update.varizon === latestVersion && (
                           <Button 
-                            onClick={() => handleDownload(update.link)}
+                            onClick={() => handleDownload(update.link, update.varizon)}
                             size="sm"
                             className="bg-pegasus-orange hover:bg-pegasus-orange-600 text-white flex items-center gap-1"
                           >
