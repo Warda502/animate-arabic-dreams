@@ -1,45 +1,72 @@
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Card } from '@/components/ui/card';
-import { supabase } from "@/integrations/supabase/client";
-import { Loader2 } from "lucide-react";
-import { toast } from "@/components/ui/use-toast";
-
-interface PaymentMethod {
-  id: string;
-  method: string;
-  description: string | null;
-  image_url: string | null;
-}
 
 const PaymentMethods = () => {
-  const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchPaymentMethods = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('payment_methods')
-          .select('*')
-          .order('id');
-        
-        if (error) throw error;
-        setPaymentMethods(data || []);
-      } catch (error) {
-        console.error('Error fetching payment methods:', error);
-        toast({
-          title: "Error",
-          description: 'Failed to load payment methods',
-          variant: "destructive"
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchPaymentMethods();
-  }, []);
+  const paymentMethods = [
+    {
+      id: 1,
+      name: "PayPal",
+      icon: (
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10" viewBox="0 0 24 24" fill="#003087">
+          <path d="M20.067 8.478c.492.88.556 2.014.3 3.327-.74 3.806-3.276 5.12-6.514 5.12h-.5a.805.805 0 00-.794.68l-.04.22-.63 4.02-.024.15a.798.798 0 01-.79.68h-2.75a.483.483 0 01-.477-.558l1.56-9.902a.735.735 0 01.725-.627h4.8c2.142 0 3.75.625 4.65 2.573zm-7.18-5.604c3.007 0 5.587 1.154 6.38 4.27.895 3.483-1.673 6.802-5.23 6.802h-1.21c-.4 0-.74.29-.802.685l-.693 4.38a.82.82 0 01-.81.685H7.366a.499.499 0 01-.493-.576l2.143-13.58a.824.824 0 01.811-.685l3.059.02z" />
+        </svg>
+      ),
+      description: "Fast and secure online payment service"
+    },
+    {
+      id: 2,
+      name: "Bank Transfer",
+      icon: (
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z" />
+        </svg>
+      ),
+      description: "Direct transfer to our bank accounts"
+    },
+    {
+      id: 3,
+      name: "USDT",
+      icon: (
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10" viewBox="0 0 24 24" fill="#26A17B">
+          <circle cx="12" cy="12" r="12" fill="#26A17B" />
+          <path d="M13.24 8.64v-.79h2.58V6.24H8.19v1.61h2.58v.79a8.66 8.66 0 00-4.42 1.28v7.17a9.88 9.88 0 004.42 1.13 10.06 10.06 0 004.74-1.13v-7.17a8.52 8.52 0 00-2.27-.79zm1.89 7.17a8.1 8.1 0 01-3.2.63 8 8 0 01-2.9-.47v-4.69a7.08 7.08 0 012.9-.63 7.08 7.08 0 013.2.63z" fill="white" />
+        </svg>
+      ),
+      description: "Tether stablecoin cryptocurrency"
+    },
+    {
+      id: 4,
+      name: "BTC",
+      icon: (
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10" viewBox="0 0 24 24" fill="#F7931A">
+          <path d="M23.638 14.904c-1.602 6.425-8.113 10.34-14.542 8.736C2.67 22.052-1.244 15.542.359 9.105 1.962 2.67 8.475-1.243 14.9.358c6.453 1.605 10.356 8.116 8.738 14.548v-.002zm-5.54-3.006c.085-.894-.5-1.374-1.342-1.697l.28-1.12-1.315-.33-.272 1.085c-.35-.09-.7-.168-1.052-.25l.273-1.09-1.32-.328-.274 1.118c-.288-.07-.576-.134-.856-.204l.004-.02-1.82-.455-.35 1.407s.98.225.96.238c.533.134.632.488.615.77l-.616 2.473c.037.01.083.022.135.044l-.14-.035-.866 3.47c-.064.158-.23.398-.6.307.012.02-.96-.24-.96-.24l-.658 1.514 1.736.434c.32.08.636.164.946.243l-.278 1.117 1.315.33.277-1.11c.36.1.713.19 1.057.275l-.273 1.102 1.32.33.28-1.112c2.25.427 3.944.255 4.65-1.774.57-1.637-.03-2.586-1.217-3.205.867-.198 1.517-.77 1.69-1.94l.01-.002zm-3.01 4.24c-.404 1.64-3.157.75-4.05.53l.72-2.894c.896.225 3.757.67 3.33 2.363zm.41-4.24c-.37 1.49-2.662.735-3.405.55l.654-2.625c.744.188 3.137.535 2.75 2.077z" />
+        </svg>
+      ),
+      description: "Bitcoin cryptocurrency"
+    },
+    {
+      id: 5,
+      name: "ETH",
+      icon: (
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10" viewBox="0 0 24 24" fill="#627EEA">
+          <path d="M11.944 17.97L4.58 13.62 11.943 24l7.37-10.38-7.372 4.35h.003zM12.056 0L4.69 12.223l7.365 4.354 7.365-4.35L12.056 0z" />
+        </svg>
+      ),
+      description: "Ethereum cryptocurrency"
+    },
+    {
+      id: 6,
+      name: "Binance/BNB",
+      icon: (
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10" viewBox="0 0 24 24" fill="#F3BA2F">
+          <path d="M12 0L5.708 6.293 8.54 9.123l3.46-3.46 3.46 3.46 2.831-2.83L12 0zM5.708 12L2.876 9.17 0 12.044l2.876 2.873L5.708 12zM8.54 14.877l-2.832 2.83L12 24l6.292-6.293-2.831-2.83L12 18.337l-3.46-3.46zM21.124 14.917L24 12.043l-2.876-2.873L18.292 12l2.832 2.917z" />
+          <path d="M15.456 12l-1.2 1.2-2.256 2.245-1.2 1.2-1.2-1.2-2.256-2.245L6.12 12l1.223-1.2 2.256-2.257 1.2-1.2 1.2 1.2 2.256 2.257L15.456 12z" />
+        </svg>
+      ),
+      description: "Binance Coin cryptocurrency"
+    }
+  ];
 
   return (
     <div className="pt-24 pb-16">
@@ -61,36 +88,20 @@ const PaymentMethods = () => {
           <Card className="p-10 shadow-lg">
             <h2 className="text-3xl font-bold text-center mb-10">We Accept</h2>
             
-            {loading ? (
-              <div className="flex justify-center items-center py-24">
-                <Loader2 className="h-12 w-12 text-blue-500 animate-spin" />
-              </div>
-            ) : paymentMethods.length > 0 ? (
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 mb-12">
-                {paymentMethods.map((method) => (
-                  <div 
-                    key={method.id} 
-                    className="flex flex-col items-center justify-center p-4 rounded-lg hover:bg-gray-50 transition-colors text-center"
-                  >
-                    <div className="mb-4 text-gray-700">
-                      {method.image_url ? (
-                        <img src={method.image_url} alt={method.method} className="h-12 w-auto" />
-                      ) : (
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-pegasus-orange" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-                        </svg>
-                      )}
-                    </div>
-                    <h3 className="text-lg font-semibold mb-2">{method.method}</h3>
-                    <p className="text-sm text-gray-600">{method.description}</p>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 mb-12">
+              {paymentMethods.map((method) => (
+                <div 
+                  key={method.id} 
+                  className="flex flex-col items-center justify-center p-4 rounded-lg hover:bg-gray-50 transition-colors text-center"
+                >
+                  <div className="mb-4 text-gray-700">
+                    {method.icon}
                   </div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-10">
-                <p>No payment methods found.</p>
-              </div>
-            )}
+                  <h3 className="text-lg font-semibold mb-2">{method.name}</h3>
+                  <p className="text-sm text-gray-600">{method.description}</p>
+                </div>
+              ))}
+            </div>
             
             <div className="text-center text-gray-600">
               <p className="mb-6">

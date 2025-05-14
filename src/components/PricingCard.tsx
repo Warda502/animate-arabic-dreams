@@ -17,7 +17,6 @@ interface PricingPlanProps {
   recommended?: boolean;
   onChoosePlan: () => void;
   variant?: 'primary' | 'secondary' | 'premium' | 'basic';
-  discountPercentage?: number;
 }
 
 const PricingCard: React.FC<PricingPlanProps> = ({
@@ -29,8 +28,7 @@ const PricingCard: React.FC<PricingPlanProps> = ({
   index,
   recommended = false,
   onChoosePlan,
-  variant = 'primary',
-  discountPercentage
+  variant = 'primary'
 }) => {
   const getGradientClass = () => {
     switch (variant) {
@@ -66,13 +64,6 @@ const PricingCard: React.FC<PricingPlanProps> = ({
     toast.info(`For more information about our ${name} plan, please contact our sales team.`);
   };
 
-  // Calculate discounted price if a discount percentage is provided
-  const originalPrice = parseFloat(price);
-  let discountedPrice;
-  if (discountPercentage && discountPercentage > 0) {
-    discountedPrice = originalPrice - (originalPrice * (discountPercentage / 100));
-  }
-
   return (
 <Card 
   className={cn(
@@ -96,18 +87,9 @@ const PricingCard: React.FC<PricingPlanProps> = ({
       {name}
     </CardTitle>
     <div className="mt-4">
-      {discountedPrice ? (
-        <div className="flex items-end gap-2">
-          <span className="text-3xl font-bold text-gray-900 dark:text-gray-100">${discountedPrice.toFixed(2)}</span>
-          <span className="text-lg text-gray-500 dark:text-gray-400 line-through">${originalPrice.toFixed(2)}</span>
-          <span className="text-sm text-green-600 dark:text-green-400 font-semibold">
-            {discountPercentage}% OFF
-          </span>
-        </div>
-      ) : (
-        <span className="text-3xl font-bold text-gray-900 dark:text-gray-100">${price}</span>
-      )}
-      <span className="text-sm text-gray-500 dark:text-gray-400 font-normal ml-1">PER MONTH</span>
+      <span className="text-3xl font-bold text-gray-900 dark:text-gray-100">${price}</span>
+      <span className="text-sm text-gray-500 dark:text-gray-400 font-normal ml-1">PER
+MONTH</span>
     </div>
   </CardHeader>
   <CardContent className="px-6 pb-6">
