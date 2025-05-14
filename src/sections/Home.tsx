@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
@@ -8,6 +9,7 @@ import { ArrowRight, Download, ShieldCheck, Smartphone, BarChart3, Users, CheckC
 import SectionHeader from '@/components/SectionHeader';
 import AnimatedCard from '@/components/AnimatedCard';
 import AnimatedCounter from '@/components/AnimatedCounter';
+import AnimatedButton from '@/components/AnimatedButton';
 
 const container = {
   hidden: { opacity: 0 },
@@ -229,14 +231,16 @@ const Home = () => {
                     <span className="absolute bottom-0 left-0 w-full h-0.5 bg-white/30 scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></span>
                   </span>
                 </Button>
-                <Button 
+                <AnimatedButton 
                   variant="outline" 
-                  className="border-2 border-pegasus-orange text-pegasus-orange hover:bg-orange-900/20 dark:hover:bg-orange-900/20 px-6 py-6 rounded-full text-lg w-full md:w-auto transition-all duration-300 hover:-translate-y-1 hover:border-pegasus-orange-400 group flex items-center justify-center"
-                  onClick={() => scrollToSection('supported-models')}
+                  className="border-2 border-pegasus-orange text-pegasus-orange hover:bg-orange-900/20 dark:hover:bg-orange-900/20 px-6 py-6 rounded-full text-lg w-full md:w-auto transition-all duration-300 hover:-translate-y-1 hover:border-pegasus-orange-400"
+                  animation="shine"
+                  icon={ArrowRight}
+                  iconPosition="right"
+                  onClick={() => scrollToSection('why-choose-pegasus')}
                 >
-                  <span>Learn More</span> 
-                  <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                </Button>
+                  Learn More
+                </AnimatedButton>
               </motion.div>
             </motion.div>
             <motion.div 
@@ -376,7 +380,7 @@ const Home = () => {
       </section>
 
       {/* Why Choose Us */}
-      <section className="py-20 bg-gradient-to-r from-orange-50 to-orange-100/50 dark:from-gray-800 dark:to-gray-900 overflow-hidden relative">
+      <section id="why-choose-pegasus" className="py-20 bg-gradient-to-r from-orange-50 to-orange-100/50 dark:from-gray-800 dark:to-gray-900 overflow-hidden relative">
         <div className="absolute inset-0 bg-[url('/patterns/circles.svg')] opacity-5"></div>
         
         {/* Animated background elements */}

@@ -5,6 +5,7 @@ import { Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 import { toast } from "sonner";
+import { motion } from "framer-motion";
 import SectionHeader from '@/components/SectionHeader';
 import PricingCard from '@/components/PricingCard';
 
@@ -144,15 +145,8 @@ const Pricing = () => {
     return lowerPlanName.includes('recommended') || lowerPlanName.includes('premium');
   };
 
-  const getPlanCardWidth = () => {
-    const count = plans.length;
-    if (count === 1) return 'md:max-w-md';
-    if (count === 2) return 'md:max-w-3xl';
-    return 'md:max-w-6xl';
-  };
-
   return (
-    <div className="pt-24 pb-16">
+    <div className="pt-24 pb-16" id="pricing">
       {/* Hero Section */}
       <section className="bg-gradient-to-b from-white to-orange-50 dark:from-gray-900 dark:to-gray-800 py-16 relative overflow-hidden">
         <div className="absolute inset-0 bg-[url('/patterns/grid.svg')] opacity-5"></div>
@@ -160,6 +154,7 @@ const Pricing = () => {
           <SectionHeader
             title="Pricing Plans"
             subtitle="Choose the perfect plan for your smartphone unlocking and flashing needs"
+            highlightWord="Plans"
           />
         </div>
       </section>
@@ -173,35 +168,38 @@ const Pricing = () => {
               <p className="text-lg text-gray-500 dark:text-gray-400">Loading pricing plans...</p>
             </div>
           ) : plans.length > 0 ? (
-            <div className={`flex justify-center items-center ${plans.length === 1 ? 'mt-10 mb-10' : ''}`}>
-              <div className={`grid grid-cols-1 md:grid-cols-${Math.min(plans.length, 3)} gap-8 ${getPlanCardWidth()}`}>
-                {plans.map((plan, index) => {
-                  const features = parseFeatures(plan.features);
-                  const perks = parsePerks(plan.perks);
-                  const planVariant = getPlanVariant(plan.name_plan);
-                  const recommended = isRecommended(plan.name_plan);
-                  
-                  // Apply discount if offer is active
-                  const { original, discounted } = calculateDiscountedPrice(plan.price);
+            <motion.div 
+              className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.6 }}
+            >
+              {plans.map((plan, index) => {
+                const features = parseFeatures(plan.features);
+                const perks = parsePerks(plan.perks);
+                const planVariant = getPlanVariant(plan.name_plan);
+                const recommended = isRecommended(plan.name_plan);
+                
+                // Apply discount if offer is active
+                const { original, discounted } = calculateDiscountedPrice(plan.price);
 
-                  return (
-                    <PricingCard
-                      key={plan.id}
-                      id={plan.id}
-                      name={plan.name_plan}
-                      price={discounted || original}
-                      originalPrice={discounted ? original : undefined}
-                      features={features}
-                      perks={perks}
-                      index={index}
-                      recommended={recommended}
-                      variant={planVariant}
-                      onChoosePlan={() => handleChoosePlan(plan)}
-                    />
-                  );
-                })}
-              </div>
-            </div>
+                return (
+                  <PricingCard
+                    key={plan.id}
+                    id={plan.id}
+                    name={plan.name_plan}
+                    price={discounted || original}
+                    originalPrice={discounted ? original : undefined}
+                    features={features}
+                    perks={perks}
+                    index={index}
+                    recommended={recommended}
+                    variant={planVariant}
+                    onChoosePlan={() => handleChoosePlan(plan)}
+                  />
+                );
+              })}
+            </motion.div>
           ) : (
             <div className="text-center py-20 px-4 max-w-2xl mx-auto">
               <h3 className="text-2xl font-bold text-gray-700 dark:text-gray-300 mb-4">No pricing plans available at the moment</h3>
