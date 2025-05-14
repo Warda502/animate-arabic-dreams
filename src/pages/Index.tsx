@@ -16,6 +16,7 @@ const Index = () => {
     try {
       // Call the increment_counter function
       const { data, error } = await supabase.rpc('increment_counter');
+      console.error('increment_counter', error);
       
       if (error) {
         console.error('Error incrementing download counter:', error);
@@ -106,95 +107,6 @@ const Index = () => {
                   className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 max-w-full h-auto animate-float"
                 />
               </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Features Preview */}
-      <section className="py-20 bg-white" id="why-choose-pegasus">
-        <div className="container mx-auto px-4">
-          <h2 className="section-title text-hw-blue">Why Choose Pegasus Tool</h2>
-          <p className="section-subtitle">Everything you need for smartphone flashing and unlocking</p>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 mt-16">
-            <div className="flex flex-col items-center text-center p-6 bg-white rounded-xl shadow-md card-hover">
-              <div className="w-16 h-16 flex items-center justify-center bg-blue-100 rounded-full mb-6">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-hw-blue" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold mb-3">Qualcomm & MediaTek Support</h3>
-              <p className="text-gray-600">Comprehensive support for the most common mobile chipsets, ensuring broad compatibility.</p>
-            </div>
-            
-            <div className="flex flex-col items-center text-center p-6 bg-white rounded-xl shadow-md card-hover">
-              <div className="w-16 h-16 flex items-center justify-center bg-blue-100 rounded-full mb-6">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-hw-blue" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold mb-3">Multi-Brand Compatibility</h3>
-              <p className="text-gray-600">Service devices from numerous manufacturers including Xiaomi, Vivo, Oppo, and more.</p>
-            </div>
-            
-            <div className="flex flex-col items-center text-center p-6 bg-white rounded-xl shadow-md card-hover">
-              <div className="w-16 h-16 flex items-center justify-center bg-blue-100 rounded-full mb-6">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-hw-blue" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold mb-3">Firmware Flashing</h3>
-              <p className="text-gray-600">Easily install or update device firmware to fix software issues or resolve boot loop problems.</p>
-            </div>
-          </div>
-          
-          <div className="text-center mt-16">
-            <Button 
-              className="bg-hw-blue hover:bg-blue-600 text-white px-8 py-3 rounded-full text-lg"
-              asChild
-            >
-              <Link to="/features">
-                Discover All Features
-              </Link>
-            </Button>
-          </div>
-        </div>
-      </section>
-
-      {/* Software Screenshot */}
-      <section className="py-20 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <h2 className="section-title text-hw-blue">Powerful Software Interface</h2>
-          <p className="section-subtitle">User-friendly design for efficient device management</p>
-          
-          <div className="mt-16 rounded-lg overflow-hidden shadow-xl max-w-4xl mx-auto transform hover:-translate-y-2 transition-transform duration-300">
-            <img 
-              src="/lovable-uploads/46319556-27d1-46f3-b365-81927d12674f.png" 
-              alt="HW-Key Tool Interface" 
-              className="w-full h-auto"
-            />
-          </div>
-          
-          <div className="flex justify-center mt-12">
-            <div className="flex items-center p-6 bg-white rounded-full shadow-lg">
-              <div className="flex-shrink-0 mr-4">
-                <div className="h-14 w-14 rounded-full bg-blue-100 flex items-center justify-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-hw-blue" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                  </svg>
-                </div>
-              </div>
-              <div>
-                <h3 className="text-xl font-semibold">HW-Key Tool v1.1.7</h3>
-                <p className="text-gray-600">Latest version with enhanced features and bug fixes</p>
-              </div>
-              <Button 
-                className="ml-8 bg-hw-blue hover:bg-blue-600 text-white px-6 py-2 rounded-full"
-                onClick={handleDownloadClick}
-              >
-                Download Now
-              </Button>
             </div>
           </div>
         </div>
@@ -325,28 +237,6 @@ const Index = () => {
                 View All Resellers
               </Link>
             </Button>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-blue-600 to-blue-400 text-white">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col md:flex-row items-center justify-between">
-            <div className="md:w-2/3 mb-10 md:mb-0">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">Ready to get started?</h2>
-              <p className="text-lg text-blue-100 max-w-xl">
-                Download HW-Key Tool now and unlock the full potential of your smartphone flashing and unlocking service.
-              </p>
-            </div>
-            <div>
-              <Button 
-                className="bg-white text-blue-600 hover:bg-blue-50 px-8 py-4 rounded-full text-lg shadow-lg"
-                onClick={handleDownloadClick}
-              >
-                Download HW-Key Tool v1.1.7
-              </Button>
-            </div>
           </div>
         </div>
       </section>
