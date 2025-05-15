@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
@@ -9,7 +8,7 @@ interface AnimatedCardProps {
   className?: string;
   delay?: number;
   variant?: "default" | "elegant" | "gradient" | "glow" | "glass" | "neo" | "minimal" | "3d";
-  hoverEffect?: "scale" | "lift" | "glow" | "none" | "rotate" | "bounce" | "tilt" | "shine" | "flip";
+  hoverEffect?: "scale" | "lift" | "glow" | "none" | "rotate" | "bounce" | "tilt" | "shine" | "flip" | "3d";
   whileInView?: boolean;
   onClick?: () => void;
   interactive3D?: boolean;
