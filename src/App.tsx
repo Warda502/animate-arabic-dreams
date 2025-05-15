@@ -24,7 +24,7 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
 const ScrollToTop = () => {
-  const { pathname, hash } = useLocation();
+  const { pathname, hash, state } = useLocation();
 
   useEffect(() => {
     // If there's a hash, scroll to it
@@ -36,9 +36,20 @@ const ScrollToTop = () => {
       }
     }
     
+    // Check if we have a state with scrollTo from navbar navigation
+    if (state && state.scrollTo) {
+      setTimeout(() => {
+        const element = document.getElementById(state.scrollTo);
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth" });
+        }
+      }, 100); // Small delay to ensure page is loaded
+      return;
+    }
+    
     // Otherwise scroll to top
     window.scrollTo(0, 0);
-  }, [pathname, hash]);
+  }, [pathname, hash, state]);
 
   return null;
 };

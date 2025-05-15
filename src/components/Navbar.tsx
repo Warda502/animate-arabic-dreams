@@ -1,5 +1,6 @@
+
 import React, { useState, useEffect } from 'react';
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -22,6 +23,8 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [latestUpdate, setLatestUpdate] = useState<LatestUpdate | null>(null);
+  const navigate = useNavigate();
+  const location = useLocation();
   
   // Menu items
   const menuItems: MenuItem[] = [
@@ -71,17 +74,26 @@ const Navbar = () => {
     fetchLatestUpdate();
   }, []);
 
-  // Modified to handle both scroll sections and regular page links
+  // Modified to handle section navigation and page navigation properly
   const scrollToSection = (href: string) => {
     setIsOpen(false);
     
     if (href.startsWith('#')) {
-      const element = document.querySelector(href);
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
+      // Check if we're already on the home page
+      if (location.pathname !== '/') {
+        // Navigate to home page first, then scroll to the section after navigation
+        navigate('/', { state: { scrollTo: href.substring(1) } }); 
+      } else {
+        // We're already on the home page, just scroll
+        const element = document.querySelector(href);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
       }
+    } else {
+      // For non-hash links, use regular navigation
+      navigate(href);
     }
-    // Regular links will be handled by React Router
   };
 
   return (
@@ -122,10 +134,6 @@ const Navbar = () => {
                 onClick={(e) => {
                   e.preventDefault();
                   scrollToSection(item.href);
-                  if (!item.href.startsWith('#')) {
-                    // Use regular navigation for non-hash links
-                    window.location.href = item.href;
-                  }
                 }}
                 className={cn(
                   "font-medium transition-all duration-200 relative py-2 px-1",
@@ -200,10 +208,6 @@ const Navbar = () => {
                   onClick={(e) => {
                     e.preventDefault();
                     scrollToSection(item.href);
-                    if (!item.href.startsWith('#')) {
-                      // Use regular navigation for non-hash links
-                      window.location.href = item.href;
-                    }
                   }}
                   className={cn(
                     "block py-3 text-gray-700 dark:text-gray-200 hover:text-pegasus-orange font-medium transition-all duration-200 border-b border-gray-100 dark:border-gray-800",

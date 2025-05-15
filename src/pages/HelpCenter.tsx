@@ -1,252 +1,316 @@
 
-import React from 'react';
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Search, MessageSquare, PhoneCall, Mail, Clock, CheckCircle, AlertTriangle, HelpCircle, ArrowRight } from "lucide-react";
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import { Search, MessageCircle, PhoneCall, Mail, ArrowRight, ChevronDown, ChevronUp } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Textarea } from '@/components/ui/textarea';
+import { toast } from 'sonner';
+import AnimatedCard from '@/components/AnimatedCard';
 
 const HelpCenter = () => {
+  const [expanded, setExpanded] = useState<number | null>(null);
+  const [contactForm, setContactForm] = useState({
+    name: '',
+    email: '',
+    message: ''
+  });
+
+  // Handle expanding/collapsing FAQ items
+  const toggleExpand = (index: number) => {
+    if (expanded === index) {
+      setExpanded(null);
+    } else {
+      setExpanded(index);
+    }
+  };
+
+  // Handle search
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    const formData = new FormData(e.target as HTMLFormElement);
+    const searchQuery = formData.get('search') as string;
+    
+    if (searchQuery.trim()) {
+      toast.info(`Searching for help with: ${searchQuery}`);
+    } else {
+      toast.warning('Please enter a search query');
+    }
+  };
+
+  // Handle contact form
+  const handleContactSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!contactForm.name || !contactForm.email || !contactForm.message) {
+      toast.error('Please fill out all fields');
+      return;
+    }
+    
+    // Form validation passed
+    toast.success('Your message has been sent! We will get back to you soon.');
+    setContactForm({
+      name: '',
+      email: '',
+      message: ''
+    });
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setContactForm(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  // FAQ data
+  const faqs = [
+    {
+      question: "How do I install Pegasus Tool?",
+      answer: "Download the latest version from our website, run the installer, and follow the on-screen instructions. Make sure to run the installer as administrator."
+    },
+    {
+      question: "Why is my device not being detected?",
+      answer: "First, ensure your device has USB debugging enabled. Second, install the appropriate drivers for your device. Finally, try using a different USB cable or port."
+    },
+    {
+      question: "How do I update to the latest version?",
+      answer: "You can update directly from within the application by going to Help > Check for Updates, or download the latest version from our website and install it over your current installation."
+    },
+    {
+      question: "Is my device supported?",
+      answer: "Check our Supported Models section to see if your specific device model is listed. We regularly add support for new devices with each update."
+    },
+    {
+      question: "How do I activate my license?",
+      answer: "After purchase, you'll receive an activation key by email. Open Pegasus Tool, go to Settings > License, and enter your activation key."
+    }
+  ];
+
+  // Contact methods
+  const contactMethods = [
+    {
+      method: "Live Chat",
+      description: "Chat with our support team in real-time",
+      icon: MessageCircle,
+      action: () => toast.info("Initiating live chat with support...")
+    },
+    {
+      method: "Phone Support",
+      description: "Call our dedicated support line",
+      icon: PhoneCall,
+      action: () => toast.info("Opening phone support details...")
+    },
+    {
+      method: "Email",
+      description: "Send us an email and we'll respond within 24 hours",
+      icon: Mail,
+      action: () => toast.info("Preparing email support form...")
+    }
+  ];
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-20 pb-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="text-center mb-12 pt-8">
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">Help Center</h1>
-          <p className="text-lg text-gray-600 dark:text-gray-300 mb-8 max-w-3xl mx-auto">
-            Get the assistance you need with Pegasus Tool. Our support team is ready to help you resolve any issues.
+        {/* Hero Section */}
+        <motion.div 
+          className="text-center mb-16"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+            Help Center
+          </h1>
+          <p className="text-lg text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+            Get the support you need to make the most of Pegasus Tool
           </p>
           
-          <div className="max-w-2xl mx-auto relative">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <Search className="h-5 w-5 text-gray-400" />
+          {/* Search section */}
+          <form onSubmit={handleSearch} className="mt-10 max-w-2xl mx-auto">
+            <div className="relative flex items-center">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              <Input 
+                name="search"
+                type="text" 
+                placeholder="What do you need help with?" 
+                className="pl-10 pr-16 py-6 w-full text-base rounded-full border-2 border-gray-200 dark:border-gray-700 focus:border-pegasus-orange focus:ring-pegasus-orange"
+              />
+              <Button 
+                type="submit"
+                className="absolute right-2 bg-pegasus-orange hover:bg-pegasus-orange-600 text-white rounded-full transition-transform hover:scale-105"
+              >
+                Search
+              </Button>
             </div>
-            <Input
-              type="text"
-              placeholder="Describe your issue or search for solutions..."
-              className="pl-10 py-6 text-lg w-full rounded-lg bg-white dark:bg-gray-800"
-            />
-            <Button className="absolute right-2 top-2 bg-pegasus-orange hover:bg-pegasus-orange-600">
-              Search
+          </form>
+        </motion.div>
+        
+        {/* Contact Methods */}
+        <div className="mb-16">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-8 text-center">Get in Touch</h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {contactMethods.map((method, index) => (
+              <AnimatedCard 
+                key={index} 
+                variant="elegant" 
+                hoverEffect="lift" 
+                delay={index * 0.1}
+                className="h-full cursor-pointer"
+                onClick={method.action}
+              >
+                <CardContent className="flex flex-col items-center text-center p-8">
+                  <div className="w-16 h-16 rounded-full bg-pegasus-orange/10 flex items-center justify-center mb-4">
+                    <method.icon className="h-8 w-8 text-pegasus-orange" />
+                  </div>
+                  <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">{method.method}</h3>
+                  <p className="text-gray-600 dark:text-gray-400">
+                    {method.description}
+                  </p>
+                  <Button 
+                    variant="ghost" 
+                    className="mt-4 text-pegasus-orange hover:bg-pegasus-orange/10 group"
+                    onClick={method.action}
+                  >
+                    Contact Now
+                    <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  </Button>
+                </CardContent>
+              </AnimatedCard>
+            ))}
+          </div>
+        </div>
+        
+        {/* FAQ Section */}
+        <div className="mb-16">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-8 text-center">Frequently Asked Questions</h2>
+          
+          <div className="max-w-3xl mx-auto space-y-4">
+            {faqs.map((faq, index) => (
+              <motion.div 
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+              >
+                <Card className="overflow-hidden">
+                  <CardContent className="p-0">
+                    <div
+                      className="p-6 flex justify-between items-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                      onClick={() => toggleExpand(index)}
+                    >
+                      <h3 className="font-semibold text-gray-900 dark:text-white">{faq.question}</h3>
+                      <Button variant="ghost" size="icon">
+                        {expanded === index ? (
+                          <ChevronUp className="h-5 w-5 text-pegasus-orange" />
+                        ) : (
+                          <ChevronDown className="h-5 w-5 text-gray-500" />
+                        )}
+                      </Button>
+                    </div>
+                    
+                    {/* Answer */}
+                    <motion.div
+                      initial={{ height: 0 }}
+                      animate={{ height: expanded === index ? "auto" : 0 }}
+                      transition={{ duration: 0.3 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="p-6 pt-0 border-t border-gray-100 dark:border-gray-700">
+                        <p className="text-gray-600 dark:text-gray-400">{faq.answer}</p>
+                      </div>
+                    </motion.div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+          
+          <div className="mt-8 text-center">
+            <Button 
+              variant="outline" 
+              className="border-pegasus-orange text-pegasus-orange hover:bg-pegasus-orange hover:text-white transition-colors"
+              onClick={() => toast.info('Loading more frequently asked questions')}
+            >
+              View All FAQs
+              <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </div>
         </div>
-
-        {/* Support Options */}
-        <Tabs defaultValue="chat" className="mb-16">
-          <TabsList className="grid grid-cols-3 max-w-2xl mx-auto mb-6">
-            <TabsTrigger value="chat">Live Chat</TabsTrigger>
-            <TabsTrigger value="phone">Phone Support</TabsTrigger>
-            <TabsTrigger value="ticket">Submit Ticket</TabsTrigger>
-          </TabsList>
-          
-          <Card className="max-w-3xl mx-auto bg-white dark:bg-gray-800">
-            <CardContent className="p-6">
-              <TabsContent value="chat" className="mt-0">
-                <div className="flex flex-col md:flex-row items-start gap-6">
-                  <div className="flex-1">
-                    <div className="flex items-center mb-4">
-                      <MessageSquare className="h-6 w-6 text-pegasus-orange mr-2" />
-                      <h3 className="text-xl font-medium text-gray-900 dark:text-white">Live Chat Support</h3>
-                    </div>
-                    <p className="text-gray-600 dark:text-gray-300 mb-4">
-                      Connect with our support team instantly via live chat for quick assistance with your questions.
-                    </p>
-                    <div className="flex items-center mb-4 text-sm text-gray-500 dark:text-gray-400">
-                      <Clock className="h-4 w-4 mr-1" /> Available 24/7
-                    </div>
-                    <div className="flex items-center mb-6 text-sm text-green-500">
-                      <CheckCircle className="h-4 w-4 mr-1" /> Support agents online now
-                    </div>
-                    <Button className="bg-pegasus-orange hover:bg-pegasus-orange-600">
-                      Start Chat Now
-                    </Button>
-                  </div>
-                  <div className="w-full md:w-1/3 bg-gray-100 dark:bg-gray-700 p-4 rounded-lg mt-4 md:mt-0">
-                    <h4 className="font-medium text-gray-900 dark:text-white mb-2">Chat Tips</h4>
-                    <ul className="text-sm space-y-2 text-gray-600 dark:text-gray-300">
-                      <li>• Have your license key ready</li>
-                      <li>• Describe your issue clearly</li>
-                      <li>• Include any error messages</li>
-                      <li>• Mention your device model</li>
-                    </ul>
-                  </div>
-                </div>
-              </TabsContent>
+        
+        {/* Contact Form */}
+        <motion.div 
+          className="max-w-2xl mx-auto"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.6 }}
+        >
+          <Card>
+            <CardContent className="p-8">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 text-center">Send Us a Message</h2>
               
-              <TabsContent value="phone" className="mt-0">
-                <div className="flex flex-col md:flex-row items-start gap-6">
-                  <div className="flex-1">
-                    <div className="flex items-center mb-4">
-                      <PhoneCall className="h-6 w-6 text-pegasus-orange mr-2" />
-                      <h3 className="text-xl font-medium text-gray-900 dark:text-white">Phone Support</h3>
-                    </div>
-                    <p className="text-gray-600 dark:text-gray-300 mb-4">
-                      Talk directly with our technical specialists who can walk you through solutions step by step.
-                    </p>
-                    <div className="flex items-center mb-4 text-sm text-gray-500 dark:text-gray-400">
-                      <Clock className="h-4 w-4 mr-1" /> Mon-Fri: 8AM-8PM EST
-                    </div>
-                    <div className="mb-6">
-                      <p className="text-xl font-medium text-gray-900 dark:text-white">+1 (800) 555-0123</p>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">International: +1 (123) 456-7890</p>
-                    </div>
-                    <Button className="bg-pegasus-orange hover:bg-pegasus-orange-600">
-                      Request Callback
+              <form onSubmit={handleContactSubmit}>
+                <div className="space-y-4">
+                  <div>
+                    <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      Your Name
+                    </label>
+                    <Input 
+                      id="name"
+                      name="name"
+                      value={contactForm.name}
+                      onChange={handleInputChange}
+                      placeholder="Enter your name"
+                      className="w-full border-gray-300 dark:border-gray-600"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      Email Address
+                    </label>
+                    <Input 
+                      id="email"
+                      name="email"
+                      type="email"
+                      value={contactForm.email}
+                      onChange={handleInputChange}
+                      placeholder="Enter your email"
+                      className="w-full border-gray-300 dark:border-gray-600"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label htmlFor="message" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      Your Message
+                    </label>
+                    <Textarea 
+                      id="message"
+                      name="message"
+                      value={contactForm.message}
+                      onChange={handleInputChange}
+                      placeholder="How can we help you?"
+                      rows={5}
+                      className="w-full border-gray-300 dark:border-gray-600"
+                    />
+                  </div>
+                  
+                  <div className="pt-4">
+                    <Button 
+                      type="submit"
+                      className="w-full bg-pegasus-orange hover:bg-pegasus-orange-600 text-white py-6 transition-transform hover:scale-[1.02]"
+                    >
+                      Send Message
                     </Button>
                   </div>
-                  <div className="w-full md:w-1/3 bg-gray-100 dark:bg-gray-700 p-4 rounded-lg mt-4 md:mt-0">
-                    <h4 className="font-medium text-gray-900 dark:text-white mb-2">Call Tips</h4>
-                    <ul className="text-sm space-y-2 text-gray-600 dark:text-gray-300">
-                      <li>• Have your license key ready</li>
-                      <li>• Be near your computer</li>
-                      <li>• Note any error codes</li>
-                      <li>• Premium support available</li>
-                    </ul>
-                  </div>
                 </div>
-              </TabsContent>
-              
-              <TabsContent value="ticket" className="mt-0">
-                <div className="flex flex-col md:flex-row items-start gap-6">
-                  <div className="flex-1">
-                    <div className="flex items-center mb-4">
-                      <Mail className="h-6 w-6 text-pegasus-orange mr-2" />
-                      <h3 className="text-xl font-medium text-gray-900 dark:text-white">Submit Support Ticket</h3>
-                    </div>
-                    <p className="text-gray-600 dark:text-gray-300 mb-4">
-                      Create a support ticket for more complex issues that require detailed investigation.
-                    </p>
-                    <div className="flex items-center mb-6 text-sm text-gray-500 dark:text-gray-400">
-                      <Clock className="h-4 w-4 mr-1" /> Average response time: 4-6 hours
-                    </div>
-                    <Button className="bg-pegasus-orange hover:bg-pegasus-orange-600">
-                      Create Support Ticket
-                    </Button>
-                  </div>
-                  <div className="w-full md:w-1/3 bg-gray-100 dark:bg-gray-700 p-4 rounded-lg mt-4 md:mt-0">
-                    <h4 className="font-medium text-gray-900 dark:text-white mb-2">Ticket Tips</h4>
-                    <ul className="text-sm space-y-2 text-gray-600 dark:text-gray-300">
-                      <li>• Include screenshots if possible</li>
-                      <li>• List steps to reproduce the issue</li>
-                      <li>• Mention software version</li>
-                      <li>• Attach log files if available</li>
-                    </ul>
-                  </div>
-                </div>
-              </TabsContent>
+              </form>
             </CardContent>
           </Card>
-        </Tabs>
-
-        {/* Quick Solutions */}
-        <div className="mb-16">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-8 text-center">Quick Solutions to Common Issues</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Card className="bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transition-all duration-300">
-              <CardContent className="p-6">
-                <AlertTriangle className="h-10 w-10 text-amber-500 mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-3">Connection Problems</h3>
-                <p className="text-gray-600 dark:text-gray-300 mb-4">
-                  If your device isn't being detected, try these simple troubleshooting steps.
-                </p>
-                <ul className="text-sm space-y-2 text-gray-600 dark:text-gray-300 mb-4">
-                  <li>• Check USB cable and ports</li>
-                  <li>• Restart device in fastboot mode</li>
-                  <li>• Install or reinstall drivers</li>
-                </ul>
-                <Button variant="link" className="p-0 text-pegasus-orange hover:text-pegasus-orange-600 flex items-center">
-                  View Complete Guide <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transition-all duration-300">
-              <CardContent className="p-6">
-                <AlertTriangle className="h-10 w-10 text-amber-500 mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-3">Flashing Errors</h3>
-                <p className="text-gray-600 dark:text-gray-300 mb-4">
-                  Common flashing errors and how to resolve them quickly.
-                </p>
-                <ul className="text-sm space-y-2 text-gray-600 dark:text-gray-300 mb-4">
-                  <li>• Firmware verification failed</li>
-                  <li>• Device stuck in bootloop</li>
-                  <li>• Error code 0x80070057</li>
-                </ul>
-                <Button variant="link" className="p-0 text-pegasus-orange hover:text-pegasus-orange-600 flex items-center">
-                  View Complete Guide <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transition-all duration-300">
-              <CardContent className="p-6">
-                <AlertTriangle className="h-10 w-10 text-amber-500 mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-3">License Issues</h3>
-                <p className="text-gray-600 dark:text-gray-300 mb-4">
-                  Solutions for common license activation and validation problems.
-                </p>
-                <ul className="text-sm space-y-2 text-gray-600 dark:text-gray-300 mb-4">
-                  <li>• Invalid license key</li>
-                  <li>• License activation failed</li>
-                  <li>• Exceeded device limit</li>
-                </ul>
-                <Button variant="link" className="p-0 text-pegasus-orange hover:text-pegasus-orange-600 flex items-center">
-                  View Complete Guide <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-
-        {/* Support Status */}
-        <div className="mb-16">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Support Status</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Card className="bg-white dark:bg-gray-800 shadow">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center">
-                    <div className="h-3 w-3 rounded-full bg-green-500 mr-2"></div>
-                    <h3 className="text-lg font-medium text-gray-900 dark:text-white">Live Chat Support</h3>
-                  </div>
-                  <span className="text-green-500 font-medium">Online</span>
-                </div>
-                <p className="text-gray-600 dark:text-gray-300">Current wait time: ~2 minutes</p>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-white dark:bg-gray-800 shadow">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center">
-                    <div className="h-3 w-3 rounded-full bg-green-500 mr-2"></div>
-                    <h3 className="text-lg font-medium text-gray-900 dark:text-white">Phone Support</h3>
-                  </div>
-                  <span className="text-green-500 font-medium">Available</span>
-                </div>
-                <p className="text-gray-600 dark:text-gray-300">Current wait time: ~5 minutes</p>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-
-        {/* Need More Help */}
-        <div className="bg-gradient-to-r from-pegasus-orange to-orange-500 rounded-xl p-8 text-white mb-16">
-          <div className="max-w-3xl mx-auto text-center">
-            <HelpCircle className="h-12 w-12 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold mb-4">Still Need Help?</h2>
-            <p className="text-lg mb-6">Our team is here for you. Check our extensive knowledge base or contact us directly.</p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button className="bg-white text-orange-600 hover:bg-gray-100">
-                Browse Knowledge Base
-              </Button>
-              <Button variant="outline" className="text-white border-white hover:bg-orange-600">
-                Visit FAQ
-              </Button>
-            </div>
-          </div>
-        </div>
+        </motion.div>
       </div>
     </div>
   );

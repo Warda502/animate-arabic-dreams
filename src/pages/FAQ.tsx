@@ -1,282 +1,280 @@
 
-import React from 'react';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Search, HelpCircle, ThumbsUp, ThumbsDown } from "lucide-react";
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import { ChevronDown, ChevronUp, Search, ArrowRight } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { toast } from 'sonner';
+import AnimatedCard from '@/components/AnimatedCard';
 
 const FAQ = () => {
-  const generalFaqs = [
-    {
-      question: "What is Pegasus Tool?",
-      answer: "Pegasus Tool is a professional software solution designed for smartphone repair technicians and service centers. It enables unlocking, flashing, and repairing various smartphone models from manufacturers like Xiaomi, Vivo, Oppo, Realme, Alcatel, and Infinix."
-    },
-    {
-      question: "What devices does Pegasus Tool support?",
-      answer: "Pegasus Tool supports a wide range of devices from manufacturers including Xiaomi, Vivo, Oppo, Realme, Alcatel, Infinix, and many others. Our database includes over 1,000 smartphone models with regular updates to add support for new devices."
-    },
-    {
-      question: "Do I need technical knowledge to use Pegasus Tool?",
-      answer: "While Pegasus Tool is designed with an intuitive interface, basic technical knowledge about smartphone repair and flashing operations is recommended. We provide comprehensive documentation and video tutorials to help users get started."
-    },
-    {
-      question: "Is Pegasus Tool legal to use?",
-      answer: "Pegasus Tool is legal for authorized use cases such as repairing your own devices or providing professional repair services. However, it should only be used in compliance with local laws and manufacturer policies. The tool is intended for legitimate repair purposes only."
-    },
-    {
-      question: "How often is Pegasus Tool updated?",
-      answer: "We release updates regularly, typically once every 1-2 months for major updates and more frequently for minor updates and bug fixes. Updates include new device support, improved features, and security enhancements."
-    }
+  const [activeCategory, setActiveCategory] = useState('general');
+  const [expandedQuestions, setExpandedQuestions] = useState<string[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  
+  // Toggle FAQ question expansion
+  const toggleQuestion = (id: string) => {
+    setExpandedQuestions(prev => 
+      prev.includes(id) 
+        ? prev.filter(item => item !== id)
+        : [...prev, id]
+    );
+  };
+  
+  // Handle search
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    toast.info(`Searching for: ${searchQuery}`);
+    // Here you would normally filter the FAQs based on search query
+  };
+  
+  // Categories
+  const categories = [
+    { id: 'general', name: 'General Questions' },
+    { id: 'account', name: 'Account & Licensing' },
+    { id: 'technical', name: 'Technical Issues' },
+    { id: 'features', name: 'Features & Usage' },
+    { id: 'compatibility', name: 'Device Compatibility' }
   ];
   
-  const licensingFaqs = [
-    {
-      question: "What licensing options are available?",
-      answer: "Pegasus Tool offers several licensing options: Standard License (for individual technicians), Professional License (for repair shops), and Enterprise License (for large service centers). Each tier offers different features and device quotas."
-    },
-    {
-      question: "How many devices can I use with one license?",
-      answer: "The number of devices you can work with depends on your license tier. Standard licenses support up to 100 devices per month, Professional licenses support up to 500 devices, and Enterprise licenses offer unlimited device support."
-    },
-    {
-      question: "Can I transfer my license to another computer?",
-      answer: "Yes, you can deactivate your license on one computer and activate it on another. Standard licenses allow transfers once per month, Professional licenses twice per month, and Enterprise licenses have unlimited transfers."
-    },
-    {
-      question: "Do you offer a trial version?",
-      answer: "Yes, we offer a 7-day trial version with limited functionality. The trial allows you to test basic features and compatibility before purchasing a full license."
-    },
-    {
-      question: "What payment methods do you accept?",
-      answer: "We accept major credit cards (Visa, MasterCard, American Express), PayPal, bank transfers, and selected cryptocurrencies. For large orders or enterprise customers, we can arrange custom payment terms."
-    }
-  ];
+  // FAQ Data
+  const faqData = {
+    general: [
+      { 
+        id: 'what-is-pegasus',
+        question: 'What is Pegasus Tool?',
+        answer: 'Pegasus Tool is a professional software solution designed for smartphone flashing, unlocking, and repair operations. It supports a wide range of devices including Xiaomi, Vivo, Oppo, Realme, and many others.'
+      },
+      { 
+        id: 'cost',
+        question: 'How much does Pegasus Tool cost?',
+        answer: 'Pegasus Tool is available in different license types including monthly and yearly subscriptions. Please check our Pricing section for detailed information.'
+      },
+      { 
+        id: 'customer-support',
+        question: 'Do you offer customer support?',
+        answer: 'Yes, we provide comprehensive customer support through various channels including email, live chat, and phone. Our support team is available to assist with any issues you might encounter.'
+      }
+    ],
+    account: [
+      { 
+        id: 'create-account',
+        question: 'How do I create an account?',
+        answer: 'To create an account, click the "Sign Up" button on our website, fill out the registration form with your details, and follow the verification instructions sent to your email.'
+      },
+      { 
+        id: 'forgot-password',
+        question: 'I forgot my password. How can I reset it?',
+        answer: 'You can reset your password by clicking on the "Forgot Password" link on the login page. Enter your registered email address and follow the instructions sent to your inbox.'
+      },
+      { 
+        id: 'transfer-license',
+        question: 'Can I transfer my license to another computer?',
+        answer: 'Yes, you can deactivate your license on one computer and activate it on another. Go to Settings > License > Deactivate in the application on your current computer, then activate it on the new one.'
+      }
+    ],
+    technical: [
+      { 
+        id: 'device-not-detected',
+        question: 'My device is not being detected by Pegasus Tool',
+        answer: 'First, ensure you have the proper USB drivers installed. Try using a different USB cable or port. Make sure USB debugging is enabled on your device. Restart both your computer and device. If the issue persists, contact our support team.'
+      },
+      { 
+        id: 'installation-error',
+        question: 'I\'m getting installation errors',
+        answer: 'Make sure you\'re running the installer as administrator. Temporarily disable your antivirus software as it might be blocking the installation. Ensure your system meets the minimum requirements. Clear temporary files and try reinstalling.'
+      },
+      { 
+        id: 'operation-failed',
+        question: 'Why do I get "Operation Failed" errors?',
+        answer: 'This can happen for several reasons: incompatible device firmware, connection issues, insufficient device battery, or locked bootloader. Check our troubleshooting guide for specific error codes and solutions.'
+      }
+    ],
+    features: [
+      { 
+        id: 'unlock-bootloader',
+        question: 'Can Pegasus Tool unlock my device\'s bootloader?',
+        answer: 'Yes, Pegasus Tool supports bootloader unlocking for many supported devices. However, the process varies by manufacturer and model. Some devices may require additional authentication or waiting periods set by the manufacturer.'
+      },
+      { 
+        id: 'data-backup',
+        question: 'Does the tool include data backup features?',
+        answer: 'Yes, Pegasus Tool includes comprehensive backup and restore functions for contacts, messages, apps, and other user data. We recommend always creating a backup before performing any flashing or unlocking operations.'
+      },
+      { 
+        id: 'remove-frp',
+        question: 'Can Pegasus Tool remove FRP locks?',
+        answer: 'Pegasus Tool includes features to address FRP (Factory Reset Protection) on supported devices. This feature is intended for legitimate use cases where the device owner has forgotten their credentials.'
+      }
+    ],
+    compatibility: [
+      { 
+        id: 'check-compatibility',
+        question: 'How do I check if my device is compatible?',
+        answer: 'You can check our Supported Models section on the website, which is regularly updated with new devices. You can search for your specific brand and model to verify compatibility.'
+      },
+      { 
+        id: 'unsupported-device',
+        question: 'What if my device is not listed as supported?',
+        answer: 'If your device is not currently listed, it may be added in future updates. You can contact our support team to request device support or to inquire about potential workarounds for similar models.'
+      },
+      { 
+        id: 'windows-compatibility',
+        question: 'Which Windows versions are supported?',
+        answer: 'Pegasus Tool is compatible with Windows 10 and Windows 11. It may work on Windows 8.1, but we officially support and recommend Windows 10/11 for the best experience and full feature set.'
+      }
+    ]
+  };
   
-  const technicalFaqs = [
-    {
-      question: "What are the system requirements for Pegasus Tool?",
-      answer: "Pegasus Tool requires Windows 10/11 (64-bit), minimum 4GB RAM (8GB recommended), Intel Core i3 or equivalent processor, 5GB free disk space, and internet connection for activation and updates. USB 3.0 ports are recommended for faster operation."
-    },
-    {
-      question: "Can Pegasus Tool remove FRP lock?",
-      answer: "Yes, Pegasus Tool can remove FRP (Factory Reset Protection) locks on supported devices. This feature is intended for legitimate use cases where the device owner has forgotten their credentials after a factory reset."
-    },
-    {
-      question: "Does Pegasus Tool work without internet connection?",
-      answer: "After initial activation, Pegasus Tool can work offline for most operations. However, some features like firmware downloads and license verification require an internet connection. We recommend maintaining internet access for the best experience."
-    },
-    {
-      question: "Can Pegasus Tool fix bricked devices?",
-      answer: "In many cases, yes. Pegasus Tool includes recovery modes that can restore functionality to devices in boot loops or soft-brick conditions. Success depends on the specific device and the nature of the problem."
-    },
-    {
-      question: "Will using Pegasus Tool void my device warranty?",
-      answer: "Operations like unlocking bootloaders, flashing custom ROMs, or bypassing security features typically void manufacturer warranties. We recommend users inform their customers about this when providing repair services."
-    }
-  ];
+  // Get current FAQs based on active category
+  const currentFaqs = faqData[activeCategory as keyof typeof faqData] || [];
   
-  const supportFaqs = [
-    {
-      question: "How can I get technical support?",
-      answer: "Technical support is available through multiple channels: in-app support ticket system, email support, live chat during business hours, and phone support for enterprise customers. We also maintain an extensive knowledge base and video tutorials."
-    },
-    {
-      question: "What is the response time for support requests?",
-      answer: "Standard license holders typically receive responses within 24 hours. Professional license holders receive priority support with responses within 12 hours. Enterprise customers enjoy dedicated support with response times under 4 hours."
-    },
-    {
-      question: "Do you offer remote assistance?",
-      answer: "Yes, for complex issues, our support team can provide remote assistance sessions to directly help resolve problems. This service is included with Professional and Enterprise licenses and available as a paid add-on for Standard licenses."
-    },
-    {
-      question: "Is training available for Pegasus Tool?",
-      answer: "Yes, we offer online training sessions for new users. Professional and Enterprise license holders receive complimentary training sessions. We also provide custom training packages for teams and organizations."
-    },
-    {
-      question: "Where can I find documentation for Pegasus Tool?",
-      answer: "Comprehensive documentation is available in our Knowledge Base, including step-by-step guides, troubleshooting information, and device-specific instructions. Video tutorials are also available on our website and YouTube channel."
-    }
-  ];
-
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-20 pb-16">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">Frequently Asked Questions</h1>
-          <p className="text-lg text-gray-600 dark:text-gray-300">
-            Find answers to the most common questions about Pegasus Tool
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Hero Section */}
+        <motion.div 
+          className="text-center mb-16"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+            Frequently Asked Questions
+          </h1>
+          <p className="text-lg text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+            Find answers to common questions about Pegasus Tool
           </p>
           
-          <div className="mt-8 relative max-w-2xl mx-auto">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <Search className="h-5 w-5 text-gray-400" />
+          {/* Search section */}
+          <form onSubmit={handleSearch} className="mt-10 max-w-2xl mx-auto">
+            <div className="relative flex items-center">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              <Input 
+                type="text" 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search for questions..." 
+                className="pl-10 pr-16 py-6 w-full text-base rounded-full border-2 border-gray-200 dark:border-gray-700 focus:border-pegasus-orange focus:ring-pegasus-orange"
+              />
+              <Button 
+                type="submit"
+                className="absolute right-2 bg-pegasus-orange hover:bg-pegasus-orange-600 text-white rounded-full transition-transform hover:scale-105"
+              >
+                Search
+              </Button>
             </div>
-            <Input
-              type="text"
-              placeholder="Search for answers..."
-              className="pl-10 py-6 text-lg w-full rounded-lg bg-white dark:bg-gray-800"
-            />
-          </div>
-        </div>
-
+          </form>
+        </motion.div>
+        
         {/* FAQ Categories */}
-        <Tabs defaultValue="general" className="mb-10">
-          <TabsList className="grid grid-cols-4 mb-8">
-            <TabsTrigger value="general">General</TabsTrigger>
-            <TabsTrigger value="licensing">Licensing</TabsTrigger>
-            <TabsTrigger value="technical">Technical</TabsTrigger>
-            <TabsTrigger value="support">Support</TabsTrigger>
-          </TabsList>
-          
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-md">
-            <TabsContent value="general" className="mt-0">
-              <Accordion type="single" collapsible className="space-y-4">
-                {generalFaqs.map((faq, index) => (
-                  <AccordionItem value={`faq-${index}`} key={index} className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
-                    <AccordionTrigger className="bg-gray-50 dark:bg-gray-800 px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 font-medium text-gray-900 dark:text-gray-100">
-                      {faq.question}
-                    </AccordionTrigger>
-                    <AccordionContent className="p-4 bg-white dark:bg-gray-800">
-                      <p className="text-gray-600 dark:text-gray-300">{faq.answer}</p>
-                      <div className="mt-4 flex items-center justify-end space-x-4">
-                        <p className="text-sm text-gray-500 dark:text-gray-400">Was this helpful?</p>
-                        <Button variant="outline" size="sm" className="h-8 w-8 p-0">
-                          <ThumbsUp className="h-4 w-4" />
-                        </Button>
-                        <Button variant="outline" size="sm" className="h-8 w-8 p-0">
-                          <ThumbsDown className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </AccordionContent>
-                  </AccordionItem>
-                ))}
-              </Accordion>
-            </TabsContent>
-            
-            <TabsContent value="licensing" className="mt-0">
-              <Accordion type="single" collapsible className="space-y-4">
-                {licensingFaqs.map((faq, index) => (
-                  <AccordionItem value={`faq-${index}`} key={index} className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
-                    <AccordionTrigger className="bg-gray-50 dark:bg-gray-800 px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 font-medium text-gray-900 dark:text-gray-100">
-                      {faq.question}
-                    </AccordionTrigger>
-                    <AccordionContent className="p-4 bg-white dark:bg-gray-800">
-                      <p className="text-gray-600 dark:text-gray-300">{faq.answer}</p>
-                      <div className="mt-4 flex items-center justify-end space-x-4">
-                        <p className="text-sm text-gray-500 dark:text-gray-400">Was this helpful?</p>
-                        <Button variant="outline" size="sm" className="h-8 w-8 p-0">
-                          <ThumbsUp className="h-4 w-4" />
-                        </Button>
-                        <Button variant="outline" size="sm" className="h-8 w-8 p-0">
-                          <ThumbsDown className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </AccordionContent>
-                  </AccordionItem>
-                ))}
-              </Accordion>
-            </TabsContent>
-            
-            <TabsContent value="technical" className="mt-0">
-              <Accordion type="single" collapsible className="space-y-4">
-                {technicalFaqs.map((faq, index) => (
-                  <AccordionItem value={`faq-${index}`} key={index} className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
-                    <AccordionTrigger className="bg-gray-50 dark:bg-gray-800 px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 font-medium text-gray-900 dark:text-gray-100">
-                      {faq.question}
-                    </AccordionTrigger>
-                    <AccordionContent className="p-4 bg-white dark:bg-gray-800">
-                      <p className="text-gray-600 dark:text-gray-300">{faq.answer}</p>
-                      <div className="mt-4 flex items-center justify-end space-x-4">
-                        <p className="text-sm text-gray-500 dark:text-gray-400">Was this helpful?</p>
-                        <Button variant="outline" size="sm" className="h-8 w-8 p-0">
-                          <ThumbsUp className="h-4 w-4" />
-                        </Button>
-                        <Button variant="outline" size="sm" className="h-8 w-8 p-0">
-                          <ThumbsDown className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </AccordionContent>
-                  </AccordionItem>
-                ))}
-              </Accordion>
-            </TabsContent>
-            
-            <TabsContent value="support" className="mt-0">
-              <Accordion type="single" collapsible className="space-y-4">
-                {supportFaqs.map((faq, index) => (
-                  <AccordionItem value={`faq-${index}`} key={index} className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
-                    <AccordionTrigger className="bg-gray-50 dark:bg-gray-800 px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 font-medium text-gray-900 dark:text-gray-100">
-                      {faq.question}
-                    </AccordionTrigger>
-                    <AccordionContent className="p-4 bg-white dark:bg-gray-800">
-                      <p className="text-gray-600 dark:text-gray-300">{faq.answer}</p>
-                      <div className="mt-4 flex items-center justify-end space-x-4">
-                        <p className="text-sm text-gray-500 dark:text-gray-400">Was this helpful?</p>
-                        <Button variant="outline" size="sm" className="h-8 w-8 p-0">
-                          <ThumbsUp className="h-4 w-4" />
-                        </Button>
-                        <Button variant="outline" size="sm" className="h-8 w-8 p-0">
-                          <ThumbsDown className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </AccordionContent>
-                  </AccordionItem>
-                ))}
-              </Accordion>
-            </TabsContent>
-          </div>
-        </Tabs>
-
-        {/* Popular Topics */}
-        <div className="mb-12">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Popular Topics</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <Card className="bg-white dark:bg-gray-800 p-4 hover:shadow-md transition-shadow cursor-pointer">
-              <h3 className="font-medium text-gray-900 dark:text-white mb-2">Activation Issues</h3>
-              <p className="text-sm text-gray-600 dark:text-gray-300">Solutions for license activation problems</p>
-            </Card>
-            <Card className="bg-white dark:bg-gray-800 p-4 hover:shadow-md transition-shadow cursor-pointer">
-              <h3 className="font-medium text-gray-900 dark:text-white mb-2">Device Connection</h3>
-              <p className="text-sm text-gray-600 dark:text-gray-300">Troubleshoot device detection problems</p>
-            </Card>
-            <Card className="bg-white dark:bg-gray-800 p-4 hover:shadow-md transition-shadow cursor-pointer">
-              <h3 className="font-medium text-gray-900 dark:text-white mb-2">Error Codes</h3>
-              <p className="text-sm text-gray-600 dark:text-gray-300">Understanding common error messages</p>
-            </Card>
-            <Card className="bg-white dark:bg-gray-800 p-4 hover:shadow-md transition-shadow cursor-pointer">
-              <h3 className="font-medium text-gray-900 dark:text-white mb-2">Firmware Flashing</h3>
-              <p className="text-sm text-gray-600 dark:text-gray-300">Tips for successful firmware updates</p>
-            </Card>
-            <Card className="bg-white dark:bg-gray-800 p-4 hover:shadow-md transition-shadow cursor-pointer">
-              <h3 className="font-medium text-gray-900 dark:text-white mb-2">Bootloader Unlocking</h3>
-              <p className="text-sm text-gray-600 dark:text-gray-300">Safe bootloader unlock procedures</p>
-            </Card>
-            <Card className="bg-white dark:bg-gray-800 p-4 hover:shadow-md transition-shadow cursor-pointer">
-              <h3 className="font-medium text-gray-900 dark:text-white mb-2">Billing & Subscriptions</h3>
-              <p className="text-sm text-gray-600 dark:text-gray-300">Managing your license and payments</p>
-            </Card>
+        <div className="mb-10">
+          <div className="flex flex-wrap justify-center gap-3">
+            {categories.map((category) => (
+              <Button
+                key={category.id}
+                variant={activeCategory === category.id ? "default" : "outline"}
+                className={activeCategory === category.id 
+                  ? "bg-pegasus-orange hover:bg-pegasus-orange-600 text-white" 
+                  : "border-gray-300 hover:border-pegasus-orange hover:text-pegasus-orange"
+                }
+                onClick={() => {
+                  setActiveCategory(category.id);
+                  setExpandedQuestions([]);
+                }}
+              >
+                {category.name}
+              </Button>
+            ))}
           </div>
         </div>
-
-        {/* Contact Support */}
-        <div className="bg-gradient-to-r from-pegasus-orange to-orange-500 text-white rounded-xl p-8 text-center">
-          <HelpCircle className="h-12 w-12 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold mb-4">Still Have Questions?</h2>
-          <p className="text-lg mb-6 max-w-2xl mx-auto">
-            Can't find what you're looking for? Our support team is ready to help with any questions or issues you may have.
+        
+        {/* FAQ Questions */}
+        <AnimatedCard variant="elegant" delay={0.2} className="max-w-4xl mx-auto mb-16">
+          <CardContent className="p-8">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-8">
+              {categories.find(c => c.id === activeCategory)?.name || "Frequently Asked Questions"}
+            </h2>
+            
+            <div className="space-y-4">
+              {currentFaqs.length > 0 ? (
+                currentFaqs.map((faq) => (
+                  <motion.div 
+                    key={faq.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <Card className="border border-gray-200 dark:border-gray-700 overflow-hidden">
+                      <div
+                        className="p-6 flex justify-between items-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                        onClick={() => toggleQuestion(faq.id)}
+                      >
+                        <h3 className="font-medium text-lg text-gray-900 dark:text-white pr-4">{faq.question}</h3>
+                        <Button variant="ghost" size="sm" className="shrink-0">
+                          {expandedQuestions.includes(faq.id) ? (
+                            <ChevronUp className="h-5 w-5 text-pegasus-orange" />
+                          ) : (
+                            <ChevronDown className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+                          )}
+                        </Button>
+                      </div>
+                      
+                      <motion.div
+                        initial={{ height: 0 }}
+                        animate={{ 
+                          height: expandedQuestions.includes(faq.id) ? "auto" : 0 
+                        }}
+                        transition={{ duration: 0.3 }}
+                        className="overflow-hidden bg-gray-50 dark:bg-gray-800/50"
+                      >
+                        <div className="p-6 border-t border-gray-200 dark:border-gray-700">
+                          <p className="text-gray-700 dark:text-gray-300 whitespace-pre-line">
+                            {faq.answer}
+                          </p>
+                        </div>
+                      </motion.div>
+                    </Card>
+                  </motion.div>
+                ))
+              ) : (
+                <p className="text-center text-gray-500 dark:text-gray-400 py-8">
+                  No FAQs available for this category at the moment.
+                </p>
+              )}
+            </div>
+          </CardContent>
+        </AnimatedCard>
+        
+        {/* Still need help section */}
+        <motion.div 
+          className="text-center max-w-2xl mx-auto"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+        >
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Still have questions?</h2>
+          <p className="text-gray-600 dark:text-gray-300 mb-6">
+            If you couldn't find the answers you're looking for, our support team is here to help
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button className="bg-white text-orange-600 hover:bg-gray-100">
+            <Button 
+              className="bg-pegasus-orange hover:bg-pegasus-orange-600 text-white group"
+              onClick={() => toast.info('Redirecting to contact page...')}
+            >
               Contact Support
+              <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
             </Button>
-            <Button variant="outline" className="text-white border-white hover:bg-orange-600">
-              Visit Help Center
+            <Button 
+              variant="outline" 
+              className="border-pegasus-orange text-pegasus-orange hover:bg-pegasus-orange/10"
+              onClick={() => toast.info('Redirecting to knowledge base...')}
+            >
+              Visit Knowledge Base
             </Button>
           </div>
-        </div>
+        </motion.div>
       </div>
     </div>
   );
