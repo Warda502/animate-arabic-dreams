@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
@@ -18,7 +18,9 @@ interface AnimatedButtonProps extends React.ButtonHTMLAttributes<HTMLButtonEleme
     "ghost" | 
     "link" | 
     "gradient" | 
-    "glowing";
+    "glowing" | 
+    "neon" | 
+    "glass";
   size?: "xs" | "sm" | "md" | "lg" | "xl";
   animation?: 
     "pulse" | 
@@ -26,6 +28,7 @@ interface AnimatedButtonProps extends React.ButtonHTMLAttributes<HTMLButtonEleme
     "ripple" | 
     "shine" | 
     "slide" | 
+    "magnetic" |
     "none";
   fullWidth?: boolean;
   rounded?: "sm" | "md" | "lg" | "full";
@@ -43,7 +46,13 @@ const AnimatedButton: React.FC<AnimatedButtonProps> = ({
   rounded = "md",
   ...props
 }) => {
-  // Base style configs - تحديث الألوان لتكون متناسقة
+  // State for animations and interactions
+  const [ripple, setRipple] = useState({ x: 0, y: 0, active: false });
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [isHovered, setIsHovered] = useState(false);
+  const [isPressed, setIsPressed] = useState(false);
+
+  // Base style configs
   const variantStyles = {
     default: "bg-pegasus-orange hover:bg-pegasus-orange-600 text-white",
     primary: "bg-pegasus-orange hover:bg-pegasus-orange-600 text-white",
@@ -51,8 +60,10 @@ const AnimatedButton: React.FC<AnimatedButtonProps> = ({
     outline: "border-2 border-pegasus-orange text-pegasus-orange hover:bg-pegasus-orange/10",
     ghost: "text-pegasus-orange hover:bg-pegasus-orange-50 dark:hover:bg-pegasus-orange/10",
     link: "text-pegasus-orange underline hover:text-pegasus-orange-600",
-    gradient: "bg-orange-gradient hover:opacity-90 text-white",
-    glowing: "bg-pegasus-orange text-white shadow-lg hover:shadow-neon"
+    gradient: "bg-gradient-to-r from-pegasus-orange via-pegasus-orange-500 to-pegasus-orange-600 hover:opacity-90 text-white",
+    glowing: "bg-pegasus-orange text-white shadow-lg hover:shadow-neon",
+    neon: "bg-transparent border-2 border-pegasus-orange text-pegasus-orange shadow-[0_0_10px_rgba(249,115,22,0.5)] hover:shadow-[0_0_20px_rgba(249,115,22,0.8)]",
+    glass: "bg-white/10 backdrop-blur-md border border-white/20 text-white hover:bg-white/20"
   };
 
   const sizeStyles = {
@@ -70,6 +81,29 @@ const AnimatedButton: React.FC<AnimatedButtonProps> = ({
     full: "rounded-full"
   };
 
+  // Magnetic effect handlers
+  const handleMouseMove = (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (animation === "magnetic") {
+      const button = e.currentTarget;
+      const rect = button.getBoundingClientRect();
+      const x = e.clientX - rect.left - rect.width / 2;
+      const y = e.clientY - rect.top - rect.height / 2;
+      setMousePosition({ x, y });
+    }
+  };
+
+  // Ripple effect handler
+  const handleRipple = (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (animation === "ripple") {
+      const button = e.currentTarget;
+      const rect = button.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      setRipple({ x, y, active: true });
+      setTimeout(() => setRipple({ x: 0, y: 0, active: false }), 600);
+    }
+  };
+
   // Animation variants
   const getAnimationProps = () => {
     switch (animation) {
@@ -81,20 +115,11 @@ const AnimatedButton: React.FC<AnimatedButtonProps> = ({
         return {
           whileHover: { y: [0, -5, 0], transition: { repeat: Infinity, duration: 0.6 } }
         };
-      case "ripple":
+      case "magnetic":
         return {
-          whileHover: {},
-          className: "overflow-hidden relative"
-        };
-      case "shine":
-        return {
-          whileHover: {},
-          className: "overflow-hidden relative"
-        };
-      case "slide":
-        return {
-          whileHover: {},
-          className: "overflow-hidden relative"
+          style: {
+            transform: `translate(${mousePosition.x * 0.1}px, ${mousePosition.y * 0.1}px)`,
+          }
         };
       default:
         return {
@@ -107,7 +132,7 @@ const AnimatedButton: React.FC<AnimatedButtonProps> = ({
   const animationProps = getAnimationProps();
   const buttonClassNames = cn(
     "shadow-md hover:shadow-lg transition-all duration-300 flex items-center justify-center",
-    variantStyles[variant],
+    variantStyles[variant as keyof typeof variantStyles],
     sizeStyles[size],
     roundedStyles[rounded],
     fullWidth ? "w-full" : "",
@@ -115,28 +140,33 @@ const AnimatedButton: React.FC<AnimatedButtonProps> = ({
     className
   );
 
-  // Ripple effect state
-  const [ripple, setRipple] = React.useState({ x: 0, y: 0, active: false });
-
-  const handleRipple = (e: React.MouseEvent<HTMLButtonElement>) => {
-    if (animation === "ripple") {
-      const button = e.currentTarget;
-      const rect = button.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      setRipple({ x, y, active: true });
-      setTimeout(() => setRipple({ x: 0, y: 0, active: false }), 600);
-    }
-  };
+  // 3D effect for pressed state
+  const pressedStyle = isPressed 
+    ? { transform: "translateY(2px)", boxShadow: "inset 0 2px 4px rgba(0,0,0,0.2)" } 
+    : {};
 
   return (
     <motion.div
       {...animationProps}
       className={cn("inline-block", fullWidth && "w-full")}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => {
+        setIsHovered(false);
+        setMousePosition({ x: 0, y: 0 });
+      }}
+      onMouseDown={() => setIsPressed(true)}
+      onMouseUp={() => setIsPressed(false)}
+      onTouchStart={() => setIsPressed(true)}
+      onTouchEnd={() => setIsPressed(false)}
     >
       <Button 
         className={buttonClassNames}
         onClick={handleRipple}
+        onMouseMove={handleMouseMove}
+        style={{
+          ...animationProps.style,
+          ...pressedStyle
+        }}
         {...props}
       >
         {/* Ripple effect */}
@@ -154,9 +184,13 @@ const AnimatedButton: React.FC<AnimatedButtonProps> = ({
         )}
         
         {/* Shine effect */}
-        {animation === "shine" && (
+        {animation === "shine" && isHovered && (
           <span className="absolute inset-0 overflow-hidden">
-            <span className="absolute top-0 left-[-100%] w-[60%] h-full bg-shimmer transform skew-x-15 animate-shimmer"></span>
+            <motion.span 
+              className="absolute top-0 left-[-100%] w-[60%] h-full bg-gradient-to-r from-transparent via-white/30 to-transparent skew-x-15"
+              animate={{ left: ['0%', '200%'] }}
+              transition={{ duration: 1.5, repeat: Infinity, repeatDelay: 0.5 }}
+            />
           </span>
         )}
         
@@ -168,18 +202,34 @@ const AnimatedButton: React.FC<AnimatedButtonProps> = ({
               initial={{ x: -100, opacity: 0 }}
               whileHover={{ x: 300, opacity: 1 }}
               transition={{ duration: 0.8 }}
-            ></motion.span>
+            />
           </span>
         )}
         
         {/* Icon on left */}
-        {Icon && iconPosition === "left" && <Icon className="mr-2 h-4 w-4" />}
+        {Icon && iconPosition === "left" && (
+          <motion.span
+            animate={isHovered ? { rotate: [0, 15, 0] } : {}}
+            transition={{ duration: 0.5 }}
+            className="mr-2"
+          >
+            <Icon className="h-4 w-4" />
+          </motion.span>
+        )}
         
         {/* Content */}
         <span>{children}</span>
         
         {/* Icon on right */}
-        {Icon && iconPosition === "right" && <Icon className="ml-2 h-4 w-4" />}
+        {Icon && iconPosition === "right" && (
+          <motion.span
+            animate={isHovered ? { x: [0, 5, 0] } : {}}
+            transition={{ duration: 0.5, repeat: isHovered ? Infinity : 0, repeatDelay: 0.5 }}
+            className="ml-2"
+          >
+            <Icon className="h-4 w-4" />
+          </motion.span>
+        )}
       </Button>
     </motion.div>
   );
