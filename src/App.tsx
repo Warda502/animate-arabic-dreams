@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -18,6 +19,7 @@ import KnowledgeBase from "./pages/KnowledgeBase";
 import HelpCenter from "./pages/HelpCenter";
 import FAQ from "./pages/FAQ";
 import TermsOfService from "./pages/TermsOfService";
+import NotFound from "./pages/NotFound";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
@@ -131,8 +133,8 @@ const App = () => {
                 <Route path="/faq" element={<FAQ />} />
                 <Route path="/terms-of-service" element={<TermsOfService />} />
                 
-                {/* Page not found */}
-                <Route path="*" element={<Navigate to="/" />} />
+                {/* Page not found - Make sure this is a proper fallback route */}
+                <Route path="*" element={<NotFound />} />
               </Routes>
               <Footer />
               <ScrollTop />

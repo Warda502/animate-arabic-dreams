@@ -231,16 +231,16 @@ const Home = () => {
                     <span className="absolute bottom-0 left-0 w-full h-0.5 bg-white/30 scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></span>
                   </span>
                 </Button>
-                <AnimatedButton 
-                  variant="outline" 
-                  className="border-2 border-pegasus-orange text-pegasus-orange hover:bg-orange-900/20 dark:hover:bg-orange-900/20 px-6 py-6 rounded-full text-lg w-full md:w-auto transition-all duration-300 hover:-translate-y-1 hover:border-pegasus-orange-400"
-                  animation="shine"
-                  icon={ArrowRight}
-                  iconPosition="right"
+                <Button 
+                  className="bg-transparent border-2 border-pegasus-orange text-white px-6 py-6 rounded-full text-lg w-full md:w-auto transition-all duration-300 hover:-translate-y-1 shadow-lg hover:shadow-xl hover:bg-pegasus-orange-600 flex items-center justify-center group"
                   onClick={() => scrollToSection('why-choose-pegasus')}
                 >
-                  Learn More
-                </AnimatedButton>
+                  <ArrowRight className="mr-2 h-5 w-5 group-hover:scale-110 transition-transform" /> 
+                  <span className="relative">
+                    Learn More
+                    <span className="absolute bottom-0 left-0 w-full h-0.5 bg-white/30 scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></span>
+                  </span>
+                </Button>
               </motion.div>
             </motion.div>
             <motion.div 
@@ -535,3 +535,4 @@ const Home = () => {
 };
 
 export default Home;
+
