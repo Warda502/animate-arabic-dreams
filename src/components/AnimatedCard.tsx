@@ -11,6 +11,7 @@ interface AnimatedCardProps {
   variant?: "default" | "elegant" | "gradient" | "glow" | "glass";
   hoverEffect?: "scale" | "lift" | "glow" | "none" | "rotate" | "bounce";
   whileInView?: boolean;
+  onClick?: () => void; // Added onClick handler to the interface
 }
 
 const AnimatedCard: React.FC<AnimatedCardProps> = ({
@@ -19,7 +20,8 @@ const AnimatedCard: React.FC<AnimatedCardProps> = ({
   delay = 0,
   variant = "default",
   hoverEffect = "lift",
-  whileInView = true
+  whileInView = true,
+  onClick // Destructure the onClick prop
 }) => {
   const getVariantClasses = () => {
     switch (variant) {
@@ -73,12 +75,14 @@ const AnimatedCard: React.FC<AnimatedCardProps> = ({
       transition={{
         duration: 0.3
       }}
+      onClick={onClick} // Apply the onClick handler to the motion.div
     >
       <Card
         className={cn(
           "rounded-lg shadow-md overflow-hidden",
           getVariantClasses(),
-          className
+          className,
+          onClick ? "cursor-pointer" : "" // Add cursor-pointer class when onClick is provided
         )}
       >
         {children}
