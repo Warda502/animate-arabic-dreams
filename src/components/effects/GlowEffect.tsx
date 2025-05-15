@@ -1,9 +1,9 @@
 
 import React, { HTMLAttributes, forwardRef } from "react";
-import { motion, MotionProps } from "framer-motion";
+import { motion, MotionProps, PanInfo } from "framer-motion";
 import { cn } from "@/lib/utils";
 
-interface GlowEffectProps extends HTMLAttributes<HTMLDivElement> {
+interface GlowEffectProps extends Omit<HTMLAttributes<HTMLDivElement>, keyof MotionProps> {
   children: React.ReactNode;
   color?: string;
   intensity?: "low" | "medium" | "high";
@@ -12,7 +12,7 @@ interface GlowEffectProps extends HTMLAttributes<HTMLDivElement> {
   className?: string;
   containerClassName?: string;
   borderGlow?: boolean;
-  motionProps?: Omit<MotionProps, keyof HTMLAttributes<HTMLDivElement>>;
+  motionProps?: MotionProps;
 }
 
 const GlowEffect = forwardRef<HTMLDivElement, GlowEffectProps>(({
@@ -72,7 +72,7 @@ const GlowEffect = forwardRef<HTMLDivElement, GlowEffectProps>(({
         animate={active ? { opacity: glowOpacity } : {}}
         {...(pulse ? pulseAnimation : {})}
         {...motionProps}
-        {...props}
+        {...props as any}
       >
         {children}
       </motion.div>
