@@ -9,7 +9,7 @@ interface MatrixRainProps {
   color?: string;
   fontSize?: number;
   density?: "low" | "medium" | "high";
-  speed?: "slow" | "normal" | "fast";
+  speed?: "slow" | "normal" | "fast" | "high";
   fadeOut?: boolean;
   customCharacters?: string;
   interactive?: boolean;
@@ -80,7 +80,7 @@ const MatrixRain: React.FC<MatrixRainProps> = ({
     }
     
     // Speed factor based on speed prop
-    const speedFactor = speed === "slow" ? 0.5 : speed === "high" ? 2 : 1;
+    const speedFactor = speed === "slow" ? 0.5 : speed === "fast" || speed === "high" ? 2 : 1;
     
     // Draw function
     const draw = () => {

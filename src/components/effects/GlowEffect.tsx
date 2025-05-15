@@ -12,7 +12,7 @@ interface GlowEffectProps extends HTMLAttributes<HTMLDivElement> {
   className?: string;
   containerClassName?: string;
   borderGlow?: boolean;
-  motionProps?: MotionProps;
+  motionProps?: Omit<MotionProps, keyof HTMLAttributes<HTMLDivElement>>;
 }
 
 const GlowEffect = forwardRef<HTMLDivElement, GlowEffectProps>(({
@@ -70,7 +70,7 @@ const GlowEffect = forwardRef<HTMLDivElement, GlowEffectProps>(({
         style={{ ...glowStyles, ...borderStyles }}
         initial={active ? { opacity: 0 } : {}}
         animate={active ? { opacity: glowOpacity } : {}}
-        {...pulseAnimation}
+        {...(pulse ? pulseAnimation : {})}
         {...motionProps}
         {...props}
       >
