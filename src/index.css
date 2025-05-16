@@ -1,10 +1,34 @@
-
 @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Loading animation styles */
+body.loading {
+  overflow: hidden;
+}
+
+body.loading #root {
+  display: none;
+}
+
+body.loaded #loading-root {
+  display: none;
+}
+
+@keyframes draw-path {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes fill-color {
+  to {
+    fill-opacity: 1;
+  }
+}
 
 @layer base {
   :root {
