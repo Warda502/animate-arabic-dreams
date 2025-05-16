@@ -142,14 +142,22 @@ const LoadingAnimation: React.FC = () => {
           ease: "easeInOut"
         }}
       />
-
       <div className="w-full max-w-md relative">
         <motion.svg 
-  viewBox="0 0 930 465" 
-  className="w-full max-w-2xl" // Adjust based on screen size
-  initial="hidden"
-  animate="visible"
->
+          viewBox="0 0 930 465" 
+          className="w-full"
+          initial="hidden"
+          animate="visible"
+        >
+          {/* Triangle 1 (left triangle) */}
+          <motion.path
+            d="m166.7 114q3.7 0 6.7 2.1 47.6 27.2 94.6 55.4 0.8 39.6 0 79.2-30.3 18.6-61.3 36.3-3.8 2.7-7.1-0.4-0.4-37.5-0.8-75.1-16.5-10.3-33.4-20-0.4 79.2-0.8 158.4-1.4 2.1-3.7 2.5-30.6-17.4-60.9-35.4-3.1-1.5-4.6-4.6-0.8-77.5 0-155 1.7-4.6 6.3-3 29.1 17.1 58.3 34.2 2.4 1.6 5 1.7-1.4-36.4-0.4-73 0.8-1.8 2.1-3.3z"
+            stroke={outlineColor}
+            strokeWidth="3"
+            fill="transparent"
+            custom={0}
+            variants={pathVariants}
+          />
   <motion.path
     d={pegasusPathData}
     stroke={outlineColor}
