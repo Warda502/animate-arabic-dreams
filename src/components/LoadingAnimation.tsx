@@ -7,26 +7,36 @@ const LoadingAnimation: React.FC = () => {
   const [animationComplete, setAnimationComplete] = useState(false);
   const { deferAnimation } = useAnimationUtils();
 
-  // Logo colors
+  // BEOLWO TOOL colors
   const orangeColor = "#F97316";
   const whiteColor = "#FFFFFF";
+  const outlineColor = "#FFFFFF";
 
   // SVG animation variants
   const pathVariants = {
-    hidden: { pathLength: 0, fill: "rgba(249, 115, 22, 0)" },
+    hidden: { 
+      pathLength: 0, 
+      opacity: 0,
+      fill: "rgba(249, 115, 22, 0)" 
+    },
     visible: (i: number) => ({
       pathLength: 1,
+      opacity: 1,
       fill: "rgba(249, 115, 22, 1)",
       transition: {
         pathLength: { 
           type: "spring", 
-          duration: 2.5,
-          bounce: 0,
-          delay: i * 0.3
+          duration: 1.8,
+          bounce: 0.3,
+          delay: i * 0.15
+        },
+        opacity: { 
+          duration: 0.5, 
+          delay: i * 0.15 
         },
         fill: { 
           duration: 0.8, 
-          delay: 2.5 + i * 0.3 
+          delay: 1.8 + i * 0.15 
         }
       }
     })
@@ -34,19 +44,33 @@ const LoadingAnimation: React.FC = () => {
 
   const textVariants = {
     hidden: { 
-      opacity: 0
+      opacity: 0,
+      y: 20
     },
     visible: (i: number) => ({
       opacity: 1,
+      y: 0,
       transition: { 
-        duration: 1,
-        delay: 3 + i * 0.1
+        duration: 0.8,
+        type: "spring",
+        bounce: 0.4,
+        delay: 2 + i * 0.1
       }
     })
   };
 
+  // Particle system
+  const particles = Array.from({ length: 30 }, (_, i) => ({
+    id: i,
+    x: Math.random() * 100,
+    y: Math.random() * 100,
+    size: Math.random() * 4 + 2,
+    duration: Math.random() * 3 + 2,
+    delay: Math.random() * 3
+  }));
+
   useEffect(() => {
-    // Complete animation after 5 seconds
+    // Complete animation after 5.5 seconds
     const timer = setTimeout(() => {
       setAnimationComplete(true);
     }, 5500);
@@ -64,134 +88,254 @@ const LoadingAnimation: React.FC = () => {
           // Using document.body.classList to avoid needing refs
           document.body.classList.remove('loading');
           document.body.classList.add('loaded');
+          
+          // Remove loading root after animation
+          const loadingRoot = document.getElementById('loading-root');
+          if (loadingRoot && loadingRoot.parentNode) {
+            loadingRoot.parentNode.removeChild(loadingRoot);
+          }
         }
       }}
-      className="fixed inset-0 flex items-center justify-center bg-black z-50"
+      className="fixed inset-0 flex items-center justify-center bg-black z-50 overflow-hidden"
     >
-      <div className="w-full max-w-md">
+      {/* Particle system */}
+      <div className="absolute inset-0 pointer-events-none">
+        {particles.map(particle => (
+          <motion.div
+            key={particle.id}
+            className="absolute rounded-full bg-pegasus-orange"
+            initial={{
+              x: `${particle.x}%`,
+              y: `${particle.y}%`,
+              opacity: 0,
+              scale: 0
+            }}
+            animate={{
+              opacity: [0, 1, 0],
+              scale: [0, 1, 0],
+              x: `${particle.x + (Math.random() * 20 - 10)}%`,
+              y: `${particle.y + (Math.random() * 20 - 10)}%`
+            }}
+            transition={{
+              duration: particle.duration,
+              delay: particle.delay,
+              repeat: Infinity,
+              repeatDelay: Math.random() * 2
+            }}
+            style={{
+              width: particle.size,
+              height: particle.size
+            }}
+          />
+        ))}
+      </div>
+
+      {/* Glow effect behind logo */}
+      <motion.div
+        className="absolute w-64 h-64 bg-pegasus-orange rounded-full filter blur-[80px] opacity-20"
+        animate={{
+          scale: [1, 1.2, 1],
+          opacity: [0.1, 0.3, 0.1]
+        }}
+        transition={{
+          duration: 3,
+          repeat: Infinity,
+          ease: "easeInOut"
+        }}
+      />
+
+      <div className="w-full max-w-md relative">
         <motion.svg 
           viewBox="0 0 600 230" 
           className="w-full"
           initial="hidden"
           animate="visible"
         >
-          {/* Logo shape - left block */}
+          {/* Triangle 1 (left triangle) */}
           <motion.path
-            d="M120 70 L120 190 L180 150 L180 110 Z"
-            stroke={whiteColor}
-            strokeWidth="4"
+            d="M80 65 L150 120 L80 175 Z"
+            stroke={outlineColor}
+            strokeWidth="3"
+            fill="transparent"
             custom={0}
             variants={pathVariants}
           />
           
-          {/* Logo shape - right block */}
+          {/* Triangle 2 (right triangle) */}
           <motion.path
-            d="M190 70 L190 150 L240 110 L240 110 Z"
-            stroke={whiteColor} 
-            strokeWidth="4"
-            custom={1}
+            d="M160 65 L230 120 L160 175 Z"
+            stroke={outlineColor}
+            strokeWidth="3"
+            fill="transparent"
+            custom={0.3}
             variants={pathVariants}
           />
 
-          {/* Text: PEGASUS */}
+          {/* Text: B */}
           <motion.path
-            d="M290 90 L290 110 L310 110 C315 110 320 105 320 100 C320 95 315 90 310 90 L290 90 Z M290 110 L290 130 L310 130 C315 130 320 125 320 120 C320 115 315 110 310 110 L290 110 Z"
-            stroke={whiteColor}
+            d="M260 90 L260 160 L305 160 C315 160 325 150 325 140 C325 130 315 125 305 125 L260 125 M260 125 L305 125 C315 125 325 115 325 105 C325 95 315 90 305 90 L260 90 Z"
+            stroke={outlineColor}
             strokeWidth="3"
-            custom={2}
+            fill="transparent"
+            custom={0.6}
             variants={pathVariants}
           />
 
+          {/* Text: E */}
           <motion.path
-            d="M330 90 L330 130 L370 130 L370 120 L340 120 L340 115 L365 115 L365 105 L340 105 L340 100 L370 100 L370 90 Z"
-            stroke={whiteColor}
+            d="M335 90 L335 160 L385 160 M335 90 L385 90 M335 125 L375 125"
+            stroke={outlineColor}
             strokeWidth="3"
-            custom={2.3}
+            fill="transparent"
+            custom={0.9}
             variants={pathVariants}
           />
 
+          {/* Text: O */}
           <motion.path
-            d="M380 90 C375 90 370 95 370 100 L370 120 C370 125 375 130 380 130 L395 130 C400 130 405 125 405 120 L405 100 C405 95 400 90 395 90 Z M380 100 L395 100 L395 120 L380 120 Z"
-            stroke={whiteColor}
-            strokeWidth="3"
-            custom={2.6}
+            d="M395 90 C380 90 370 100 370 125 C370 150 380 160 395 160 C410 160 420 150 420 125 C420 100 410 90 395 90 Z"
+            stroke={outlineColor}
+            strokeWidth="3" 
+            fill="transparent"
+            custom={1.2}
             variants={pathVariants}
           />
 
+          {/* Text: L */}
           <motion.path
-            d="M415 90 L415 130 L455 130 L455 120 L425 120 L425 90 Z"
-            stroke={whiteColor}
+            d="M430 90 L430 160 L480 160"
+            stroke={outlineColor}
             strokeWidth="3"
-            custom={2.9}
+            fill="transparent"
+            custom={1.5}
             variants={pathVariants}
           />
 
+          {/* Text: W */}
           <motion.path
-            d="M465 90 L465 115 C465 125 475 135 485 130 L495 130 C505 135 515 125 515 115 L515 90 L505 90 L505 115 C505 120 495 120 495 115 L495 90 L485 90 L485 115 C485 120 475 120 475 115 L475 90 Z"
-            stroke={whiteColor}
+            d="M490 90 L505 160 L520 110 L535 160 L550 90"
+            stroke={outlineColor}
             strokeWidth="3"
-            custom={3.2}
+            fill="transparent"
+            custom={1.8}
             variants={pathVariants}
           />
 
+          {/* Text: O */}
           <motion.path
-            d="M525 90 C520 90 515 95 515 100 L515 120 C515 125 520 130 525 130 L540 130 C545 130 550 125 550 120 L550 100 C550 95 545 90 540 90 Z M525 100 L540 100 L540 120 L525 120 Z"
-            stroke={whiteColor}
+            d="M560 90 C545 90 535 100 535 125 C535 150 545 160 560 160 C575 160 585 150 585 125 C585 100 575 90 560 90 Z"
+            stroke={outlineColor}
             strokeWidth="3"
-            custom={3.5}
+            fill="transparent"
+            custom={2.1}
             variants={pathVariants}
           />
 
-          {/* Text: TOOL */}
+          {/* Text: T */}
           <motion.path
-            d="M320 150 L320 170 L360 170 L360 160 L345 160 L345 190 L335 190 L335 160 L320 160 Z"
-            stroke={whiteColor}
+            d="M290 180 L350 180 M320 180 L320 230"
+            stroke={outlineColor}
             strokeWidth="3"
-            custom={4}
+            fill="transparent"
+            custom={2.4}
             variants={pathVariants}
           />
 
+          {/* Text: O */}
           <motion.path
-            d="M370 150 C365 150 360 155 360 160 L360 180 C360 185 365 190 370 190 L385 190 C390 190 395 185 395 180 L395 160 C395 155 390 150 385 150 Z M370 160 L385 160 L385 180 L370 180 Z"
-            stroke={whiteColor}
+            d="M360 180 C345 180 335 190 335 205 C335 220 345 230 360 230 C375 230 385 220 385 205 C385 190 375 180 360 180 Z"
+            stroke={outlineColor}
             strokeWidth="3"
-            custom={4.3}
+            fill="transparent"
+            custom={2.7}
             variants={pathVariants}
           />
 
+          {/* Text: O */}
           <motion.path
-            d="M405 150 C400 150 395 155 395 160 L395 180 C395 185 400 190 405 190 L420 190 C425 190 430 185 430 180 L430 160 C430 155 425 150 420 150 Z M405 160 L420 160 L420 180 L405 180 Z"
-            stroke={whiteColor}
+            d="M395 180 C380 180 370 190 370 205 C370 220 380 230 395 230 C410 230 420 220 420 205 C420 190 410 180 395 180 Z"
+            stroke={outlineColor}
             strokeWidth="3"
-            custom={4.6}
+            fill="transparent"
+            custom={3.0}
             variants={pathVariants}
           />
 
+          {/* Text: L */}
           <motion.path
-            d="M440 150 L440 190 L450 190 L450 150 Z"
-            stroke={whiteColor}
+            d="M430 180 L430 230 L470 230"
+            stroke={outlineColor}
             strokeWidth="3"
-            custom={5}
+            fill="transparent"
+            custom={3.3}
             variants={pathVariants}
           />
         </motion.svg>
+
+        {/* Additional animated elements around the logo */}
+        <div className="absolute inset-0">
+          <motion.div
+            className="absolute w-4 h-4 rounded-full bg-pegasus-orange"
+            initial={{ x: -20, y: -20, opacity: 0 }}
+            animate={{ 
+              x: ['-10%', '110%'],
+              y: ['10%', '90%'],
+              opacity: [0, 1, 0]
+            }}
+            transition={{
+              duration: 4,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+          />
+          <motion.div
+            className="absolute w-3 h-3 rounded-full bg-pegasus-orange"
+            initial={{ right: -20, bottom: -20, opacity: 0 }}
+            animate={{ 
+              right: ['10%', '90%'],
+              bottom: ['90%', '10%'],
+              opacity: [0, 1, 0]
+            }}
+            transition={{
+              duration: 3.5,
+              delay: 0.5,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+          />
+        </div>
       </div>
 
-      {/* Loading text */}
-      <motion.div 
-        className="absolute bottom-10 left-0 right-0 text-center text-white text-lg"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 2, duration: 0.5 }}
-      >
-        <motion.span
-          initial={{ width: "0%" }}
-          animate={{ width: "100%" }}
-          transition={{ duration: 5, ease: "easeInOut" }}
-          className="inline-block h-1 bg-pegasus-orange rounded-full absolute bottom-0 left-0"
-        />
-        Loading...
-      </motion.div>
+      {/* Loading progress bar */}
+      <div className="absolute bottom-10 left-0 right-0 text-center">
+        <motion.div 
+          className="relative w-64 h-6 mx-auto"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 2, duration: 0.5 }}
+        >
+          <div className="w-full h-1 bg-gray-800 rounded-full overflow-hidden">
+            <motion.div
+              initial={{ width: "0%" }}
+              animate={{ width: "100%" }}
+              transition={{ duration: 5, ease: "easeInOut" }}
+              className="h-full bg-pegasus-orange rounded-full"
+            />
+          </div>
+          <motion.p 
+            className="text-white mt-2 font-bold tracking-wider"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: [0, 1, 0.5, 1] }}
+            transition={{ 
+              duration: 2, 
+              repeat: 2, 
+              repeatType: "reverse" 
+            }}
+          >
+            Loading...
+          </motion.p>
+        </motion.div>
+      </div>
     </motion.div>
   );
 };
